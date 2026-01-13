@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -13,7 +15,13 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
+  public static class OIConstants {
     public static final int kDriverControllerPort = 0;
+  }
+  public static class LimelightConstants {
+    public static final double kMountAngleRadians = Units.degreesToRadians(30);
+    public static final double kLimelightLensHeightMeters = Units.inchesToMeters(13.75);
+    public static final double kGoalHeightMeters = Units.inchesToMeters(53.875);
+    public static final String limelight1Name = "Test";
   }
 }
