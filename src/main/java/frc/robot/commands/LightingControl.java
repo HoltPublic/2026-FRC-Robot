@@ -26,6 +26,10 @@ private Lighting _blinkin;
     blinkin = _blinkin;
     addRequirements(_blinkin);
   }
+  @Override
+  public void initialize(){
+   System.out.println("This is a test initialization to see if I can actually get LEDs working. Uhh, the pattern is: " + _blinkin.getPattern());
+  }
 
   /**
    * Basically, while active, if the person is shooting, then it runs the breath color of the alliance, if the robot is disabled, then it's gold, elsewise, the robot is gray.
