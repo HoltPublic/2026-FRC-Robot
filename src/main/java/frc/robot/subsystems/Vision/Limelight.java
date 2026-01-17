@@ -29,16 +29,25 @@ public class Limelight extends SubsystemBase{
     public boolean getTV(){
         return LimelightHelpers.getTV(limelightName);
     }
-
+  /**
+   * Gets the Distance
+   * @return Returns the Distance in Meters
+   */
  public double getDistance() {
     // System.out.println((LimelightConstants.kGoalHeightMeters - LimelightConstants.kLimelightLensHeightMeters) / Math.tan(LimelightConstants.kMountAngleRadians + Units.degreesToRadians(LimelightHelpers.getTY("limelight-shooter"))));
     return (LimelightConstants.kGoalHeightMeters - LimelightConstants.kLimelightLensHeightMeters) / Math.tan(LimelightConstants.kMountAngleRadians + Units.degreesToRadians(LimelightHelpers.getTY(limelightName)));
   }
-
+  /**
+   * Gets the Yaw
+   * @return Returns the Yaw (Horizontal Angular Displacement)
+   */
   public double getTX(){
     return LimelightHelpers.getTX(limelightName);
   }
-
+/**
+ * Gets the pitch
+ * @return Returns the pitch (Vertical Angular Displacement)
+ */
   public double getTY(){
     return LimelightHelpers.getTY(limelightName);
   }

@@ -5,9 +5,15 @@
 package frc.robot;
 
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.PrintApriltagId;
+import frc.robot.commands.LightingControl;
+import frc.robot.commands.changeToShooting;
+import frc.robot.subsystems.Lighting;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,9 +26,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   private final XboxController joystick1 = new XboxController(OIConstants.kDriverControllerPort);
+  public static Lighting _lighting = Lighting.getInstance();
+  Supplier<Boolean> quoteUnquoteLaunching = () -> false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    CommandScheduler.getInstance().setDefaultCommand(_lighting, new LightingControl(_lighting, quoteUnquoteLaunching));
     configureButtonBindings();
   }
 
@@ -36,7 +45,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(joystick1, XboxController.Button.kA.value).onTrue(new PrintApriltagId());
+   new JoystickButton(joystick1, XboxController.Button.kA.value).onTrue(new changeToShooting(() -> true));
+   new JoystickButton(joystick1, XboxController.Button.kA.value).onFalse(new changeToShooting(() -> false));
   }
 
   /**
