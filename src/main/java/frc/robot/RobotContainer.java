@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.limelight;
 import frc.robot.LimelightHelpers;
 import frc.robot.commands.TurretLeft;
 import frc.robot.commands.TurretRight;
@@ -26,6 +27,7 @@ import frc.robot.commands.setAngle;
 
 public class RobotContainer {
       private final Turret m_turret = new Turret();
+      private final limelight m_Limelight = new limelight();
 
     private double MaxSpeed = 0.1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -62,7 +64,7 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-
+/* 
 joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(
             drivetrain.applyRequest(() -> {
       
@@ -81,11 +83,11 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
                  .withVelocityY(0)
                  .withRotationalRate(llTurn);
             }
-      
+      /
            
             )
-        );
-
+     );
+*/
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
@@ -93,8 +95,8 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        
-        joystick.rightTrigger().whileTrue( new setAngle(m_turret));
+        joystick.leftBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(new setAngle(m_turret, m_Limelight));
+        joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
         joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));

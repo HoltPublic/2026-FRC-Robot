@@ -67,6 +67,14 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
 
   @Override
   public void periodic() {
+    double tx = LimelightHelpers.getTX("limelight-two");
+   // double mRot = m_turret.getPosition().getValueAsDouble();
+   // double mDeg = (mRot / 100) * 360;
+
+
+  // System.out.println(mSet + "-mSet");
+   // System.out.println(mRot + "-mRot");
+   // System.out.println(mDeg + "-mDeg");
     //System.out.println(m_turret.getPosition());
     // This method will be called once per scheduler run
   }
@@ -83,18 +91,24 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
   m_turret.setControl(new VoltageOut(0));
  }
 
-public void setAngle () {
-double tx = LimelightHelpers.getTX("limelight-two");
-    double mRot = m_turret.getPosition().getValueAsDouble();
-    double mDeg = (mRot / 360) * 100;
+public void setAngle (double angle ) {
+  double mRot = m_turret.getPosition().getValueAsDouble();
+  double mDeg = (mRot / 100) * 360;
 
-    if (tx > 180) {
-    tx -= 360;
-  } else if (tx < -180) {
-    tx += 360;
-  }
-  double difference = tx - mDeg;
-  m_turret.setControl(new PositionVoltage((tx / 100) * 360));
+
+  if (angle > 180) {
+    angle -= 360;
+} else if (angle < -180) {
+  angle += 360;
+}
+
+  double mSet = angle;
+
+  m_turret.setControl(new PositionVoltage(mSet));
+}
+
+public void tZero () {
+  m_turret.setControl(m_turretPV.withPosition(0));
 }
 
 
