@@ -5,25 +5,22 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import static edu.wpi.first.units.Units.Volt;
+public class Indexer extends SubsystemBase {
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
-import frc.robot.*;
-
-public class Intake extends SubsystemBase {
-  /** Creates a new TestMotor. */
-  TalonFX intakeMotor;
-
-  public Intake() {
-    intakeMotor = new TalonFX(Constants.IntakeConstants.kIntakeMotorID);
-    TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
-    intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    intakeMotor.getConfigurator().apply(intakeConfig);
+  TalonFX indexMotor;
+  /** Creates a new Indexer. */
+  public Indexer() {
+    indexMotor = new TalonFX(Constants.IndexConstants.kIndexMotorID);
+    TalonFXConfiguration indexConfig = new TalonFXConfiguration();
+    indexConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    indexMotor.getConfigurator().apply(indexConfig);
   }
 
   @Override
@@ -32,6 +29,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    intakeMotor.setControl(new VoltageOut(speed));
+    indexMotor.setControl(new VoltageOut(speed));
   }
 }

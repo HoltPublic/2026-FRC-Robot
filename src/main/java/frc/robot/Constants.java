@@ -27,7 +27,17 @@ public final class Constants {
   }
   public static class IntakeConstants {
 
-    public static final int kHopperMotorID_1 = 21;
-    public static final int kHopperMotorID_2 = 1;
+    public static final int kIntakeMotorID = 21;
+  }
+  public static class IndexConstants {
+
+    public static final int kIndexMotorID = 20;
+  }
+  public static class HopperConstants {
+
+    //public static final int kHopperMotorID1 = 21;
+    //public static final int kHopperMotorID2 = 20;
+    public static final double kHopperIn = 10;
+    public static final double kHopperOut = -10;
   }
 }

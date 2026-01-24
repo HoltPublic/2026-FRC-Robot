@@ -10,6 +10,7 @@ public class IntakeFore extends Command {
 
   Intake m_motor;
   double m_speed;
+  boolean run = false;
 
   public IntakeFore(Intake motor) {
     // If this motor is in a subsystem, addRequirements(subsystem)
@@ -20,10 +21,16 @@ public class IntakeFore extends Command {
   @Override
   public void initialize() {
     m_motor.setSpeed(0);
+    if (run)
+      run = false;
+    else
+      run = true;
+
   }
 
   @Override
   public void execute() {
+    if(!run) return;
     m_motor.setSpeed(m_speed);
   }
 
