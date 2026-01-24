@@ -17,9 +17,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 //import com.ctre.phoenix6.sim.ChassisReference;
 
+
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
+
 
 public class Turret extends SubsystemBase {
 
@@ -67,7 +68,6 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
 
   @Override
   public void periodic() {
-    double tx = LimelightHelpers.getTX("limelight-two");
    // double mRot = m_turret.getPosition().getValueAsDouble();
    // double mDeg = (mRot / 100) * 360;
 
@@ -92,8 +92,8 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
  }
 
 public void setAngle (double angle ) {
-  double mRot = m_turret.getPosition().getValueAsDouble();
-  double mDeg = (mRot / 100) * 360;
+ // double mRot = m_turret.getPosition().getValueAsDouble();
+ // double mDeg = (mRot / 100) * 360;
 
 
   if (angle > 180) {
@@ -103,8 +103,8 @@ public void setAngle (double angle ) {
 }
 
   double mSet = angle;
-
-  m_turret.setControl(new PositionVoltage(mSet));
+  m_turret.setControl(m_turretPV.withPosition(mSet));
+ // m_turret.setControl(new PositionVoltage(mSet));
 }
 
 public void tZero () {

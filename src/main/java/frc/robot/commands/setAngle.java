@@ -41,8 +41,9 @@ public class setAngle extends Command {
   double mDeg = (mRot / 100) * 360;
 
     m_turret.setAngle(m_Limelight.tx() + mDeg);
-    System.out.println(m_Limelight.tx());
-    System.out.println(mDeg);
+    System.out.println(m_Limelight.tx() + "-Command");
+    System.out.println(mDeg + "-Command");
+    System.out.println(mDeg + m_Limelight.tx() + "-Command");
   }
 
   // Called once the command ends or is interrupted.
