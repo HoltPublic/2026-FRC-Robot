@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Turret extends SubsystemBase {
 
-  private final TalonFX m_turret = new TalonFX(20);
+  private final TalonFX turret = new TalonFX(99);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
 
@@ -33,11 +33,9 @@ public class Turret extends SubsystemBase {
  // private final VelocityVoltage m_turretVV = new VelocityVoltage(null);
   /** Creates a new Turret. */
   public Turret() {
+  turret.setPosition(0);
 
 TalonFXConfiguration configs = new TalonFXConfiguration();
-
-  m_turret.setPosition(0);
-
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     configs.Slot0.kP = 0.10; // An error of 0.5 rotations results in 1.2 volts output
@@ -58,7 +56,7 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);
     configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-180);
 
-    m_turret.getConfigurator().apply(configs);
+    turret.getConfigurator().apply(configs);
 
   }
 
@@ -80,15 +78,15 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
   }
 
   public void rightSpin () {
-    m_turret.setControl(new VoltageOut(-6));
+    turret.setControl(new VoltageOut(-6));
   }
  
  public void leftSpin () {
-  m_turret.setControl(new VoltageOut(6));
+  turret.setControl(new VoltageOut(6));
  }
 
  public void stopSpin () {
-  m_turret.setControl(new VoltageOut(0));
+  turret.setControl(new VoltageOut(0));
  }
 
 public void setAngle (double angle ) {
@@ -103,12 +101,12 @@ public void setAngle (double angle ) {
 }
 
   double mSet = angle;
-  m_turret.setControl(m_turretPV.withPosition(mSet));
+  turret.setControl(m_turretPV.withPosition(mSet));
  // m_turret.setControl(new PositionVoltage(mSet));
 }
 
 public void tZero () {
-  m_turret.setControl(m_turretPV.withPosition(0));
+  turret.setControl(m_turretPV.withPosition(0));
 }
 
 
