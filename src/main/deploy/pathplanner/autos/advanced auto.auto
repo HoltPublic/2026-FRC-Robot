@@ -5,22 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "path",
+          "data": {
+            "pathName": "start-mid"
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "forwards"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "turn"
+                  "pathName": "intake"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid-shoot"
           }
         }
       ]
