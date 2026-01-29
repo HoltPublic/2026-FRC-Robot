@@ -11,7 +11,7 @@ import frc.robot.subsystems.Turret;
 public class setAngle extends Command {
  private final Turret m_turret;
 
-  /** Creates a new setAngle. */
+  /** Creates a new command that allows the {@link Turret} to move to a specified angle, I think*/
   public setAngle (Turret turret) {
      m_turret = turret;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -22,13 +22,18 @@ public class setAngle extends Command {
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
+    /**
+     * Calls {@link Turret#setAngle()}
+     */
   @Override
   public void execute() {
     m_turret.setAngle();
   }
 
-  // Called once the command ends or is interrupted.
+    /**
+     * Stops the turret from spinning
+     * @param interrupted In the event that the code is force stopped
+     */
   @Override
   public void end(boolean interrupted) {
     m_turret.stopSpin();

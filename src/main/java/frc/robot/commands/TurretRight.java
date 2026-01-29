@@ -10,7 +10,7 @@ import frc.robot.subsystems.Turret;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretRight extends Command {
   private Turret m_turret;
-  /** Creates a new TurretRight. */
+  /**Creates the command that allows the {@link Turret} to move to the right*/
   public TurretRight(Turret turret) {
     m_turret = turret;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -21,13 +21,18 @@ public class TurretRight extends Command {
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Calls {@link Turret#rightSpin()}
+   */
   @Override
   public void execute() {
     m_turret.rightSpin();
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * Stops the turret from spinning
+   * @param interrupted In the event that the command is force stopped
+   */
   @Override
   public void end(boolean interrupted) {
     m_turret.stopSpin();

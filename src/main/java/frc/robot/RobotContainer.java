@@ -52,13 +52,18 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    /**
+     * Primary constructor for the Robot Container, sets up Lighting, and configures bindings
+     */
     public RobotContainer() {
          CommandScheduler.getInstance().setDefaultCommand(_lighting, new LightingControl(_lighting, quoteUnquoteLaunching));
         configureBindings();
     }
 
-    
 
+    /**
+     * Pretty much sets up controls for Swerve and also getting some stuff related to the Limelight
+     */
     private void configureBindings() {
 
         // Note that X is defined as forward according to WPILib convention,
@@ -124,6 +129,10 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
+    /**
+     * Autonomous Commands
+     * @return Returns a command
+     */
     public Command getAutonomousCommand() {
         // Simple drive forward auton
         final var idle = new SwerveRequest.Idle();

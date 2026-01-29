@@ -21,6 +21,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
+/**
+ * The turret of our robot
+ */
 public class Turret extends SubsystemBase {
 
   private final TalonFX m_turret = new TalonFX(20);
@@ -30,7 +33,7 @@ public class Turret extends SubsystemBase {
   private final PositionVoltage m_turretPV = new PositionVoltage(0);
 
  // private final VelocityVoltage m_turretVV = new VelocityVoltage(null);
-  /** Creates a new Turret. */
+  /** Sets up things for the turret to function, Henry certainly should document his code */
   public Turret() {
 
 TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -61,6 +64,11 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
 
   }
 
+    /**
+     * Degrees to rotate
+     * @param degrees Degrees, like the imperial
+     * @return Returns <pre><code>(degrees/360)*100</code></pre>
+     */
     private double degToRot (double degrees) {
     return (degrees/ 360) * 100;
   }
@@ -71,19 +79,31 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
     // This method will be called once per scheduler run
   }
 
+    /**
+     * Changes the voltage to make the motor for the turret turn right
+     */
   public void rightSpin () {
     m_turret.setControl(new VoltageOut(-6));
   }
- 
+
+    /**
+     * Changes the voltage to make the motor for the turret turn left
+     */
  public void leftSpin () {
   m_turret.setControl(new VoltageOut(6));
  }
 
+    /**
+     * Cuts off the voltage to the motor
+     */
  public void stopSpin () {
   m_turret.setControl(new VoltageOut(0));
  }
 
-public void setAngle () {
+    /**
+     * I think this uses the Limelight to track the yaw of an apriltag to follow that precisely until the difference is 0, I think.
+     */
+    public void setAngle () {
 double tx = LimelightHelpers.getTX("limelight-two");
     double mRot = m_turret.getPosition().getValueAsDouble();
     double mDeg = (mRot / 360) * 100;
