@@ -1,0 +1,56 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "start-mid"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid-shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot-intake2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "intake2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mid-shoot2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
