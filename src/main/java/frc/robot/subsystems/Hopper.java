@@ -32,15 +32,17 @@ public class Hopper extends SubsystemBase {
     hopperConfig1.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     hopperConfig2.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hopperConfig1.Slot0.kP = 1;
+    hopperConfig1.Slot0.kP = 20;
     hopperConfig1.Slot0.kD = 0.01;
-    hopperConfig2.Slot0.kP = 1;
+    hopperConfig2.Slot0.kP = 20;
     hopperConfig2.Slot0.kD = 0.01;
 
     hopperMotor2.setControl(new Follower(Constants.HopperConstants.kHopperMotorID1, MotorAlignmentValue.Opposed));
 
     hopperMotor1.getConfigurator().apply(hopperConfig1);
     hopperMotor2.getConfigurator().apply(hopperConfig2);
+
+    double hopperPos = hopperMotor1.getRotorPosition().getValueAsDouble();
   }
 
   @Override
@@ -50,6 +52,10 @@ public class Hopper extends SubsystemBase {
 
   public void setSpeed(double speed) {
     hopperMotor1.setControl(new VoltageOut(speed));
+  }
+
+  public void setPos(double pos) {
+    hopperMotor1.setControl(m_hopperPV.withPosition(pos));
   }
 
   public void hZero () {

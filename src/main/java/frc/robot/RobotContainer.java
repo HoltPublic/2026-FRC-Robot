@@ -29,6 +29,7 @@ import frc.robot.commands.IntakeFore;
 import frc.robot.commands.IntakeBack;
 import frc.robot.commands.HopperIn;
 import frc.robot.commands.HopperOut;
+import frc.robot.commands.HopperAuto;
 
 public class RobotContainer {
       private final Turret m_turret = new Turret();
@@ -110,7 +111,7 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.x().whileTrue(new HopperIn(m_hopper));
+        joystick.x().toggleOnTrue(new HopperAuto(m_hopper));
         joystick.y().whileTrue(new HopperOut(m_hopper));
 
         // Run SysId routines when holding back/start and X/Y.

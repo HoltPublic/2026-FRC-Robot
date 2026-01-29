@@ -7,26 +7,25 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Hopper;
 
-
-public class HopperOut extends Command {
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class HopperSetPos extends Command {
 
   Hopper m_hopper;
   double m_speed;
   /** Creates a new HopperOut. */
-  public HopperOut(Hopper hopper) {
+  public HopperSetPos(Hopper hopper) {
     m_hopper = hopper;
-    m_speed = -1;
+    m_speed = 1;
   }
 
   @Override
   public void initialize() {
     m_hopper.setSpeed(0);
-    m_hopper.hZero();
   }
 
   @Override
   public void execute() {
-    m_hopper.setSpeed(m_speed);
+    
   }
 
   @Override

@@ -37,7 +37,6 @@ public final class Constants {
 
     public static final int kHopperMotorID1 = 21;
     public static final int kHopperMotorID2 = 20;
-    public static final double kHopperIn = 10;
-    public static final double kHopperOut = -10;
+    public static final double kHopperAuto = 10;
   }
 }
