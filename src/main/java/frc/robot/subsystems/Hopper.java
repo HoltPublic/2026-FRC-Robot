@@ -23,8 +23,8 @@ public class Hopper extends SubsystemBase {
   private final PositionVoltage m_hopperPV = new PositionVoltage(0);
 
   public Hopper() {
-    //hopperMotor1 = new TalonFX(Constants.HopperConstants.kHopperMotorID1);
-    //hopperMotor2 = new TalonFX(Constants.HopperConstants.kHopperMotorID2);
+    hopperMotor1 = new TalonFX(Constants.HopperConstants.kHopperMotorID1);
+    hopperMotor2 = new TalonFX(Constants.HopperConstants.kHopperMotorID2);
 
     TalonFXConfiguration hopperConfig1 = new TalonFXConfiguration();
     TalonFXConfiguration hopperConfig2 = new TalonFXConfiguration();
@@ -37,7 +37,7 @@ public class Hopper extends SubsystemBase {
     hopperConfig2.Slot0.kP = 1;
     hopperConfig2.Slot0.kD = 0.01;
 
-    //hopperMotor2.setControl(new Follower(Constants.HopperConstants.kHopperMotorID1, MotorAlignmentValue.Opposed));
+    hopperMotor2.setControl(new Follower(Constants.HopperConstants.kHopperMotorID1, MotorAlignmentValue.Opposed));
 
     hopperMotor1.getConfigurator().apply(hopperConfig1);
     hopperMotor2.getConfigurator().apply(hopperConfig2);
