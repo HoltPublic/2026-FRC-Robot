@@ -59,4 +59,13 @@ public final class Constants {
     public static final double kHopperIn = 10;
     public static final double kHopperOut = -10;
   }
+
+  /**
+   * Constants related to the Shooter Mechanism
+   */
+  public static class ShooterConstants {
+    public static final int kAngleMotorId = 314;
+    public static final int kFuelMotorLeftId = 315;
+    public static final int kFuelMotorRightId = 316;
+  }
 }

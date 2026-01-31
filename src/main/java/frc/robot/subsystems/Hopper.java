@@ -15,7 +15,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
-/**\
+/**
  * The large box-like thingy that holds fuel
  */
 public class Hopper extends SubsystemBase {

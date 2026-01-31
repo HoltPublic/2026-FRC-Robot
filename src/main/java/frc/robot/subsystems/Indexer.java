@@ -11,7 +11,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-//What even is this class supposed to be? - Riley
+//I have no clue as to what this subsystem does.
+//But my best guess is likely the subsystem for counting fuel
 public class Indexer extends SubsystemBase {
 
   TalonFX indexMotor;

@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Lighting extends SubsystemBase {
   /**
    * A List of Patterns (for aurafarming)
+   * <br>
+   *<code>
+   *System.out.println("Aurafarming");
+   *</code>
    */
   public enum blinkinPattern {
     //Fixed Palette Patterns
