@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import frc.robot.Constants.*;
 
 import static edu.wpi.first.units.Units.Volt;
 
@@ -15,12 +16,17 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import frc.robot.*;
 
+/**
+ * Subsystem that allows te intake of fuel
+ */
 public class Intake extends SubsystemBase {
-  /** Creates a new TestMotor. */
   TalonFX intakeMotor;
 
+  /**
+   *Sets up the intake motor to allow for moving fuel in and out
+   */
   public Intake() {
-    intakeMotor = new TalonFX(Constants.IntakeConstants.kIntakeMotorID);
+    intakeMotor = new TalonFX(IntakeConstants.kIntakeMotorID); // If you import Constants, you can just call internal classes
     TalonFXConfiguration intakeConfig = new TalonFXConfiguration();
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     intakeMotor.getConfigurator().apply(intakeConfig);
@@ -31,6 +37,10 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Changes the Voltage of the motor so that the intake motor can move fuel in and out of itself.
+   * @param speed How fast the motor moves
+   */
   public void setSpeed(double speed) {
     intakeMotor.setControl(new VoltageOut(speed));
   }

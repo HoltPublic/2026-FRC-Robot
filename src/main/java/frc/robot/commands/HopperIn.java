@@ -7,28 +7,40 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Hopper;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * Command that allows the {@link Hopper} to move inward
+ */
 public class HopperIn extends Command {
 
   Hopper m_hopper;
   double m_speed;
-  /** Creates a new HopperIn. */
+  /**Constructor for the {@link Hopper} to utilize for moving the hopper in*/
   public HopperIn(Hopper hopper) {
     m_hopper = hopper;
     m_speed = 1;
   }
 
+  /**
+   * Cuts off the voltage, and zeroes the Hopper
+   */
   @Override
   public void initialize() {
     m_hopper.setSpeed(0);
     m_hopper.hZero();
   }
 
+  /**
+   * Sets the speed to a specified speed
+   */
   @Override
   public void execute() {
     m_hopper.setSpeed(m_speed);
   }
 
+  /**
+   * Cuts off voltage a-la {@link Hopper#setSpeed(double)}
+   * @param interrupted In the event the code is forcibly stopped
+   */
   @Override
   public void end(boolean interrupted) {
     m_hopper.setSpeed(0);

@@ -11,7 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+//What even is this class supposed to be? - Riley
 public class Indexer extends SubsystemBase {
 
   TalonFX indexMotor;
@@ -28,6 +28,10 @@ public class Indexer extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Uhh, sets speed maybe?
+   * @param speed A floating point number that is more precise than a float
+   */
   public void setSpeed(double speed) {
     indexMotor.setControl(new VoltageOut(speed));
   }

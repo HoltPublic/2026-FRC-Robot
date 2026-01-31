@@ -15,13 +15,19 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
+/**\
+ * The large box-like thingy that holds fuel
+ */
 public class Hopper extends SubsystemBase {
-  /** Creates a new Hopper. */
+
 
   TalonFX hopperMotor1;
   TalonFX hopperMotor2;
   private final PositionVoltage m_hopperPV = new PositionVoltage(0);
 
+  /**
+   * Sets up the Hopper Motor to allow it to expand and retract
+   */
   public Hopper() {
     //hopperMotor1 = new TalonFX(Constants.HopperConstants.kHopperMotorID1);
     //hopperMotor2 = new TalonFX(Constants.HopperConstants.kHopperMotorID2);
@@ -48,10 +54,17 @@ public class Hopper extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Changes the voltage to make the motors move faster or slower
+   * @param speed How fast it should go
+   */
   public void setSpeed(double speed) {
     hopperMotor1.setControl(new VoltageOut(speed));
   }
 
+  /**
+   * Moves the hopper back to it's starting position
+   */
   public void hZero () {
     hopperMotor1.setControl(m_hopperPV.withPosition(0));
   }

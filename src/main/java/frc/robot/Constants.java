@@ -16,23 +16,42 @@ import frc.robot.commands.IntakeBack;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  /**
+   * Constants related to the Drive Team
+   */
   public static class OIConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  /**
+   * Constants related to the Limelight
+   */
   public static class LimelightConstants {
     public static final double kMountAngleRadians = Units.degreesToRadians(30);
     public static final double kLimelightLensHeightMeters = Units.inchesToMeters(13.75);
     public static final double kGoalHeightMeters = Units.inchesToMeters(53.875);
     public static final String limelight1Name = "Test";
   }
+
+  /**
+   * Constants related to the intake
+   */
   public static class IntakeConstants {
 
     public static final int kIntakeMotorID = 21;
   }
+
+  /**
+   * Constants related to the Indexer
+   */
   public static class IndexConstants {
 
     public static final int kIndexMotorID = 20;
   }
+
+  /**
+   * Constants related to the Hopper
+   */
   public static class HopperConstants {
 
     //public static final int kHopperMotorID1 = 21;
