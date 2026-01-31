@@ -22,8 +22,8 @@ private Lighting _blinkin;
  * @param shootingSupplier A supplier to check if we are indeed launching fuel
  */
   public LightingControl(Lighting blinkin, Supplier<Boolean> shootingSupplier) {
-    shootingSupplier = _shootingSupplier;
-    blinkin = _blinkin;
+    _shootingSupplier = shootingSupplier;
+    _blinkin = blinkin;
     addRequirements(_blinkin);
   }
   @Override
