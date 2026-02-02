@@ -86,7 +86,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "advanced auto",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 43.315

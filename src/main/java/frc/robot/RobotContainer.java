@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
@@ -57,7 +59,12 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    public RobotContainer() {
+    public RobotContainer() { 
+        // Register Named Commands
+     //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+     //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
+     //   NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
+          NamedCommands.registerCommand("auto align", new setAngle(m_turret, m_Limelight));
 
 
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -86,14 +93,14 @@ public class RobotContainer {
             )
         );
 
-joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(
+joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(
             drivetrain.applyRequest(() -> {
-      
+
         double ta = LimelightHelpers.getTA("limelight-two");      
         double tx  = LimelightHelpers.getTX("limelight-two");
         double llTurn = tx * -0.05;
         
-        double llposition = MathUtil.clamp(-ta + 1,-0.5,0.8);
+        double llposition = MathUtil.clamp(ta + 1,-0.5,0.8);
         
         System.out.println(ta + "-TA");
         System.out.println(llposition + "-llP");
@@ -116,7 +123,7 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.leftBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(new setAngle(m_turret, m_Limelight));
+        joystick.leftBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new setAngle(m_turret, m_Limelight));
         joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
         joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
 
