@@ -5,11 +5,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
+//import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,7 +21,7 @@ private final TalonFX shooterLeft = new TalonFX(20);
 private final TalonFX shooterRight = new TalonFX(21);
 private final TalonFX shooterHood = new TalonFX(32);
 
-private final VelocityVoltage shooterRightVV = new VelocityVoltage(0);
+//private final VelocityVoltage shooterRightVV = new VelocityVoltage(0);
 private final VelocityVoltage shooterLeftVV = new VelocityVoltage(0);
 
 private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
@@ -64,6 +66,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     rightConfig.CurrentLimits.StatorCurrentLimit = 40;
     rightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    shooterRight.setControl(new Follower(20, MotorAlignmentValue.Opposed));
 
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
 
@@ -94,17 +97,17 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
   }
 
   public void shoot () {
-    shooterRight.setControl(shooterRightVV.withVelocity(150));
+    //shooterRight.setControl(shooterRightVV.withVelocity(150));
     shooterLeft.setControl(shooterLeftVV.withVelocity(150));
   }
 
   public void shootIn () {
-    shooterRight.setControl(shooterRightVV.withVelocity(-10));
+   // shooterRight.setControl(shooterRightVV.withVelocity(-10));
     shooterLeft.setControl(shooterLeftVV.withVelocity(-10));
   }
 
   public void stopShoot () {
-    shooterRight.setControl(shooterRightVV.withVelocity(0));
+   // shooterRight.setControl(shooterRightVV.withVelocity(0));
     shooterLeft.setControl(shooterLeftVV.withVelocity(0));
   }
 }

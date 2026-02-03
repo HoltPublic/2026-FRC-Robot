@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -64,7 +63,7 @@ public class RobotContainer {
      //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
      //   NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
-          NamedCommands.registerCommand("auto align", new setAngle(m_turret, m_Limelight));
+          NamedCommands.registerCommand("Turret Align", new setAngle(m_turret, m_Limelight));
 
 
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -96,13 +95,23 @@ public class RobotContainer {
 joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(
             drivetrain.applyRequest(() -> {
 
-        double ta = LimelightHelpers.getTA("limelight-two");      
+        //double ta = LimelightHelpers.getTA("limelight-two");      
         double tx  = LimelightHelpers.getTX("limelight-two");
         double llTurn = tx * -0.05;
+        double lldistance = 0;
+// Get raw AprilTag/Fiducial data
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+for (RawFiducial fiducial : fiducials) {
+   // double distToCamera = fiducial.distToCamera;  // Distance to camera
+    double distToRobot = fiducial.distToRobot;    // Distance to robot
+    lldistance = distToRobot;
+}
         
-        double llposition = MathUtil.clamp(ta + 1,-0.5,0.8);
+
+
+        double llposition = MathUtil.clamp(lldistance + 1,-0.5,0.8);
         
-        System.out.println(ta + "-TA");
+       // System.out.println(ta + "-TA");
         System.out.println(llposition + "-llP");
         System.out.println(tx + "-TX");
         System.out.println(llTurn + "-llT");
