@@ -98,7 +98,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
   public void shoot () {
     //shooterRight.setControl(shooterRightVV.withVelocity(150));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(150));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(50));//set 150
   }
 
   public void shootIn () {

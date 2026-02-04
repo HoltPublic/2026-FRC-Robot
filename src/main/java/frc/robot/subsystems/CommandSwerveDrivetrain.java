@@ -275,7 +275,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         field.setRobotPose(getState().Pose);
        // System.out.println(getState().Pose);
 
-if (getState().Pose.getX() > 4.634 && getState().Pose.getX() < 12 ) { System.out.println("I'm at mid"); }
+
        
         /*
          * Periodically try to apply the operator perspective.

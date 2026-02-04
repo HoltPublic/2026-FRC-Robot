@@ -12,14 +12,14 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class setAngle extends Command {
+public class llSetAngle extends Command {
 
   private final TalonFX m_turret1 = new TalonFX(20);
 
  private final Turret m_turret;
   private final limelight m_Limelight;
   /** Creates a new setAngle. */
-  public setAngle (Turret turret, limelight limelight) {
+  public llSetAngle (Turret turret, limelight limelight) {
 
 
     
@@ -40,7 +40,7 @@ public class setAngle extends Command {
   double mRot = m_turret1.getPosition().getValueAsDouble();
   double mDeg = (mRot / 100) * 360;
 
-    m_turret.setAngle(m_Limelight.tx());
+    m_turret.llSetAngle(m_Limelight.tx());
     System.out.println(m_Limelight.tx());
     System.out.println(mDeg);
   }

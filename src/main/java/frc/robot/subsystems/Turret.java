@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 
+import static edu.wpi.first.units.Units.Degrees;
+
 //import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 //import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -89,7 +91,11 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
   turret.setControl(new VoltageOut(0));
  }
 
-public void setAngle (double angle ) {
+public void setAngle (double setangle) {
+    turret.setControl(m_turretPV.withPosition(setangle));
+}
+
+public void llSetAngle (double angle ) {
  // double mRot = m_turret.getPosition().getValueAsDouble();
  // double mDeg = (mRot / 100) * 360;
 
