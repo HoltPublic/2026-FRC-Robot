@@ -2,16 +2,16 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Turret;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TurretRight extends Command {
-  private Turret m_turret;
-  /**Creates the command that allows the {@link Turret} to move to the right*/
-  public TurretRight(Turret turret) {
+public class TurretLeft extends Command {
+  private final Turret m_turret;
+  /** Constructor for a command that allows the {@link Turret} to turn left*/
+  public TurretLeft(Turret turret) {
     m_turret = turret;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_turret);
@@ -22,16 +22,16 @@ public class TurretRight extends Command {
   public void initialize() {}
 
   /**
-   * Calls {@link Turret#rightSpin()}
+   *Spins the turret Left
    */
   @Override
   public void execute() {
-    m_turret.rightSpin();
+    m_turret.leftSpin();
   }
 
   /**
-   * Stops the turret from spinning
-   * @param interrupted In the event that the command is force stopped
+   * Stops the turret from Spinning
+   * @param interrupted In the event that this code is force stopped or something
    */
   @Override
   public void end(boolean interrupted) {
