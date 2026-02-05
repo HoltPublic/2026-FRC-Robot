@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "pt1-start to shoot"
+            "pathName": "test auto"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "pt2-shoot to hp"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "pt3-hp to shoot"
+            "pathName": "test auto 2"
           }
         }
       ]

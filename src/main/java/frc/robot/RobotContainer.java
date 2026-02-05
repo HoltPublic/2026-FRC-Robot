@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -26,9 +28,11 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
+import frc.robot.commands.turret.llSetAngle;
 import frc.robot.commands.turret.setAngle;
 
 public class RobotContainer {
@@ -57,7 +61,12 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    public RobotContainer() {
+    public RobotContainer() { 
+        // Register Named Commands
+     //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+     //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
+     //   NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
+          NamedCommands.registerCommand("Turret Align", new llSetAngle(m_turret, m_Limelight));
 
 
     // Build an auto chooser. This will use Commands.none() as the default option.
@@ -75,6 +84,9 @@ public class RobotContainer {
 
     private void configureBindings() {
 
+        Trigger mid = new Trigger(() -> drivetrain.getState().Pose.getX() > 4.634 
+        && drivetrain.getState().Pose.getX() < 12);
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -86,16 +98,26 @@ public class RobotContainer {
             )
         );
 
-joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(
+joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(
             drivetrain.applyRequest(() -> {
-      
-        double ta = LimelightHelpers.getTA("limelight-two");      
+
+        //double ta = LimelightHelpers.getTA("limelight-two");      
         double tx  = LimelightHelpers.getTX("limelight-two");
         double llTurn = tx * -0.05;
+        double lldistance = 0;
+// Get raw AprilTag/Fiducial data
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+for (RawFiducial fiducial : fiducials) {
+   // double distToCamera = fiducial.distToCamera;  // Distance to camera
+    double distToRobot = fiducial.distToRobot;    // Distance to robot
+    lldistance = distToRobot;
+}
         
-        double llposition = MathUtil.clamp(-ta + 1,-0.5,0.8);
+
+
+        double llposition = MathUtil.clamp(lldistance + 1,-0.5,0.8);
         
-        System.out.println(ta + "-TA");
+       // System.out.println(ta + "-TA");
         System.out.println(llposition + "-llP");
         System.out.println(tx + "-TX");
         System.out.println(llTurn + "-llT");
@@ -109,38 +131,49 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
             )
      );
 
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
-        final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        );
+        mid.whileTrue(Commands.print("mid"));
 
-        joystick.leftBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(new setAngle(m_turret, m_Limelight));
-        joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
-        joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
-
-        joystick.y().whileTrue( new Shoot(m_shooter));
-
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-      //  joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-      //  joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-        // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-        drivetrain.registerTelemetry(logger::telemeterize);
-    }
-
-    public Command getAutonomousCommand() {
+        mid.whileFalse(Commands.print("not mid"));
+        
+                // Idle while the robot is disabled. This ensures the configured
+                // neutral mode is applied to the drive motors while disabled.
+                final var idle = new SwerveRequest.Idle();
+                RobotModeTriggers.disabled().whileTrue(
+                    drivetrain.applyRequest(() -> idle).ignoringDisable(true)
+                );
+        
+                joystick.leftBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
+                joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
+                joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
+        
+                joystick.y().whileTrue( new Shoot(m_shooter));
+        
+                joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                joystick.b().whileTrue(drivetrain.applyRequest(() ->
+                    point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+                ));
+        
+                // Run SysId routines when holding back/start and X/Y.
+                // Note that each routine should be run exactly once in a single log.
+              //  joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+              //  joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+                joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        
+                // Reset the field-centric heading on left bumper press.
+                joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        
+                drivetrain.registerTelemetry(logger::telemeterize);
+            }
+        
+            private Command limelight(Object object) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'limelight'");
+            }
+        
+        
+        
+            public Command getAutonomousCommand() {
             return autoChooser.getSelected();
     // This method loads the auto when it is called, however, it is recommended
     // to first load your paths/autos when code starts, then return the
