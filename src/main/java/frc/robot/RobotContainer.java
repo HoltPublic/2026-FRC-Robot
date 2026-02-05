@@ -131,15 +131,9 @@ for (RawFiducial fiducial : fiducials) {
             )
      );
 
-        mid.onTrue(
-            Commands.runOnce(() -> {
-System.out.println("mid");
-    }));
+        mid.whileTrue(Commands.print("mid"));
 
-            mid.onFalse(
-            Commands.runOnce(() -> {
-System.out.println("not mid");
-    }));
+        mid.whileFalse(Commands.print("not mid"));
         
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
