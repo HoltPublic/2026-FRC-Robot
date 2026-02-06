@@ -11,31 +11,26 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.*;
 
+/**
+ * Subsystem layout for what we are going to use to shooting the fuel. It looks something like this. <br>
+ * <img src="../doc-files/isometricShooterSubsystem.png">
+ */
 public class Shooter extends SubsystemBase {
-    /**
-     * The Motor for adjusting the angle of the shooter
-     */
     TalonFX angleAdjusterMotor;
-    /**
-     * The left motor for the wheels that shoot out the fuel
-     */
     TalonFX fuelMotorLeft;
-    /**
-     * The right motor for the wheels that shoot out the fuel
-     */
     TalonFX fuelMotorRight;
 
     private final VelocityVoltage m_leftMotorVoltage = new VelocityVoltage(0);
     private final PositionVoltage m_angleVoltage = new PositionVoltage(0);
     /**
-     * The target speed for rotations
+     * The Rotations Per Second we want to go for
      */
     private double m_targetRps = 0.0;
 
     private double m_targetAngle = 0.0;
 
     /**
-     * Sets up the IDs for the Shooter
+     * Configures the motors for the shooter subsystem.
      */
     public Shooter() {
         TalonFXConfiguration angleMotorConfig = new TalonFXConfiguration();
@@ -94,6 +89,10 @@ public class Shooter extends SubsystemBase {
         fuelMotorRight.getConfigurator().apply(rightFuelMotorConfig);
         fuelMotorLeft.getConfigurator().apply(leftFuelMotorConfig);
     }
+
+    /**
+     * Unused in this subsystem, but typically this method gets ran every 20ms
+     */
     @Override
     public void periodic(){
         // This is unused. But gets called every 20ms
