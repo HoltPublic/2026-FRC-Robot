@@ -7,19 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "test auto"
+            "pathName": "red shoot-climb pt1 p3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "test auto 2"
+            "pathName": "red shoot-climb pt2 p3"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "shoot-climb",
   "choreoAuto": false
 }

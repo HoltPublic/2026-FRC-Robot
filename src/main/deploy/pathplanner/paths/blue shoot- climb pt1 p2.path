@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.3774179743223962,
-        "y": 0.6386019971469341
+        "x": 3.625,
+        "y": 4.041
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2123291534053648,
-        "y": 1.496289732503652
+        "x": 3.2627389443636936,
+        "y": 4.093223965769939
       },
       "isLocked": false,
-      "linkedName": "human player"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.849,
-        "y": 3.188
+        "x": 2.625,
+        "y": 4.041
       },
       "prevControl": {
-        "x": 2.299289320926156,
-        "y": 2.6249091928810087
+        "x": 2.8749995579738608,
+        "y": 4.041470120063764
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "shoot"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 0.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 31.329
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "human player",
+  "folder": "blue shoot p2",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

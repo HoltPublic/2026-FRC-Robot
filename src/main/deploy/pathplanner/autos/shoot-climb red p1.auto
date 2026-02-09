@@ -7,32 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "start-mid"
+            "pathName": "red shoot-climb pt1 p1"
           }
         },
         {
-          "type": "parallel",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "intake"
-                }
-              }
-            ]
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "mid-shoot"
+            "pathName": "red shoot-climb pt2 p1"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "shoot-climb",
   "choreoAuto": false
 }

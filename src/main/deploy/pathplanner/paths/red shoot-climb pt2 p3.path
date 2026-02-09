@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 13.458,
+        "y": 3.097
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 13.665420827389443,
+        "y": 3.5886162624821685
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 15.166305278174036,
+        "y": 4.261426533523538
+      },
+      "prevControl": {
+        "x": 14.273537803138373,
+        "y": 4.054407988587732
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 0.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "red shoot p3",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 137.862
+  },
+  "useDefaultConstraints": false
+}

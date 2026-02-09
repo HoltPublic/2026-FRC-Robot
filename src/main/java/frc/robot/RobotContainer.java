@@ -14,6 +14,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,8 +41,8 @@ public class RobotContainer {
 
       private final Shooter m_shooter = new Shooter();
 
-    private double MaxSpeed = 0.1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = 50 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -49,7 +50,7 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    private final SwerveRequest.RobotCentric LLdrive = new SwerveRequest.RobotCentric();
+
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -98,42 +99,14 @@ public class RobotContainer {
             )
         );
 
-joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(
-            drivetrain.applyRequest(() -> {
 
-        //double ta = LimelightHelpers.getTA("limelight-two");      
-        double tx  = LimelightHelpers.getTX("limelight-two");
-        double llTurn = tx * -0.05;
-        double lldistance = 0;
-// Get raw AprilTag/Fiducial data
-RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-for (RawFiducial fiducial : fiducials) {
-   // double distToCamera = fiducial.distToCamera;  // Distance to camera
-    double distToRobot = fiducial.distToRobot;    // Distance to robot
-    lldistance = distToRobot;
-}
-        
+        mid.whileTrue(
+            Commands.run(() -> System.out.println("mid"))
+            );
 
-
-        double llposition = MathUtil.clamp(lldistance + 1,-0.5,0.8);
-        
-       // System.out.println(ta + "-TA");
-        System.out.println(llposition + "-llP");
-        System.out.println(tx + "-TX");
-        System.out.println(llTurn + "-llT");
-          return
-           LLdrive.withVelocityX(llposition)
-                 .withVelocityY(0)
-                 .withRotationalRate(llTurn);
-            }
-      
-           
-            )
-     );
-
-        mid.whileTrue(Commands.print("mid"));
-
-        mid.whileFalse(Commands.print("not mid"));
+        mid.whileFalse(
+            Commands.run(() -> System.out.println("not mid"))
+            );
         
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -142,7 +115,7 @@ for (RawFiducial fiducial : fiducials) {
                     drivetrain.applyRequest(() -> idle).ignoringDisable(true)
                 );
         
-                joystick.leftBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
+                joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
                 joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
                 joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
         
@@ -166,11 +139,7 @@ for (RawFiducial fiducial : fiducials) {
                 drivetrain.registerTelemetry(logger::telemeterize);
             }
         
-            private Command limelight(Object object) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'limelight'");
-            }
-        
+
         
         
             public Command getAutonomousCommand() {

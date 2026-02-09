@@ -4,72 +4,81 @@
 
 package frc.robot.subsystems;
 
+
+
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.LimelightHelpers.RawFiducial;
 
 public class limelight extends SubsystemBase {
+  private CommandSwerveDrivetrain drivetrain;
+  private final Pigeon2 pigeon = new Pigeon2(67);
 
-  String fleft = "limelight-fleft";
-  String fright = "limelight-fright";
-
-  private final CommandSwerveDrivetrain drivetrain;
-
-  /** Creates a new limelight. */
-  public limelight(CommandSwerveDrivetrain drivetrain) {
-    this.drivetrain = drivetrain;
+  double fleftA = 0;
+  double frightA = 0;
+    /** Creates a new limelight. */
+    public limelight(CommandSwerveDrivetrain drivetrain) {
+      this.drivetrain = drivetrain;
+     
   }
+
 
   @Override
   public void periodic() {
-    updatePose(fleft);
-    updatePose(fright);
+    ambiguityfleft();
+    ambiguityfright();
+
+
+    if (frightA > fleftA) {
+    updatePose("limelight-fleft");
+    } else if (fleftA > frightA) {
+    updatePose("limelight-fright");
+    }
     // This method will be called once per scheduler run
   }
-
-  public double tx() {
+  //gets the offset of the robot to april tag
+  public double tx () {
     return LimelightHelpers.getTX("limelight-two");
   }
 
-private void updatePose(String name) {
+//gets how confident the limelight is
+private void ambiguityfleft () {
 
-    // No target → no update
-    if (!LimelightHelpers.getTV(name)) return;
-
-    // Get pose from Limelight (already robot-space if configured in LL)
-    double[] poseArray = LimelightHelpers.getBotPose_wpiBlue(name);
-    if (poseArray.length < 6) return;
-
-    Pose2d visionPose = new Pose2d(
-        poseArray[0], // X (meters)
-        poseArray[1], // Y (meters)
-        Rotation2d.fromDegrees(poseArray[5]) // Heading
-    );
-
-    // Total latency
-    double latencyMs =
-        LimelightHelpers.getLatency_Pipeline(name) +
-        LimelightHelpers.getLatency_Capture(name);
-
-    double timestamp =
-        Timer.getFPGATimestamp() - latencyMs / 1000.0;
-
-    // Distance from camera to target (meters)
-    double avgDist = poseArray[2];
-
-    // Increase uncertainty as distance increases
-    double xyStdDev = Math.max(0.3, avgDist * 0.25);
-    double thetaStdDev = Math.toRadians(10 + avgDist * 2);
-
-    drivetrain.addVisionMeasurement(
-        visionPose,
-        timestamp,
-        VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev)
-    );
+  // Get raw AprilTag/Fiducial data
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight-fleft");
+for (RawFiducial fiducial : fiducials) {
+   double ambiguityleft = fiducial.ambiguity;   // Tag pose ambiguity
+    fleftA = ambiguityleft;
+}
 }
 
+//gets how confident the limelight is
+private void ambiguityfright () {
+  // Get raw AprilTag/Fiducial data
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight-fright");
+for (RawFiducial fiducial : fiducials) {
+   double ambiguityright = fiducial.ambiguity;   // Tag pose ambiguity
+    frightA = ambiguityright;
+}
+}
+//update where the robot is with lmelights
+private void updatePose(String name) {
+
+double robotYaw = pigeon.getYaw().getValueAsDouble();
+LimelightHelpers.SetRobotOrientation(name, robotYaw, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+// Get the pose estimate
+LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+
+// Add it to your pose estimator
+drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+drivetrain.addVisionMeasurement(
+    limelightMeasurement.pose,
+    limelightMeasurement.timestampSeconds
+);
+
+}
 }

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.937,
-        "y": 3.239
+        "x": 2.926,
+        "y": 4.844
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.937,
-        "y": 3.239
+        "x": 3.4956348074179737,
+        "y": 4.170855920114123
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.795,
-        "y": 3.239
+        "x": 1.5677746077032806,
+        "y": 3.653309557774608
       },
       "prevControl": {
-        "x": 7.795,
-        "y": 3.239
+        "x": 2.9651497860199716,
+        "y": 3.187517831669045
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 0.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "advanced auto",
+  "folder": "blue shoot p3",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -40.601
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
