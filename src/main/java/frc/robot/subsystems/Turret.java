@@ -14,12 +14,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 //import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 //import com.ctre.phoenix6.sim.ChassisReference;
 
-
+import edu.wpi.first.math.MathUtil;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Turret extends SubsystemBase {
 
   private final TalonFX turret = new TalonFX(99);
+  private final Pigeon2 pigeon = new Pigeon2(67);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
 
@@ -55,8 +57,8 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);
-    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-180);
+    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(360);
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-360);
 
     turret.getConfigurator().apply(configs);
 
@@ -100,15 +102,20 @@ public void llSetAngle (double angle ) {
  // double mDeg = (mRot / 100) * 360;
 
 
-  if (angle > 180) {
-    angle -= 360;
-} else if (angle < -180) {
-  angle += 360;
-}
+  angle = MathUtil.inputModulus(angle, -360, 360);
 
   double mSet = angle;
+ // turret.setControl(m_turretPV.withPosition(mSet));
+  turret.setControl(new PositionVoltage(mSet));
+}
+
+public void gyroSetAngle (double angle) {
+  double robotYaw = pigeon.getYaw().getValueAsDouble();
+
+  angle = MathUtil.inputModulus(angle, -360, 360);
+  
+  double mSet = angle - robotYaw;
   turret.setControl(m_turretPV.withPosition(mSet));
- // m_turret.setControl(new PositionVoltage(mSet));
 }
 
 public void tZero () {
