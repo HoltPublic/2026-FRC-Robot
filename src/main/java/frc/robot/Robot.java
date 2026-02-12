@@ -9,10 +9,12 @@ import com.ctre.phoenix6.HootAutoReplay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+//import frc.robot.subsystems.Hopper;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
+    //private final Hopper m_hopper = new Hopper();
     private final RobotContainer m_robotContainer;
 
     /* log and replay timestamp and joystick data */
@@ -28,6 +30,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run(); 
+        //System.out.println("Position: " + String.valueOf(m_hopper.hopperPos));
     }
 
     @Override

@@ -19,8 +19,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Hopper;
+//import frc.robot.subsystems.Intake;
+//import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.HopperIntake;
+import frc.robot.subsystems.Indexer;
 import frc.robot.LimelightHelpers;
 import frc.robot.commands.TurretLeft;
 import frc.robot.commands.TurretRight;
@@ -29,12 +31,17 @@ import frc.robot.commands.IntakeFore;
 import frc.robot.commands.IntakeBack;
 import frc.robot.commands.HopperIn;
 import frc.robot.commands.HopperOut;
-import frc.robot.commands.HopperAuto;
+import frc.robot.commands.IndexerBack;
+import frc.robot.commands.IndexerForwards;
+//import frc.robot.commands.HopperAuto;
+import frc.robot.commands.HopperIntakeAuto;
 
 public class RobotContainer {
       private final Turret m_turret = new Turret();
-      private final Intake m_intake = new Intake();
-      private final Hopper m_hopper = new Hopper();
+      //private final Intake m_intake = new Intake();
+      //private final Hopper m_hopper = new Hopper();
+      private final HopperIntake m_hopperIntake = new HopperIntake();
+      private final Indexer m_Indexer = new Indexer();
 
     private double MaxSpeed = 0.1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -106,13 +113,16 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
         joystick.rightTrigger().whileTrue( new setAngle(m_turret));
         joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.x().toggleOnTrue(new HopperAuto(m_hopper));
-        joystick.y().whileTrue(new HopperOut(m_hopper));
+        joystick.x().onTrue(new HopperIntakeAuto(m_hopperIntake).until(m_hopperIntake.stopped));
+        joystick.a().onTrue(new IntakeFore(m_hopperIntake).withTimeout(0.001));
+        joystick.y().whileTrue(new IntakeBack(m_hopperIntake));
+        joystick.leftBumper().onTrue(new IndexerForwards(m_Indexer).withTimeout(0.001));
+        joystick.rightBumper().whileTrue(new IndexerBack(m_Indexer));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
