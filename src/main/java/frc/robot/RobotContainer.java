@@ -24,6 +24,7 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     //Test Code for the Lights
+    private final Blinkin m_blinkin = new Blinkin();
 
 
     /**
