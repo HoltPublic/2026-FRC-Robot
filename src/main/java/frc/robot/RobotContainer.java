@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.*;
 
@@ -24,14 +25,18 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     //Test Code for the Lights
-    private final Blinkin m_blinkin = new Blinkin();
+    private final AlternateLED m_alternativeLED = new AlternateLED();
+    //private final Blinkin m_blinkin = new Blinkin();
+
 
 
     /**
      * Primary constructor for the Robot Container
      */
     public RobotContainer() {
-
+        m_alternativeLED.setDefaultCommand(
+                new RunCommand(() -> m_alternativeLED.setRedGoldWave(), m_alternativeLED)
+        );
         configureBindings();
     }
 

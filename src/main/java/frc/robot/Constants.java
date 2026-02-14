@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -31,7 +32,7 @@ public final class Constants {
      * PWM Port on the RoboRIO that the Blinkin is plugged into. The below image points out the PWM area <br>
      * <img src="doc-files/roborioPWM.png">
      */
-    public static final int kPwmPort = 9;
+    public static final int kPwmPort = 0;
 
     /**
      * Pretty much a bunch of pre-made patterns
@@ -158,8 +159,34 @@ public final class Constants {
       }
     }
 
+    /**
+     * A Bunch of custom patterns to represent the LGBTQ+ Community. I, myself, am Agender, so I figured why not.
+     */
     public static enum lgbtqPatterns {
       TRANS()
+    }
+  }
+
+  public static class LEDConstants {
+    public static final int kPWMPort = 0;
+    public static final int kLEDLength = 60;
+
+    public enum Colors {
+      kGold(new Color(212, 175, 55), "Gold"),
+      kRed(Color.kFirstRed, "Red"),
+      kBlue(Color.kFirstBlue, "Blue"),
+      kOrange(Color.kOrange, "Orange"),
+      kBlack(Color.kBlack, "Off"),
+      kGreen(Color.kGreen, "Green");
+
+
+      public final Color color;
+      public final String displayName;
+
+      Colors(Color color, String displayName){
+        this.color = color;
+        this.displayName = displayName;
+      }
     }
   }
 }

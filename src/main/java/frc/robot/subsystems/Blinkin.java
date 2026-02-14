@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -35,6 +36,39 @@ public class Blinkin extends SubsystemBase {
 
     @Override
     public void periodic() {
+        setAllianceColorGoonettes();
+    }
+
+    /**
+     * Sets the color of the LEDs based on the alliance
+     */
+    public void setAllianceColor(){
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            if (alliance.get() == DriverStation.Alliance.Red){
+                m_ledController.set(blinkinPattern.RED.value);
+            }
+            else {
+                m_ledController.set(blinkinPattern.BLUE.value);
+            }
+        }
+    }
+
+    /**
+     * Sets the colors of the LEDs based on the alliance, however, it's themed for Goonettes
+     */
+    public void setAllianceColorGoonettes(){
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            if (alliance.get() == DriverStation.Alliance.Red){
+                m_ledController.set(blinkinPattern.HOT_PINK.value);
+            } else {
+                m_ledController.set(blinkinPattern.VIOLET.value);
+            }
+        }
+    }
+
+    public void setCustomColor(){
         blinkinPattern selected = patternChooser.getSelected();
         if (selected != null){
             m_ledController.set(selected.value);
