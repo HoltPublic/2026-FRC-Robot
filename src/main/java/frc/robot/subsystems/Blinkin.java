@@ -36,7 +36,7 @@ public class Blinkin extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setAllianceColorGoonettes();
+        setCustomColor();
     }
 
     /**
@@ -68,6 +68,9 @@ public class Blinkin extends SubsystemBase {
         }
     }
 
+    /**
+     * Allows you to select from a custom pattern
+     */
     public void setCustomColor(){
         blinkinPattern selected = patternChooser.getSelected();
         if (selected != null){
