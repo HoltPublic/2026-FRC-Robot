@@ -15,6 +15,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -63,8 +64,8 @@ public class RobotContainer {
     private final limelight m_Limelight = new limelight(drivetrain);
 
     private final SendableChooser<Command> autoChooser;
-
-    public RobotContainer() { 
+    
+    public RobotContainer() {
         // Register Named Commands
      //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
@@ -76,7 +77,7 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser();
 
     // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default         boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;Auto");
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -89,6 +90,26 @@ public class RobotContainer {
 
         Trigger mid = new Trigger(() -> drivetrain.getState().Pose.getX() > 4.634 
         && drivetrain.getState().Pose.getX() < 12);
+
+        Trigger opposingZone = new Trigger(() -> {
+        boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
+
+        if (DSBlue) {
+            return drivetrain.getState().Pose.getX() > 12;
+        } else {
+            return drivetrain.getState().Pose.getX() < 4.634;
+        }
+        });
+
+        Trigger alienceZone = new Trigger(() -> {
+             boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
+
+             if (DSBlue) {
+                return drivetrain.getState().Pose.getX() < 4.634;
+             } else {
+                return drivetrain.getState().Pose.getX() > 12;
+             }
+        });
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -103,13 +124,25 @@ public class RobotContainer {
 
 
         mid.whileTrue(
-            Commands.run(() -> System.out.println("mid"))
+Commands.either(
+    new gyroSetAngle(m_turret, 180),
+    new gyroSetAngle(m_turret, 0),
+    () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue
+)
+            //Commands.run(() -> System.out.println("mid"))
             );
 
-        mid.whileFalse( new cordSetAngle(m_turret, drivetrain)
+       // mid.whileFalse( new cordSetAngle(m_turret, drivetrain)
            // Commands.run(() -> System.out.println("not mid"))
-            );
+         //   );
         
+         opposingZone.whileTrue(
+            Commands.run(() -> System.out.println("Opposing zone"))
+         );
+
+        alienceZone.whileTrue(
+            new cordSetAngle(m_turret, drivetrain)
+        );
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
                 final var idle = new SwerveRequest.Idle();

@@ -18,7 +18,7 @@ public class cordSetAngle extends Command {
     m_turret = turret;
     m_drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_turret);
+   // addRequirements(m_turret);
   }
 
   // Called when the command is initially scheduled.
@@ -42,7 +42,7 @@ if (DSBlue == true) {
     double bluePoseAngle = Math.toDegrees(Math.atan2(blueOffsetY, blueOffsetX));
 
     m_turret.gyroSetAngle(bluePoseAngle);
-    System.out.println(bluePoseAngle + "-Blue");
+   // System.out.println(bluePoseAngle + "-Blue");
   } else {
     double redTargetX = 11.919;
     double redTargetY = 4.029;
@@ -53,13 +53,15 @@ if (DSBlue == true) {
     double redPoseAngle = Math.toDegrees(Math.atan2(redOffsetY, redOffsetX));
 
     m_turret.gyroSetAngle(redPoseAngle);
-    System.out.println(redPoseAngle + "-Red");
+ //   System.out.println(redPoseAngle + "-Red");
   }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_turret.stopSpin();
+  }
 
   // Returns true when the command should end.
   @Override

@@ -24,7 +24,6 @@ public class llSetAngle extends Command {
      m_turret = turret;
      m_Limelight = limelight;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_Limelight);
     addRequirements(m_turret);
   }
 

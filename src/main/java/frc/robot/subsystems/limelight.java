@@ -9,13 +9,14 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 public class limelight extends SubsystemBase {
   private CommandSwerveDrivetrain drivetrain;
-  private final Pigeon2 pigeon = new Pigeon2(67);
+  private final Pigeon2 pigeon = new Pigeon2(0);
 
   double fleftA = 0;
   double frightA = 0;
@@ -35,7 +36,7 @@ public class limelight extends SubsystemBase {
     if (frightA > fleftA) {
     updatePose("limelight-fleft");
     } else if (fleftA > frightA) {
-    updatePose("limelight-fright");
+    updatePose("limelight-fleft");
     }
     // This method will be called once per scheduler run
   }
@@ -66,12 +67,28 @@ for (RawFiducial fiducial : fiducials) {
 }
 //update where the robot is with lmelights
 private void updatePose(String name) {
+  boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
+
 
 double robotYaw = pigeon.getYaw().getValueAsDouble();
 LimelightHelpers.SetRobotOrientation(name, robotYaw, 0.0, 0.0, 0.0, 0.0, 0.0);
 
+LimelightHelpers.PoseEstimate limelightMeasurement;
+
 // Get the pose estimate
-LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+
+
+             if (DSBlue) {
+             limelightMeasurement = 
+LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+             } else {
+             limelightMeasurement = 
+LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(name);
+             }
+
+if (limelightMeasurement == null || limelightMeasurement.tagCount ==  0) {
+  return;
+}
 
 // Add it to your pose estimator
 drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));

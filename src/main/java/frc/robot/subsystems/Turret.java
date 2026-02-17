@@ -27,8 +27,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Turret extends SubsystemBase {
 
-  private final TalonFX turret = new TalonFX(99);
-  private final Pigeon2 pigeon = new Pigeon2(67);
+  private final TalonFX turret = new TalonFX(20);
+  private final Pigeon2 pigeon = new Pigeon2(0);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
 
@@ -65,18 +65,18 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
   }
 
     private double degToRot (double degrees) {
-    return (degrees/ 360) * 100;
+    return (degrees/ 360) * 12;//100 on turret
   }
 
   @Override
   public void periodic() {
-   // double mRot = m_turret.getPosition().getValueAsDouble();
-   // double mDeg = (mRot / 100) * 360;
+   // double mRot = turret.getPosition().getValueAsDouble();
+    //double mDeg = (mRot / 100) * 360;
 
 
   // System.out.println(mSet + "-mSet");
    // System.out.println(mRot + "-mRot");
-   // System.out.println(mDeg + "-mDeg");
+  //  System.out.println(mDeg + "-mDeg");
     //System.out.println(m_turret.getPosition());
     // This method will be called once per scheduler run
   }
@@ -112,10 +112,12 @@ public void llSetAngle (double angle ) {
 public void gyroSetAngle (double angle) {
   double robotYaw = pigeon.getYaw().getValueAsDouble();
 
-  angle = MathUtil.inputModulus(angle, -360, 360);
-  
   double mSet = angle - robotYaw;
-  turret.setControl(m_turretPV.withPosition(mSet));
+
+  mSet = MathUtil.inputModulus(mSet, -360, 360);
+
+ // turret.setControl(m_turretPV.withPosition(mSet));
+  System.out.println(mSet);
 }
 
 public void tZero () {
