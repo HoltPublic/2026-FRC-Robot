@@ -88,39 +88,6 @@ public final class Constants {
       STROBE_BLUE(-0.09, "(Fixed) Strobe, Blue (Probably don't use this one)"),
       STROBE_GOLD(-0.07, "(Fixed) Strobe, Gold (Even though this is our team color, please don't use this one)"),
       STROBE_WHITE(-0.05, "(Fixed) Stobe, White (I feel this one would require an epilepsy warning)"),
-      //CP1: Color 1 Patterns
-      CP1_END_TO_END_BLEND_TO_BLACK(-0.03, "(Color Pattern 1) End to End, Blend to Black"),
-      CP1_LARSON_SCANNER(-0.01, "(Color Pattern 1) Larson Scanner"),
-      CP1_LIGHT_CHASE(+0.01, "(Color Pattern 1) Light Chase"),
-      CP1_HEARTBEAT_SLOW(+0.03, "(Color Pattern 1) Heartbeat, Slow"),
-      CP1_HEARTBEAT_MEDIUM(+0.05, "(Color Pattern 1) Heartbeat, Medium"),
-      CP1_HEARTBEAT_FAST(+0.07, "(Color Pattern 1) Heartbeat, Fast"),
-      CP1_BREATH_SLOW(+0.09, "(Color Pattern 1) Breath, Slow"),
-      CP1_BREATH_FAST(+0.11, "(Color Pattern 1) Breath, Fast"),
-      CP1_SHOT(+0.13, "(Color Pattern 1) Shot"),
-      CP1_STROBE(+0.15, "(Color Pattern 1) Strobe (Please Don't)"),
-      //CP2: Color 2 Patterns
-      CP2_END_TO_END_BLEND_TO_BLACK(+0.17, "(Color Pattern 2) End to End, Blend to Black"),
-      CP2_LARSON_SCANNER(+0.19, "(Color Pattern 2) Larson Scanner"),
-      CP2_LIGHT_CHASE(+0.21, "(Color Pattern 2) Light Chase"),
-      CP2_HEARTBEAT_SLOW(+0.23, "(Color Pattern 2) Heartbeat, Slow"),
-      CP2_HEARTBEAT_MEDIUM(+0.25, "(Color Pattern 2) Heartbeat, Medium"),
-      CP2_HEARTBEAT_FAST(+0.27, "(Color Pattern 2) Heartbeat, Fast"),
-      CP2_BREATH_SLOW(+0.29, "(Color Pattern 2) Breath, Slow"),
-      CP2_BREATH_FAST(+0.31, "(Color Pattern 2) Breath, Fast"),
-      CP2_SHOT(+0.33, "(Color Pattern 2) Shot"),
-      CP2_STROBE(+0.35, "(Color Pattern 2) Strobe (Please Don't)"),
-      //CP1_2: Color 1 and 2 Patterns
-      CP1_2_SPARKLE_1_ON_2(+0.37, "(Color Patterns 1 & 2) Sparkle (Color 1 on Color 2)"),
-      CP1_2_SPARKLE_2_ON_1(+0.39, "(Color Patterns 1 & 2) Sparkle (Color 2 on Color 1)"),
-      CP1_2_COLOR_GRADIENT(+0.41, "(Color Patterns 1 & 2) Color Gradient (Color 1 and 2)"),
-      CP1_2_BEATS_PER_MINUTE(+0.43, "(Color Patterns 1 & 2) BPM (Color 1 and 2)"),
-      CP1_2_END_TO_END_BLEND_1_TO_2(+0.45, "(Color Patterns 1 & 2)"),
-      CP1_2_END_TO_END_BLEND(+0.47, "(Color Patterns 1 & 2) End to End (Blending Color 1 and Color 2)"),
-      CP1_2_NO_BLENDING(+0.49, "(Color Patterns 1 & 2) Color 1 and Color 2 without color blending (Setup Pattern)"),
-      CP1_2_TWINKLES(+0.51, "(Color Patterns 1 & 2) Twinkles (Color 1 and 2)"),
-      CP1_2_COLOR_WAVES(+0.53, "(Color Patterns 1 & 2) Color Waves (Color 1 and 2"),
-      CP1_2_SINELON(+0.55, "(Color Patterns 1 & 2) Sinelon (Color 1 and 2)"),
       //Solid Color
       HOT_PINK(+0.57, "(Solid) Hot Pink"),
       DARK_RED(+0.59, "(Solid) Dark Red"),
@@ -159,12 +126,6 @@ public final class Constants {
       }
     }
 
-    /**
-     * A Bunch of custom patterns to represent the LGBTQ+ Community. I, myself, am Agender, so I figured why not.
-     */
-    public static enum lgbtqPatterns {
-      TRANS()
-    }
   }
 
   public static class LEDConstants {
