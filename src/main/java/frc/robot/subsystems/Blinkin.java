@@ -36,7 +36,8 @@ public class Blinkin extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setCustomColor();
+        SmartDashboard.putString("Current LED Mode",
+                getCurrentCommand() != null ? getCurrentCommand().getName() : "Idle");
     }
 
     /**
@@ -46,10 +47,10 @@ public class Blinkin extends SubsystemBase {
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             if (alliance.get() == DriverStation.Alliance.Red){
-                m_ledController.set(blinkinPattern.RED.value);
+                m_ledController.set(blinkinPattern.BREATH_RED.value);
             }
             else {
-                m_ledController.set(blinkinPattern.BLUE.value);
+                m_ledController.set(blinkinPattern.BREATH_BLUE.value);
             }
         }
     }
@@ -77,4 +78,32 @@ public class Blinkin extends SubsystemBase {
             m_ledController.set(selected.value);
         }
     }
+
+    public void setActionPattern(boolean isShooting){
+        var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
+        if (isShooting){
+            m_ledController.set(alliance == DriverStation.Alliance.Red ?
+                    blinkinPattern.SHOT_RED.value :
+                    blinkinPattern.SHOT_BLUE.value);
+        } else {
+            m_ledController.set(alliance == DriverStation.Alliance.Red ?
+                    blinkinPattern.BREATH_RED.value :
+            blinkinPattern.BREATH_BLUE.value);
+        }
+    }
+    public void setPattern(blinkinPattern pattern){
+        m_ledController.set(pattern.value);
+    }
+
+    public void phaseMode(){
+    var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
+        if (alliance == DriverStation.Alliance.Red){
+            m_ledController.set(blinkinPattern.DARK_GREEN.value);
+        } else {
+            m_ledController.set(blinkinPattern.BLUE_GREEN.value);
+        }
+    }
+
+
+
 }//Thank you 103 and 3201!
