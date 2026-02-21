@@ -21,12 +21,13 @@ public class HopperIntake extends SubsystemBase {
   /** Creates a new Hopper. */
   public double hopperPos = 0;
   public final double inPos = 0; /* motor position for hopper in */
-  public final double midPos = 25; /* motor position to stop intake for hopper in */
-  public final double outPos = 50; /* motor position for hopper out */
+  public final double midPos = 0.5; /* motor position to stop intake for hopper in */
+  public final double outPos = 1; /* motor position for hopper out */
+  public final double slowPos = 0.75;
   public double targetPos = 0;
-  public final double maxHopperVoltage = 2; /* maximum hopper voltage aka speed */
-  public final double forwardSpd = 1; /* forward intake speed used */
-  public final double backwardSpd = -0.5; /* backward intake speed used */
+  public final double maxHopperVoltage = 0.5; /* maximum hopper voltage aka speed */
+  public final double forwardSpd = 0.5; /* forward intake speed used */
+  public final double backwardSpd = -0.25; /* backward intake speed used */
   public double difference;
   TalonFX hopperMotor1;
   TalonFX hopperMotor2;
@@ -113,7 +114,8 @@ public class HopperIntake extends SubsystemBase {
       diff = targetPos - hopperPos;
       //System.out.println("Difference: " + diff);
 
-      if (diff > -0.25) {
+      //if (diff > -0.25) {
+      if (diff > -1) {
         //sets hopper and intake to stop when in-past specific distance (intake here as well for failsafe...)
         setHopperState(HOPPER_STATE_STOP);
         setIntakeState(INTAKE_STATE_STOP);
@@ -122,8 +124,10 @@ public class HopperIntake extends SubsystemBase {
         //set intake to stop midway through hopper going in
         setIntakeState(INTAKE_STATE_STOP);
       }
-      else if (diff > -2) {
-      volts = Math.max(-maxHopperVoltage,diff*maxHopperVoltage);
+      else if (diff > -slowPos) {
+      volts = (diff*maxHopperVoltage) / (slowPos);
+      //System.out.println("Speed: " + volts);
+      //System.out.println("Difference: " + diff);
       hopperMotor1.setControl(new VoltageOut(volts));
       }
     }
@@ -135,12 +139,13 @@ public class HopperIntake extends SubsystemBase {
       diff = targetPos - hopperPos;
       //System.out.println("Difference: " + diff);
       
-      if (diff < 0.25) {
+      //if (diff < 0.25) {
+      if (diff < 1) {
         //set hopper to stop when in/past specific distance 
         setHopperState(HOPPER_STATE_STOP);
       }
-      else if (diff < 2) { 
-      volts = Math.min(maxHopperVoltage,diff*maxHopperVoltage);
+      else if (diff < slowPos) { 
+      volts = (diff*maxHopperVoltage) / (slowPos);
       hopperMotor1.setControl(new VoltageOut(volts));
       }
     }

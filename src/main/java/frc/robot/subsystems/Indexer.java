@@ -23,10 +23,10 @@ public class Indexer extends SubsystemBase {
   public static int STATE_INDEX_BACK = 4;
 
   // speeds for states
-  public static final int slowSpeed = 1;
-  public static final int medSpeed = 2;
-  public static final int fastSpeed = 3;
-  public static final int backSpeed = -1;
+  public static final double slowSpeed = 0.33;
+  public static final double medSpeed = 0.66;
+  public static final double fastSpeed = 1;
+  public static final double backSpeed = -0.5;
   
   TalonFX indexMotor;
   /** Creates a new Indexer. */
