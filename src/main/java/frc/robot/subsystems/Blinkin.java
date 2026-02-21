@@ -6,14 +6,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.BlinkinConstants;
 import frc.robot.Constants.BlinkinConstants.blinkinPattern;
-
-import javax.swing.*;
 
 /**
  * Primary class for the Rev Blinkin
@@ -22,6 +19,7 @@ public class Blinkin extends SubsystemBase {
     private Spark m_ledController = new Spark(BlinkinConstants.kPwmPort);
     private SendableChooser<blinkinPattern> patternChooser = new SendableChooser<>();
     private double m_color = 0.0;
+    private boolean m_isFiring = false;
 
     public Blinkin() {
         patternChooser.setDefaultOption(blinkinPattern.LIME.displayName, blinkinPattern.LIME);
@@ -36,8 +34,38 @@ public class Blinkin extends SubsystemBase {
 
     @Override
     public void periodic() {
+        
         SmartDashboard.putString("Current LED Mode",
                 getCurrentCommand() != null ? getCurrentCommand().getName() : "Idle");
+        if (m_isFiring){
+            setFiringAnim(true);
+        }
+        else if (DriverStation.isTeleopEnabled()){
+            double time = DriverStation.getMatchTime();
+            String gameData = DriverStation.getGameSpecificMessage();
+            if (gameData.isEmpty() || time > 130 || time <= 30) {
+                setAllianceColorGoonettes();
+                return;
+            }
+            var myAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
+            boolean weAreInactiveFirst = gameData.startsWith(myAlliance == DriverStation.Alliance.Red ? "B" : "R");
+
+            int shift;
+            if (time > 105) shift = 1;
+            else if (time > 80) shift = 2;
+            else if (time > 55) shift = 3;
+            else shift = 4;
+
+            if (shift == 1 || shift == 3) {
+                if (weAreInactiveFirst) phaseMode();
+                else setAllianceColorGoonettes();
+            } else {
+                if (weAreInactiveFirst) setAllianceColorGoonettes();
+                else phaseMode();
+            }
+        } else if (DriverStation.isAutonomousEnabled()){
+            setAllianceColorGoonettes();
+        }
     }
 
     /**
@@ -79,16 +107,13 @@ public class Blinkin extends SubsystemBase {
         }
     }
 
-    public void setActionPattern(boolean isShooting){
+    public void setFiringAnim(boolean isShooting){
+        m_isFiring = isShooting;
         var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
         if (isShooting){
             m_ledController.set(alliance == DriverStation.Alliance.Red ?
                     blinkinPattern.SHOT_RED.value :
                     blinkinPattern.SHOT_BLUE.value);
-        } else {
-            m_ledController.set(alliance == DriverStation.Alliance.Red ?
-                    blinkinPattern.BREATH_RED.value :
-            blinkinPattern.BREATH_BLUE.value);
         }
     }
     public void setPattern(blinkinPattern pattern){

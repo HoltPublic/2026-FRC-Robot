@@ -7,12 +7,9 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.*;
-
-import java.util.function.Supplier;
 
 /**
  * Holds all the robot code, as {@link Robot}, we don't really touch that class at all, primarily with command based code
@@ -32,9 +29,6 @@ public class RobotContainer {
      * Primary constructor for the Robot Container
      */
     public RobotContainer() {
-        m_blinkin.setDefaultCommand(
-                new RunCommand(() -> m_blinkin.setAllianceColor(), m_blinkin)
-        );
 //        m_alternativeLED.setDefaultCommand(
 //                new RunCommand(() -> m_alternativeLED.setRedGoldWave(), m_alternativeLED)
 //        );
@@ -49,16 +43,12 @@ public class RobotContainer {
     private void configureBindings() {
         joystick.a().whileTrue(
                 new StartEndCommand(
-                        () -> m_blinkin.setActionPattern(true),
-                        () -> {},
+                        () -> m_blinkin.setFiringAnim(true),
+                        () -> m_blinkin.setFiringAnim(false),
                         m_blinkin
                 )
         );
-        joystick.start().onTrue(
-                m_blinkin.runOnce(() -> m_blinkin.phaseMode())
-                        .andThen(new WaitCommand(30.0))
-                        .finallyDo(() -> m_blinkin.setAllianceColor())
-        );
+
     }
 
     /**
