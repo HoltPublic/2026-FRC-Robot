@@ -20,8 +20,8 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     //Test Code for the Lights
-//    private final AlternateLED m_alternativeLED = new AlternateLED();
-    private final Blinkin m_blinkin = new Blinkin();
+    private final AlternateLED m_alternativeLED = new AlternateLED();
+//    private final Blinkin m_blinkin = new Blinkin();
 
 
 
@@ -29,10 +29,12 @@ public class RobotContainer {
      * Primary constructor for the Robot Container
      */
     public RobotContainer() {
-//        m_alternativeLED.setDefaultCommand(
-//                new RunCommand(() -> m_alternativeLED.setRedGoldWave(), m_alternativeLED)
-//        );
-        // Well, this is basically in the event that we decide to use the AlternativeLED class rather than the Blinkin
+        m_alternativeLED.setDefaultCommand(
+                new RunCommand(
+                        () -> m_alternativeLED.setPattern(Constants.LEDConstants.UniquePatterns.kAgenderWave),
+                        m_alternativeLED
+                )
+        );
         configureBindings();
     }
 
@@ -41,13 +43,13 @@ public class RobotContainer {
      * Pretty much sets up controls for Swerve and also getting some stuff related to the Limelight
      */
     private void configureBindings() {
-        joystick.a().whileTrue(
-                new StartEndCommand(
-                        () -> m_blinkin.setFiringAnim(true),
-                        () -> m_blinkin.setFiringAnim(false),
-                        m_blinkin
-                )
-        );
+//        joystick.a().whileTrue(
+//                new StartEndCommand(
+//                        () -> m_blinkin.setFiringAnim(true),
+//                        () -> m_blinkin.setFiringAnim(false),
+//                        m_blinkin
+//                )
+//        );
 
     }
 

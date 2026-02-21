@@ -8,6 +8,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 
+import java.util.Map;
+
 import static edu.wpi.first.units.Units.Hertz;
 
 /**
@@ -134,7 +136,7 @@ public final class Constants {
   }
 
   /**
-   * Constants for if we wanted to use the {@link frc.robot.subsystems.AlternateLED AddressableLED} option
+   * Constants for if we wanted to use the {@link frc.robot.subsystems.AlternateLED AddressableLED} option. Not used in the 2026 season, but if anyone wants to use it in the future, I'll leave this here for future students - Riley
    */
   public static class LEDConstants {
     public static final int kPWMPort = 0;
@@ -146,7 +148,10 @@ public final class Constants {
       kBlue(Color.kFirstBlue, "Blue"),
       kOrange(Color.kOrange, "Orange"),
       kBlack(Color.kBlack, "Off"),
-      kGreen(Color.kGreen, "Green");
+      kGreen(Color.kGreen, "Green"),
+      kWhite(Color.kWhite, "White"),
+      kGray(new Color(163, 163, 163), "Gray"),
+      kLime(new Color(185, 251, 106), "Lime");
 
 
       public final Color color;
@@ -159,21 +164,57 @@ public final class Constants {
     }
 
     /**
-     * A class to hold all of my standard patterns, will this get used, the answer is likely a resounding no, but if our team decides to use AddressableLED when I am at college, then they have a starting point
+     * A class to hold a bunch of fairly standard patterns I made
      */
     public static final class Patterns{
-
+      /**
+       * A Red-Gold Wave Pattern
+       */
       public static final LEDPattern kRedGoldWave = LEDPattern.gradient(
               LEDPattern.GradientType.kContinuous,
               Colors.kRed.color,
               Colors.kGold.color
       ).scrollAtRelativeSpeed(Hertz.of(0.5));
-
+      /**
+       * A Blue-Gold Wave Pattern
+       */
       public static final LEDPattern kBlueGoldWave = LEDPattern.gradient(
               LEDPattern.GradientType.kContinuous,
               Colors.kBlue.color,
               Colors.kGold.color
       ).scrollAtRelativeSpeed(Hertz.of(0.5));
+      /**
+       * A Red-Green Wave Pattern
+       */
+      public static final LEDPattern kRedGreenWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kRed.color,
+              Colors.kGreen.color
+      );
+      /**
+       * A Blue-Green Wave Pattern
+       */
+      public static final LEDPattern kBlueGreenWave = LEDPattern.gradient(
+        LEDPattern.GradientType.kContinuous,
+        Colors.kBlue.color,
+        Colors.kGreen.color
+      );
+
+    }
+
+    /**
+     * Unique Patterns, I would assume that these would be used for Rainbow Rumble, but honestly, if you want to make any other unique patterns, I suppose use this as a template
+     */
+    public static final class UniquePatterns{
+      /**
+       * A Pattern of the Agender Flag :)
+       */
+      public static final LEDPattern kAgenderPattern = LEDPattern.steps(Map.of(0.0, Colors.kBlack.color, 0.14, Colors.kGray.color, 0.28, Colors.kWhite.color, 0.42, Colors.kLime.color, 0.57, Colors.kWhite.color, 0.71, Colors.kGray.color, 0.85, Colors.kBlack.color));
+      /**
+       * A Wave pattern of {@link #kAgenderPattern}
+       */
+      public static final LEDPattern kAgenderWave = kAgenderPattern.scrollAtRelativeSpeed(Hertz.of(0.5));
+
 
     }
   }

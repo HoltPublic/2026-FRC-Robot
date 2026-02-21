@@ -11,7 +11,7 @@ import static edu.wpi.first.units.Units.*;
 
 /**
  * A custom LED Class that allows for ease of changing colors
- * @deprecated This Class is Unused as we made a collective decision to use the REV Blinkin Class
+ * This Class is Unused as we made a collective decision to use the REV Blinkin Class
  */
 public class AlternateLED extends SubsystemBase {
     private final AddressableLED m_led;
