@@ -5,34 +5,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.HopperIntake;
+import frc.robot.subsystems.*;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class HopperIn extends Command {
-
-  HopperIntake m_hopper;
-  double m_speed;
-  /** Creates a new HopperIn. */
-  public HopperIn(HopperIntake hopper) {
-    m_hopper = hopper;
-    m_speed = -m_hopper.maxHopperVoltage / 2;
+public class IndexerBack extends Command {
+  Indexer m_indexer;
+  public IndexerBack(Indexer indexer) {
+    m_indexer = indexer;
   }
 
   @Override
   public void initialize() {
-    //simple manual hopper in command
-    m_hopper.setHopperSpeed(0);
-    m_hopper.hZero();
-  }
-
-  @Override
-  public void execute() {
-    m_hopper.setHopperSpeed(m_speed);
+    m_indexer.setState(Indexer.STATE_INDEX_BACK);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_hopper.setHopperSpeed(0);
+    m_indexer.setState(Indexer.STATE_INDEX_STOP);
   }
 
   @Override

@@ -25,19 +25,16 @@ public final class Constants {
     public static final double kGoalHeightMeters = Units.inchesToMeters(53.875);
     public static final String limelight1Name = "Test";
   }
-  public static class IntakeConstants {
-
-    public static final int kIntakeMotorID = 21;
-  }
   public static class IndexConstants {
 
-    public static final int kIndexMotorID = 20;
+    public static final int kIndexMotorID = 21;
   }
   public static class HopperConstants {
 
-    //public static final int kHopperMotorID1 = 21;
-    //public static final int kHopperMotorID2 = 20;
-    public static final double kHopperIn = 10;
-    public static final double kHopperOut = -10;
+    public static final int kIntakeMotorID1 = 21;
+    public static final int kIntakeMotorID2 = 457;
+    public static final int kHopperMotorID1 = 20;
+    public static final int kHopperMotorID2 = 456;
+    public static final double kHopperAuto = 6;
   }
 }
