@@ -9,16 +9,15 @@ import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LEDConstants.Colors;
 import static edu.wpi.first.units.Units.*;
 
+/**
+ * A custom LED Class that allows for ease of changing colors
+ * @deprecated This Class is Unused as we made a collective decision to use the REV Blinkin Class
+ */
 public class AlternateLED extends SubsystemBase {
     private final AddressableLED m_led;
     private final AddressableLEDBuffer m_buffer;
-    /**
-     * Tracks Wave Movement
-     */
-    private double m_offset = 0;
-    private static final Color kRed = Color.kFirstRed;
-    private static final Color kBlue = Color.kFirstBlue;
-    private static final Color kGold = new Color(255, 215, 0);
+
+    private LEDPattern m_currentPattern = LEDConstants.Patterns.kRedGoldWave;
 
     public AlternateLED() {
         m_led = new AddressableLED(LEDConstants.kPWMPort);
@@ -28,15 +27,20 @@ public class AlternateLED extends SubsystemBase {
         m_led.start();
     }
 
-    public void setRedGoldWave() {
-        LEDPattern wave = LEDPattern.gradient(
-                LEDPattern.GradientType.kContinuous,
-                Colors.kRed.color,
-                Colors.kGold.color
-        );
+    /**
+     * Updates the currently displayed pattern
+     * @param pattern A {@link LEDPattern pattern} of which you'll want to grab from {@link LEDConstants.Patterns the Patterns Class}
+     */
+    public void setPattern(LEDPattern pattern){
+        m_currentPattern = pattern;
+    }
 
-        wave.scrollAtRelativeSpeed(Hertz.of(0.5))
-                .applyTo(m_buffer);
+    @Override
+    public void periodic(){
+        m_currentPattern.applyTo(m_buffer);
         m_led.setData(m_buffer);
     }
+
+
+
 }

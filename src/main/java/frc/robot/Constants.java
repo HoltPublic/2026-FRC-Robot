@@ -5,7 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
+
+import static edu.wpi.first.units.Units.Hertz;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -33,6 +36,8 @@ public final class Constants {
      * <img src="doc-files/roborioPWM.png">
      */
     public static final int kPwmPort = 0;
+
+    public static final String kLedChoice = "custom"; //Have this value set to either default, goonettes, or custom
 
     /**
      * Pretty much a bunch of pre-made patterns
@@ -128,6 +133,9 @@ public final class Constants {
 
   }
 
+  /**
+   * Constants for if we wanted to use the {@link frc.robot.subsystems.AlternateLED AddressableLED} option
+   */
   public static class LEDConstants {
     public static final int kPWMPort = 0;
     public static final int kLEDLength = 60;
@@ -148,6 +156,25 @@ public final class Constants {
         this.color = color;
         this.displayName = displayName;
       }
+    }
+
+    /**
+     * A class to hold all of my standard patterns, will this get used, the answer is likely a resounding no, but if our team decides to use AddressableLED when I am at college, then they have a starting point
+     */
+    public static final class Patterns{
+
+      public static final LEDPattern kRedGoldWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kRed.color,
+              Colors.kGold.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+
+      public static final LEDPattern kBlueGoldWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kBlue.color,
+              Colors.kGold.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+
     }
   }
 }

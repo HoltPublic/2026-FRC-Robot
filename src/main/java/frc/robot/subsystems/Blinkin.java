@@ -44,7 +44,7 @@ public class Blinkin extends SubsystemBase {
             double time = DriverStation.getMatchTime();
             String gameData = DriverStation.getGameSpecificMessage();
             if (gameData.isEmpty() || time > 130 || time <= 30) {
-                setAllianceColorGoonettes();
+                easyChoice(BlinkinConstants.kLedChoice);
                 return;
             }
             var myAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
@@ -58,13 +58,13 @@ public class Blinkin extends SubsystemBase {
 
             if (shift == 1 || shift == 3) {
                 if (weAreInactiveFirst) phaseMode();
-                else setAllianceColorGoonettes();
+                else easyChoice(BlinkinConstants.kLedChoice);
             } else {
-                if (weAreInactiveFirst) setAllianceColorGoonettes();
+                if (weAreInactiveFirst) easyChoice(BlinkinConstants.kLedChoice);
                 else phaseMode();
             }
         } else if (DriverStation.isAutonomousEnabled()){
-            setAllianceColorGoonettes();
+            easyChoice(BlinkinConstants.kLedChoice);
         }
     }
 
@@ -107,6 +107,10 @@ public class Blinkin extends SubsystemBase {
         }
     }
 
+    /**
+     * Acts as a thing to change the LED pattern to one used for a firing animation
+     * @param isShooting If the robot is firing
+     */
     public void setFiringAnim(boolean isShooting){
         m_isFiring = isShooting;
         var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
@@ -116,10 +120,18 @@ public class Blinkin extends SubsystemBase {
                     blinkinPattern.SHOT_BLUE.value);
         }
     }
+
+    /**
+     * Manual Override of the Pattern
+     * @param pattern
+     */
     public void setPattern(blinkinPattern pattern){
         m_ledController.set(pattern.value);
     }
 
+    /**
+     * Used for when we are in a phase where our hub is active
+     */
     public void phaseMode(){
     var alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
         if (alliance == DriverStation.Alliance.Red){
@@ -129,6 +141,23 @@ public class Blinkin extends SubsystemBase {
         }
     }
 
-
+    /**
+     * Essentially makes it so our code works with either our colors for default matches, for Goonettes, and any custom options.
+     * @param choice A String that allows us to choose the type of lighting we want, either default, goonettes, or custom
+     */
+    public void easyChoice(String choice){
+        if (choice.toLowerCase().contains("default")){
+            setAllianceColor();
+        } else if (choice.toLowerCase().contains("goonettes")){
+            setAllianceColorGoonettes();
+        } else if (choice.toLowerCase().contains("custom")){
+            setCustomColor();
+        }
+    }
 
 }//Thank you 103 and 3201!
+/* Go ahead and add any patterns here that you want to use for competitions, I'll make methods for them :) - Riley
+Auton/Inactive/Endgame Alliance Colors - Breath Red/Blue (Default), Hot Pink/Purple (Goonettes)
+Firing Fuel - Shot Red/Blue
+Active Alliance Colors - Dark Green / Blue-Green
+ */
