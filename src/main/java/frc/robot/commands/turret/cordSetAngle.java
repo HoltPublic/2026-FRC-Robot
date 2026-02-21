@@ -4,6 +4,7 @@
 
 package frc.robot.commands.turret;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -32,29 +33,28 @@ public class cordSetAngle extends Command {
 boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
       var pose = m_drivetrain.getState().Pose;
-if (DSBlue == true) {    
-    double blueTargetX = 4.621;
-    double blueTargetY = 4.029;
+      var speed = m_drivetrain.getState().Speeds;
+      
+    double targetX = DSBlue ? 4.621 : 11.919;
+    double targetY = 4.029;
 
-    double blueOffsetX = blueTargetX - pose.getX();
-    double blueOffsetY = blueTargetY - pose.getY();
+    double fuelSpeed = 11; //meters per second
 
-    double bluePoseAngle = Math.toDegrees(Math.atan2(blueOffsetY, blueOffsetX));
+    double distance = pose.getTranslation().getDistance(new Translation2d(targetX, targetY));
 
-    m_turret.gyroSetAngle(bluePoseAngle);
-   // System.out.println(bluePoseAngle + "-Blue");
-  } else {
-    double redTargetX = 11.919;
-    double redTargetY = 4.029;
+    double flightTime = distance / fuelSpeed;
 
-    double redOffsetX = redTargetX - pose.getX();
-    double redOffsetY = redTargetY - pose.getY();
+    double futureX = pose.getX() + speed.vxMetersPerSecond * flightTime;
+    double futureY = pose.getY() + speed.vyMetersPerSecond * flightTime;
 
-    double redPoseAngle = Math.toDegrees(Math.atan2(redOffsetY, redOffsetX));
+    double offsetX = targetX - futureX;
+    double offsetY = targetY - futureY;
 
-    m_turret.gyroSetAngle(redPoseAngle);
- //   System.out.println(redPoseAngle + "-Red");
-  }
+    double poseAngle = Math.toDegrees(Math.atan2(offsetY, offsetX));
+
+    m_turret.gyroSetAngle(poseAngle);
+   // System.out.println(poseAngle);
+
   }
 
   // Called once the command ends or is interrupted.

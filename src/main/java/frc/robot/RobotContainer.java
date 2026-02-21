@@ -40,12 +40,11 @@ import frc.robot.commands.turret.llSetAngle;
 import frc.robot.commands.turret.setAngle;
 
 public class RobotContainer {
-      private final Turret m_turret = new Turret();
 
       private final Shooter m_shooter = new Shooter();
 
-    private double MaxSpeed = 0.40 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = 0.20 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.25).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -60,6 +59,8 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private final Turret m_turret = new Turret(drivetrain);
 
     private final limelight m_Limelight = new limelight(drivetrain);
 

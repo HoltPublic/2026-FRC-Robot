@@ -3,12 +3,10 @@
   "robotLength": 0.6858,
   "holonomicMode": true,
   "pathFolders": [
-    "blue shoot p1",
-    "blue shoot p2",
-    "blue shoot p3",
-    "red shoot p1",
-    "red shoot p2",
-    "red shoot p3"
+    "New Folder",
+    "shoot p1",
+    "shoot p2",
+    "shoot p3"
   ],
   "autoFolders": [
     "shoot-climb"

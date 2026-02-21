@@ -27,23 +27,25 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Turret extends SubsystemBase {
 
-  private final TalonFX turret = new TalonFX(20);
-  private final Pigeon2 pigeon = new Pigeon2(0);
+  private final TalonFX turret = new TalonFX(25);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
 
   private final PositionVoltage m_turretPV = new PositionVoltage(0);
 
+  private final CommandSwerveDrivetrain drivetrain;
+
  // private final VelocityVoltage m_turretVV = new VelocityVoltage(null);
   /** Creates a new Turret. */
-  public Turret() {
+  public Turret(CommandSwerveDrivetrain drivetrain) {
+    this.drivetrain = drivetrain;
   turret.setPosition(0);
 
 TalonFXConfiguration configs = new TalonFXConfiguration();
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    configs.Slot0.kP = 0.10; // An error of 0.5 rotations results in 1.2 volts output
-    configs.Slot0.kD = 0.01; // A change of 1 rotation per second results in 0.1 volts output
+    configs.Slot0.kP = 0.20; // An error of 0.5 rotations results in 1.2 volts output
+    configs.Slot0.kD = 0.02; // A change of 1 rotation per second results in 0.1 volts output
 
     configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
@@ -110,14 +112,16 @@ public void llSetAngle (double angle ) {
 }
 
 public void gyroSetAngle (double angle) {
-  double robotYaw = pigeon.getYaw().getValueAsDouble();
+  double robotYaw = drivetrain.getState().Pose.getRotation().getDegrees();
 
   double mSet = angle - robotYaw;
 
-  mSet = MathUtil.inputModulus(mSet, -360, 360);
 
- // turret.setControl(m_turretPV.withPosition(mSet));
-  System.out.println(mSet);
+
+ // mSet = MathUtil.inputModulus(mSet, -180, 180);
+
+  turret.setControl(m_turretPV.withPosition(mSet));
+  System.out.println(mSet + "MSET");
 }
 
 public void tZero () {
