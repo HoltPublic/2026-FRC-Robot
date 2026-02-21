@@ -25,7 +25,7 @@ public class HopperIntake extends SubsystemBase {
   public final double outPos = 1; /* motor position for hopper out */
   public final double slowPos = 0.75;
   public double targetPos = 0;
-  public final double maxHopperVoltage = 0.5; /* maximum hopper voltage aka speed */
+  public final double maxHopperVoltage = 0.05; /* maximum hopper voltage aka speed */
   public final double forwardSpd = 0.5; /* forward intake speed used */
   public final double backwardSpd = -0.25; /* backward intake speed used */
   public double difference;
