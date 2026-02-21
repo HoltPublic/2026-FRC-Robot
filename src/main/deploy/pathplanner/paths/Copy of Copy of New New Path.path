@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.211,
-        "y": 2.657
+        "x": 7.778330955777461,
+        "y": 6.900912981455065
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.693437945791726,
-        "y": 3.420413694721826
+        "x": 7.778330955777461,
+        "y": 6.163409415121254
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "end point new path"
     },
     {
       "anchor": {
-        "x": 1.3995720399429386,
-        "y": 3.7438801711840233
+        "x": 7.778330955777461,
+        "y": 4.015592011412268
       },
       "prevControl": {
-        "x": 2.2276462196861626,
-        "y": 3.4721683309557787
+        "x": 7.778330955777461,
+        "y": 4.520199714693295
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.5,
+    "maxVelocity": 1.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -45,10 +45,10 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "blue shoot p1",
+  "folder": "New Folder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 48.468
+    "rotation": 90.0
   },
   "useDefaultConstraints": false
 }
