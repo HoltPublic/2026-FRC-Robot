@@ -88,7 +88,7 @@ public class RobotContainer {
     
 
     private void configureBindings() {
-
+        // Zone Triggers
         Trigger mid = new Trigger(() -> drivetrain.getState().Pose.getX() > 4.634 
         && drivetrain.getState().Pose.getX() < 12);
 
@@ -112,6 +112,7 @@ public class RobotContainer {
              }
         });
 
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -123,20 +124,14 @@ public class RobotContainer {
             )
         );
 
-
+        // Zone Commands
         mid.whileTrue(
 Commands.either(
     new gyroSetAngle(m_turret, 180),
     new gyroSetAngle(m_turret, 0),
     () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue
-)
-            //Commands.run(() -> System.out.println("mid"))
-            );
+) );
 
-       // mid.whileFalse( new cordSetAngle(m_turret, drivetrain)
-           // Commands.run(() -> System.out.println("not mid"))
-         //   );
-        
          opposingZone.whileTrue(
             Commands.run(() -> System.out.println("Opposing zone"))
          );
@@ -150,7 +145,7 @@ Commands.either(
                 RobotModeTriggers.disabled().whileTrue(
                     drivetrain.applyRequest(() -> idle).ignoringDisable(true)
                 );
-        
+        // Driver Commmands
                 joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
                 joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
                 joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
