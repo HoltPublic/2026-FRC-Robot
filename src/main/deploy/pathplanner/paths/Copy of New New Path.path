@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.3774179743223962,
-        "y": 0.6386019971469341
+        "x": 7.778,
+        "y": 5.038
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2123291534053648,
-        "y": 1.496289732503652
+        "x": 7.778330955777461,
+        "y": 5.839942938659058
       },
       "isLocked": false,
-      "linkedName": "human player"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.849,
-        "y": 3.188
+        "x": 7.778330955777461,
+        "y": 6.900912981455065
       },
       "prevControl": {
-        "x": 2.299289320926156,
-        "y": 2.6249091928810087
+        "x": 7.791269614835947,
+        "y": 6.241041369472183
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "shoot"
+      "linkedName": "end point new path"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 1.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 31.329
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "human player",
+  "folder": "New Folder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -1,14 +1,16 @@
 {
-  "robotWidth": 0.6858,
+  "robotWidth": 0.686,
   "robotLength": 0.6858,
   "holonomicMode": true,
   "pathFolders": [
-    "Trial auto",
-    "advanced auto",
-    "human player",
-    "move forward"
+    "New Folder",
+    "shoot p1",
+    "shoot p2",
+    "shoot p3"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "shoot-climb"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
