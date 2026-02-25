@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Blinkin;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -65,6 +66,7 @@ public class RobotContainer {
     private final limelight m_Limelight = new limelight(drivetrain);
 
     private final SendableChooser<Command> autoChooser;
+    private final Blinkin m_blinkin = new Blinkin();
     
     public RobotContainer() {
         // Register Named Commands
@@ -163,7 +165,11 @@ Commands.either(
               //  joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
               //  joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
               //  joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        
+            /* Whichever Button is going to be shoot, I'll leave this here: new StartEndCommand(
+                        () -> m_blinkin.setFiringAnim(true),
+                        () -> m_blinkin.setFiringAnim(false),
+                        m_blinkin
+                        */
                 // Reset the field-centric heading on left bumper press.
                 joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         
