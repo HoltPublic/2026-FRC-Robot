@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot- climb pt1 p2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot- climb pt2 p2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "shoot-climb",
+  "choreoAuto": false
+}
