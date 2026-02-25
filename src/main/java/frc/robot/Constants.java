@@ -38,8 +38,10 @@ public final class Constants {
      * <img src="doc-files/roborioPWM.png">
      */
     public static final int kPwmPort = 0;
-
-    public static final String kLedChoice = "custom"; //Have this value set to either default, goonettes, or custom
+    /**
+     * A specified LED Choice for the Blinkin, it pretty much allows for the choice between Default (Red & Blue), Goonettes (Pink & Purple), or a Custom Color
+     */
+    public static final String kLedChoice = "default"; //Have this value set to either default, goonettes, or custom
 
     /**
      * Pretty much a bunch of pre-made patterns
