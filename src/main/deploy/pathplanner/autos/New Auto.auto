@@ -5,62 +5,99 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "New Path"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Pass"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "New New Path"
+                  "pathName": "New Path"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": null
+                  "name": "Hopper out"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Copy of New New Path"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": []
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "New New Path"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake"
+                      }
+                    }
+                  ]
+                }
+              },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Copy of Copy of New New Path"
+                  "pathName": "Copy of New New Path"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": null
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Copy of Copy of New New Path"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "New New New Path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
                 }
               }
             ]
