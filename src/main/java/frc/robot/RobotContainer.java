@@ -6,58 +6,35 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.function.Supplier;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.Shooter.Shoot;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
-import frc.robot.commands.Lighting.LightingControl;
-import frc.robot.commands.Turret.TurretLeft;
-import frc.robot.commands.Turret.setAngle;
-import frc.robot.commands.Intake.IntakeFore;
-import frc.robot.commands.Intake.IntakeBack;
 
+/**
+ * Holds all the robot code, as {@link Robot}, we don't really touch that class at all, primarily with command based code
+ */
 public class RobotContainer {
-      private final Turret m_turret = new Turret();
-      private final Intake m_intake = new Intake();
-      private final Shooter m_shooter = new Shooter();
 
-    private double MaxSpeed = 0.1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    private final SwerveRequest.RobotCentric LLdrive = new SwerveRequest.RobotCentric();
-
-    private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     //Test Code for the Lights
-    public static Lighting _lighting = Lighting.getInstance();
-    Supplier<Boolean> quoteUnquoteLaunching = () -> joystick.a().getAsBoolean();
+//    private final AlternateLED m_alternativeLED = new AlternateLED();
+    private final Blinkin m_blinkin = new Blinkin();
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
 
     /**
-     * Primary constructor for the Robot Container, sets up Lighting, and configures bindings
+     * Primary constructor for the Robot Container
      */
     public RobotContainer() {
-         CommandScheduler.getInstance().setDefaultCommand(_lighting, new LightingControl(_lighting, quoteUnquoteLaunching));
+//        m_alternativeLED.setDefaultCommand(
+//                new RunCommand(
+//                        () -> m_alternativeLED.setPattern(Constants.LEDConstants.UniquePatterns.kAgenderWave),
+//                        m_alternativeLED
+//                )
+//        );
         configureBindings();
     }
 
@@ -66,73 +43,14 @@ public class RobotContainer {
      * Pretty much sets up controls for Swerve and also getting some stuff related to the Limelight
      */
     private void configureBindings() {
-
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
+        joystick.a().whileTrue(
+                new StartEndCommand(
+                        () -> m_blinkin.setFiringAnim(true),
+                        () -> m_blinkin.setFiringAnim(false),
+                        m_blinkin
+                )
         );
 
-joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTrue(
-            drivetrain.applyRequest(() -> {
-      
-        double ta = LimelightHelpers.getTA("limelight-two");      
-        double tx  = LimelightHelpers.getTX("limelight-two");
-        double llTurn = tx * -0.05;
-        
-        double llposition = MathUtil.clamp(-ta + 1,-0.5,0.8);
-        
-        System.out.println(ta + "-TA");
-        System.out.println(llposition + "-llP");
-        System.out.println(tx + "-TX");
-        System.out.println(llTurn + "-llT");
-          return
-           LLdrive.withVelocityX(llposition)
-                 .withVelocityY(0)
-                 .withRotationalRate(llTurn);
-            }
-      
-           
-            )
-        );
-
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
-        final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        );
-
-        
-        joystick.rightTrigger().whileTrue( new setAngle(m_turret));
-        joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
-
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
-
-        joystick.x().onTrue(new IntakeFore(m_intake));
-        joystick.y().whileTrue(new IntakeBack(m_intake));
-
-        joystick.povUp().whileTrue(new Shoot(m_shooter));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-        // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     /**
@@ -142,19 +60,6 @@ joystick.rightBumper().and(() ->LimelightHelpers.getTV("limelight-two")).whileTr
     public Command getAutonomousCommand() {
         // Simple drive forward auton
         final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
-        );
+        return Commands.sequence();
     }
 }
