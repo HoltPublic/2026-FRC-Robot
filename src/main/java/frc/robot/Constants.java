@@ -20,10 +20,9 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class LimelightConstants {
-    public static final double kMountAngleRadians = Units.degreesToRadians(30);
-    public static final double kLimelightLensHeightMeters = Units.inchesToMeters(13.75);
-    public static final double kGoalHeightMeters = Units.inchesToMeters(53.875);
-    public static final String limelight1Name = "Test";
+  public static String LimelightFrontLeft = "limelight-fleft";
+  public static String LimelightFrontRight = "limelight-fright";
+  public static String LimelightTurret = "limelight-turret";
   }
   public static class IndexConstants {
 

@@ -22,12 +22,11 @@ public class HopperIn extends Command {
   public void initialize() {
     //simple manual hopper in command
     m_hopper.setHopperSpeed(0);
-    m_hopper.hZero();
   }
 
   @Override
   public void execute() {
-    m_hopper.setHopperSpeed(m_speed);
+      m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_IN);
   }
 
   @Override
