@@ -21,13 +21,12 @@ public class HopperOut extends Command {
   @Override
   public void initialize() {
     m_hopper.setHopperSpeed(0);
-    m_hopper.hZero();
   }
 
   @Override
   public void execute() {
     //simple manual hopper out command
-    m_hopper.setHopperSpeed(m_speed);
+      m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_OUT);
   }
 
   @Override

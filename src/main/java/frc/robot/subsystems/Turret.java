@@ -21,11 +21,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 //import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class Turret extends SubsystemBase {
+
+  boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
   private final TalonFX turret = new TalonFX(25);
 
@@ -39,7 +42,7 @@ public class Turret extends SubsystemBase {
   /** Creates a new Turret. */
   public Turret(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
-  turret.setPosition(0);
+  turret.setPosition(DSBlue ? 0 : 180);
 
 TalonFXConfiguration configs = new TalonFXConfiguration();
 

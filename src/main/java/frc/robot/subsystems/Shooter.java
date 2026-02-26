@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -25,6 +26,10 @@ private final TalonFX shooterHood = new TalonFX(32);
 private final VelocityVoltage shooterLeftVV = new VelocityVoltage(0);
 
 private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
+
+private final InterpolatingDoubleTreeMap rpmTable = new InterpolatingDoubleTreeMap();
+private final InterpolatingDoubleTreeMap hoodAngleTable = new InterpolatingDoubleTreeMap();
+
   /** Creates a new Shooter. */
   public Shooter() {
 
@@ -89,6 +94,47 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     shooterHood.getConfigurator().apply(hoodConfigs);
     shooterRight.getConfigurator().apply(rightConfig);
     shooterLeft.getConfigurator().apply(leftConfig);
+
+// distance in meters to rpm of shooter
+    rpmTable.put(0.0, 500.0);
+    rpmTable.put(0.5, 750.0);
+    rpmTable.put(1.0, 1000.0);
+    rpmTable.put(1.5, 1250.0);
+    rpmTable.put(2.0, 1500.0);
+    rpmTable.put(2.5, 1750.0);
+    rpmTable.put(3.0, 2000.0);
+    rpmTable.put(3.5, 2250.0);
+    rpmTable.put(4.0, 2500.0);
+    rpmTable.put(4.5, 2750.0);
+    rpmTable.put(5.0, 3000.0);
+    rpmTable.put(5.5, 3250.0);
+    rpmTable.put(6.0, 3500.0);
+    rpmTable.put(6.5, 3750.0);
+    rpmTable.put(7.0, 4000.0);
+    rpmTable.put(7.5, 4250.0);
+
+
+
+
+    hoodAngleTable.put(0.0, 0.0);
+    hoodAngleTable.put(0.5, 1.0);
+    hoodAngleTable.put(1.0, 2.0);
+    hoodAngleTable.put(1.5, 3.0);
+    hoodAngleTable.put(2.0, 4.0);
+    hoodAngleTable.put(2.5, 5.0);
+    hoodAngleTable.put(3.0, 6.0);
+    hoodAngleTable.put(3.5, 7.0);
+    hoodAngleTable.put(4.0, 8.0);
+    hoodAngleTable.put(4.5, 9.0);
+    hoodAngleTable.put(5.0, 10.0);
+    hoodAngleTable.put(5.5, 11.0);
+    hoodAngleTable.put(6.0, 12.0);
+    hoodAngleTable.put(6.5, 13.0);
+    hoodAngleTable.put(7.0, 14.0);
+    hoodAngleTable.put(7.5, 15.0);
+
+ 
+
   }
 
   @Override
@@ -96,9 +142,12 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     // This method will be called once per scheduler run
   }
 
-  public void shoot () {
+  public void shoot (double distance) {
+   double RPM =  distanceToRPM(distance) / 60;
+   double hoodAngle = distanceToHoodAngle(distance);
     //shooterRight.setControl(shooterRightVV.withVelocity(150));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(50));//set 150
+    shooterLeft.setControl(shooterLeftVV.withVelocity(RPM));//set 150
+    shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
   }
 
   public void shootIn () {
@@ -109,5 +158,15 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
   public void stopShoot () {
    // shooterRight.setControl(shooterRightVV.withVelocity(0));
     shooterLeft.setControl(shooterLeftVV.withVelocity(0));
+  }
+
+  public double distanceToRPM (double distance) {
+    distance = Math.max(0.0, Math.min(7.5, distance));
+    return rpmTable.get(distance);
+  }
+
+  public double distanceToHoodAngle (double distance) {
+    distance = Math.max(0.0, Math.min(7.5, distance));
+    return hoodAngleTable.get(distance);
   }
 }

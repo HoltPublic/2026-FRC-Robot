@@ -34,7 +34,7 @@ public class llSetAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_turret.llSetAngle(m_Limelight.tx());
+    m_turret.llSetAngle(m_Limelight.turretTx());
     //System.out.println(m_Limelight.tx());
   }
 
