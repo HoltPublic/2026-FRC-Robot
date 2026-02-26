@@ -4,14 +4,19 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Shoot extends Command {
+  private final CommandSwerveDrivetrain m_drivetrain;
   private final Shooter m_shooter;
   /** Creates a new Shoot. */
-  public Shoot(Shooter shooter) {
+  public Shoot(Shooter shooter, CommandSwerveDrivetrain drivetrain) {
+    m_drivetrain = drivetrain;
     m_shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooter);
@@ -24,7 +29,17 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.shoot();
+    boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
+
+      var pose = m_drivetrain.getState().Pose;
+
+      
+    double targetX = DSBlue ? 4.621 : 11.919;
+    double targetY = 4.029;
+
+
+    double distance = pose.getTranslation().getDistance(new Translation2d(targetX, targetY));
+    m_shooter.shoot(distance);
   }
 
   // Called once the command ends or is interrupted.

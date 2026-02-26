@@ -6,17 +6,17 @@ package frc.robot.subsystems;
 
 
 
-import com.ctre.phoenix6.hardware.Pigeon2;
+
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 public class limelight extends SubsystemBase {
   private CommandSwerveDrivetrain drivetrain;
-  private final Pigeon2 pigeon = new Pigeon2(0);
 
   double fleftA = 0;
   double frightA = 0;
@@ -33,36 +33,43 @@ public class limelight extends SubsystemBase {
     ambiguityfright();
 
 
-    if (frightA > fleftA) {
-    updatePose("limelight-fleft");
-    } else if (fleftA > frightA) {
-    updatePose("limelight-fleft");
+    if (frightA < fleftA) {
+    updatePose(LimelightConstants.LimelightFrontLeft);
+    } else if (fleftA < frightA) {
+    updatePose(LimelightConstants.LimelightFrontRight);
     }
     // This method will be called once per scheduler run
   }
   //gets the offset of the robot to april tag
-  public double tx () {
-    return LimelightHelpers.getTX("limelight-two");
+  public double turretTx () {
+    return LimelightHelpers.getTX(LimelightConstants.LimelightTurret);
   }
 
 //gets how confident the limelight is
 private void ambiguityfleft () {
-
-  // Get raw AprilTag/Fiducial data
-RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight-fleft");
+if ( LimelightHelpers.getTV(LimelightConstants.LimelightFrontLeft)){
+    // Get raw AprilTag/Fiducial data
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightFrontLeft);
 for (RawFiducial fiducial : fiducials) {
    double ambiguityleft = fiducial.ambiguity;   // Tag pose ambiguity
     fleftA = ambiguityleft;
+}
+} else {
+  fleftA = 1;
 }
 }
 
 //gets how confident the limelight is
 private void ambiguityfright () {
+if ( LimelightHelpers.getTV(LimelightConstants.LimelightFrontRight)){
   // Get raw AprilTag/Fiducial data
-RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight-fright");
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightFrontRight);
 for (RawFiducial fiducial : fiducials) {
    double ambiguityright = fiducial.ambiguity;   // Tag pose ambiguity
     frightA = ambiguityright;
+}
+} else {
+    frightA = 1;
 }
 }
 //update where the robot is with lmelights
@@ -70,7 +77,7 @@ private void updatePose(String name) {
   boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
 
-double robotYaw = pigeon.getYaw().getValueAsDouble();
+double robotYaw = drivetrain.getState().Pose.getRotation().getDegrees();
 LimelightHelpers.SetRobotOrientation(name, robotYaw, 0.0, 0.0, 0.0, 0.0, 0.0);
 
 LimelightHelpers.PoseEstimate limelightMeasurement;

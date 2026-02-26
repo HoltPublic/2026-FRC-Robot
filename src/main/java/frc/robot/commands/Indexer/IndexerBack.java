@@ -12,6 +12,8 @@ public class IndexerBack extends Command {
   Indexer m_indexer;
   public IndexerBack(Indexer indexer) {
     m_indexer = indexer;
+
+    addRequirements(m_indexer);
   }
 
   @Override
