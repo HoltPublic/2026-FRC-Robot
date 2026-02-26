@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -152,8 +153,8 @@ Commands.either(
                 joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
                 joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
         
-                joystick.y().whileTrue( new Shoot(m_shooter));
-        
+                joystick.y().whileTrue( new Shoot(m_shooter, drivetrain));
+                joystick.y().whileTrue(new StartEndCommand(() -> m_blinkin.setFiringAnim(true), () -> m_blinkin.setFiringAnim(false), m_blinkin));
                 joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
                 joystick.b().whileTrue(drivetrain.applyRequest(() ->
                     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
