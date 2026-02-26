@@ -26,7 +26,8 @@ public class HopperIn extends Command {
 
   @Override
   public void execute() {
-      m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_IN);
+     // m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_IN);
+         m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_OUT);
   }
 
   @Override

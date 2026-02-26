@@ -85,6 +85,12 @@ public class HopperIntake extends SubsystemBase {
     //Sets Motor2 to follow Motor1 opposite (so on the hopper they turn the same way)
     //hopperMotor2.setControl(new Follower(Constants.HopperConstants.kHopperMotorID1, MotorAlignmentValue.Opposed));
     //intakeMotor2.setControl(new Follower(Constants.HopperConstants.kIntakeMotorID1, MotorAlignmentValue.Opposed));
+
+    hopperConfig1.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    hopperConfig2.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+    hopperConfig1.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 9999999;
+    hopperConfig2.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 9999999;
     
     //Apply configurations to hopperMotors
     hopperMotor1.getConfigurator().apply(hopperConfig1);
@@ -103,6 +109,9 @@ public class HopperIntake extends SubsystemBase {
     double diff,volts;
     volts = 0;
 
+      hopperPos = hopperMotor1.getRotorPosition().getValueAsDouble();
+      System.out.println("Hopper position: " + hopperPos);
+
     //Constantly setting variable hopperPos to the motor's rotational position
 
     //if (hopperState == HOPPER_STATE_STOP) return;
@@ -110,7 +119,7 @@ public class HopperIntake extends SubsystemBase {
     // Hopper Move In
     if (hopperState == HOPPER_STATE_MOVE_IN) {
       hopperPos = hopperMotor1.getRotorPosition().getValueAsDouble();
-      //System.out.println("Hopper position: " + hopperPos);
+      System.out.println("Hopper position: " + hopperPos);
       diff = targetPos - hopperPos;
       //System.out.println("Difference: " + diff);
 

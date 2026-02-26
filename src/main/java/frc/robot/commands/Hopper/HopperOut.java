@@ -26,7 +26,8 @@ public class HopperOut extends Command {
   @Override
   public void execute() {
     //simple manual hopper out command
-      m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_OUT);
+    //  m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_OUT);
+    m_hopper.setHopperState(HopperIntake.HOPPER_STATE_MOVE_OUT);
   }
 
   @Override
