@@ -176,4 +176,4 @@ Auton/Inactive/Endgame Alliance Colors - Breath Red/Blue (Default), Hot Pink/Pur
 Firing Fuel - Shot Red/Blue
 Active Alliance Colors - Dark Green / Blue-Green
  */
-//TODO: When disconnecting from the field, make the LEDs flash red
+//RIO has a hardware PWM Switch that I cannot disable at all, hopefully the Systemcore does it differently
