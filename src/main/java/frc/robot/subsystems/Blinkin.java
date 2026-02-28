@@ -37,35 +37,7 @@ public class Blinkin extends SubsystemBase {
         
         SmartDashboard.putString("Current LED Mode",
                 getCurrentCommand() != null ? getCurrentCommand().getName() : "Idle");
-        if (m_isFiring){
-            setFiringAnim(true);
-        }
-        else if (DriverStation.isTeleopEnabled()){
-            double time = DriverStation.getMatchTime();
-            String gameData = DriverStation.getGameSpecificMessage();
-            if (gameData.isEmpty() || time > 130 || time <= 30) {
-                easyChoice(BlinkinConstants.kLedChoice);
-                return;
-            }
-            var myAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
-            boolean weAreInactiveFirst = gameData.startsWith(myAlliance == DriverStation.Alliance.Red ? "B" : "R");
-
-            int shift;
-            if (time > 105) shift = 1;
-            else if (time > 80) shift = 2;
-            else if (time > 55) shift = 3;
-            else shift = 4;
-
-            if (shift == 1 || shift == 3) {
-                if (weAreInactiveFirst) phaseMode();
-                else easyChoice(BlinkinConstants.kLedChoice);
-            } else {
-                if (weAreInactiveFirst) easyChoice(BlinkinConstants.kLedChoice);
-                else phaseMode();
-            }
-        } else if (DriverStation.isAutonomousEnabled()){
-            easyChoice(BlinkinConstants.kLedChoice);
-        }
+        updateLEDSignals();
     }
 
     /**
@@ -152,6 +124,50 @@ public class Blinkin extends SubsystemBase {
             setAllianceColorGoonettes();
         } else if (choice.toLowerCase().contains("custom")){
             setCustomColor();
+        }
+    }
+
+/**
+     * Holds all updates to the LED signals, this code was originally in {@link #periodic()} but I moved it into it's own method
+     */
+    public void updateLEDSignals(){
+        if (!DriverStation.isFMSAttached() && !DriverStation.isDSAttached()){
+            setPattern(blinkinPattern.HEARTBEAT_RED);
+            return;
+        }
+        else if (DriverStation.isDisabled()){
+            setPattern(blinkinPattern.LIME);
+            return;
+        }
+        else {
+            if (m_isFiring) {
+                setFiringAnim(true);
+            } else if (DriverStation.isTeleopEnabled()) {
+                double time = DriverStation.getMatchTime();
+                String gameData = DriverStation.getGameSpecificMessage();
+                if (gameData.isEmpty() || time > 130 || time <= 30) {
+                    easyChoice(BlinkinConstants.kLedChoice);
+                    return;
+                }
+                var myAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
+                boolean weAreInactiveFirst = gameData.startsWith(myAlliance == DriverStation.Alliance.Red ? "B" : "R");
+
+                int shift;
+                if (time > 105) shift = 1;
+                else if (time > 80) shift = 2;
+                else if (time > 55) shift = 3;
+                else shift = 4;
+
+                if (shift == 1 || shift == 3) {
+                    if (weAreInactiveFirst) phaseMode();
+                    else easyChoice(BlinkinConstants.kLedChoice);
+                } else {
+                    if (weAreInactiveFirst) easyChoice(BlinkinConstants.kLedChoice);
+                    else phaseMode();
+                }
+            } else if (DriverStation.isAutonomousEnabled()) {
+                easyChoice(BlinkinConstants.kLedChoice);
+            }
         }
     }
 
