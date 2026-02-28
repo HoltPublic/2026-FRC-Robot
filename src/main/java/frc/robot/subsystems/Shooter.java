@@ -143,10 +143,10 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
   }
 
   public void shoot (double distance) {
-   double RPM =  distanceToRPM(distance) / 60;
+   double RPS =  distanceToRPM(distance) / 60;
    double hoodAngle = distanceToHoodAngle(distance);
     //shooterRight.setControl(shooterRightVV.withVelocity(150));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(RPM));//set 150
+    shooterLeft.setControl(shooterLeftVV.withVelocity(RPS));//set 150
     shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
   }
 
