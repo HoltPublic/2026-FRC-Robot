@@ -28,14 +28,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
-import frc.robot.subsystems.HopperIntake;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.LimelightHelpers;
 import frc.robot.commands.Hopper.HopperIn;
 import frc.robot.commands.Hopper.HopperOut;
+import frc.robot.commands.Hopper.MHopperIn;
+import frc.robot.commands.Hopper.MHopperOut;
+import frc.robot.commands.Hopper.ZeroH;
 import frc.robot.commands.Indexer.IndexerBack;
 import frc.robot.commands.Indexer.IndexerForwards;
 import frc.robot.commands.Intake.IntakeBack;
@@ -43,6 +47,7 @@ import frc.robot.commands.Intake.IntakeFore;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
+import frc.robot.commands.turret.ZeroT;
 import frc.robot.commands.turret.cordSetAngle;
 import frc.robot.commands.turret.gyroSetAngle;
 import frc.robot.commands.turret.llSetAngle;
@@ -54,7 +59,7 @@ public class RobotContainer {
 
 
     private double MaxSpeed = 0.20 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.25).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.15).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -77,7 +82,9 @@ public class RobotContainer {
 
     private final limelight m_Limelight = new limelight(drivetrain);
 
-    private final HopperIntake m_HopperIntake = new HopperIntake();
+    private final Intake m_Intake = new Intake();
+
+    private final Hopper m_Hopper = new Hopper();
 
     private final Indexer m_Indexer = new Indexer();
 
@@ -89,6 +96,7 @@ public class RobotContainer {
 
     
     public RobotContainer() {
+         
         // Register Named Commands
      //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
@@ -98,16 +106,19 @@ public class RobotContainer {
     new gyroSetAngle(m_turret, 180),
     new gyroSetAngle(m_turret, 0),
     () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue));
-        NamedCommands.registerCommand("Hopper in", new HopperIn(m_HopperIntake));
-        NamedCommands.registerCommand("Hopper out", new HopperOut(m_HopperIntake));
+        NamedCommands.registerCommand("Hopper in", new HopperIn(m_Hopper));
+        NamedCommands.registerCommand("Hopper out", new HopperOut(m_Hopper));
         NamedCommands.registerCommand("Shoot", new Shoot(m_shooter, drivetrain));
-        NamedCommands.registerCommand("Intake", new IntakeFore(m_HopperIntake));
-        NamedCommands.registerCommand("Intake Reverse", new IntakeBack(m_HopperIntake));
+        NamedCommands.registerCommand("Intake", new IntakeFore(m_Intake));
+        NamedCommands.registerCommand("Intake Reverse", new IntakeBack(m_Intake));
         NamedCommands.registerCommand("Indexer Forwards", new IndexerForwards(m_Indexer));
         NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(m_Indexer));
-
+        
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser();
+    //autoChooser = AutoBuilder.buildAutoChooser();
+ 
+    autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("none", Commands.none());
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default         boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;Auto");
@@ -150,8 +161,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-m_driver.getLeftY() * MaxSpeed * slowDrive) // Drive forward with negative Y (forward)
-                    .withVelocityY(-m_driver.getLeftX() * MaxSpeed * slowDrive) // Drive left with negative X (left)
+                drive.withVelocityX(m_driver.getLeftY() * MaxSpeed * slowDrive) // Drive forward with negative Y (forward)
+                    .withVelocityY(m_driver.getLeftX() * MaxSpeed * slowDrive) // Drive left with negative X (left)
                     .withRotationalRate(-m_driver.getRightX() * MaxAngularRate * slowDrive) // Drive counterclockwise with negative X (left)
             )
         );
@@ -182,16 +193,20 @@ Commands.either(
             //shooter
             new JoystickButton(m_operator, 1).whileTrue(new Shoot(m_shooter, drivetrain));
             //Hopper
-            new JoystickButton(m_operator, 17).whileTrue(new HopperIn(m_HopperIntake));
-            new JoystickButton(m_operator, 18).whileTrue(new HopperOut(m_HopperIntake));
+            new JoystickButton(m_operator, 18).onTrue(new HopperIn(m_Hopper));
+            new JoystickButton(m_operator, 17).onTrue(new HopperOut(m_Hopper));
+            new JoystickButton(m_operator, 19).whileTrue(new MHopperIn(m_Hopper));
+            new JoystickButton(m_operator, 20).whileTrue(new MHopperOut(m_Hopper));
+            new JoystickButton(m_operator, 22).whileTrue(new ZeroH(m_Hopper));
             //Turret
             new JoystickButton(m_operator, 6).and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
+            new JoystickButton(m_operator, 23).whileTrue(new ZeroT(m_turret));
             //Indexer
             new JoystickButton(m_operator, 9).toggleOnTrue(new IndexerForwards(m_Indexer));
             new JoystickButton(m_operator, 4).whileTrue(new IndexerBack(m_Indexer));
             //Intake
-            new JoystickButton(m_operator, 10).toggleOnTrue(new IntakeFore(m_HopperIntake));
-            new JoystickButton(m_operator, 5).whileTrue(new IntakeBack(m_HopperIntake));
+            new JoystickButton(m_operator, 10).toggleOnTrue(new IntakeFore(m_Intake));
+            new JoystickButton(m_operator, 5).whileTrue(new IntakeBack(m_Intake));
 
         // Driver Commmands
                 //Turret

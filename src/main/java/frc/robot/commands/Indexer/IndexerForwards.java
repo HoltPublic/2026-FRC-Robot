@@ -15,13 +15,17 @@ public class IndexerForwards extends Command {
   }
 
   @Override
-  public void initialize() {
-    // cycles through the four states (stop, slow, medium, fast)
-    m_indexer.setState((m_indexer.State + 1) % 4);
+  public void initialize() {}
+
+ @Override
+  public void execute() {
+    m_indexer.IndexerForwards();
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_indexer.IndexerStop();
+  }
 
   @Override
   public boolean isFinished() {

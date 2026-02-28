@@ -1,39 +1,28 @@
 package frc.robot.commands.Intake;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.HopperIntake;
-import frc.robot.Constants;
+import frc.robot.subsystems.Intake;
 
 public class IntakeFore extends Command {
 
-  HopperIntake m_intake;
+  Intake m_intake;
 
-  public IntakeFore(HopperIntake intake) {
+  public IntakeFore(Intake intake) {
     // If this motor is in a subsystem, addRequirements(subsystem)
     m_intake = intake;
   }
 
   @Override
-  public void initialize() {
-    if (m_intake.intakeState == HopperIntake.INTAKE_STATE_FORWARD) {
-      m_intake.setIntakeState(HopperIntake.INTAKE_STATE_STOP);
-      System.out.println("Setting state to stop...");
-    }
-    else {
-      m_intake.setIntakeState(HopperIntake.INTAKE_STATE_FORWARD);
-      System.out.println("Setting state to forward...");
-    }
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
-    //System.out.println("IM DOING IT");
+      m_intake.intakeFore();
   }
 
   @Override
   public void end(boolean interrupted) {
+    m_intake.intakeStop();
   }
 
   @Override
