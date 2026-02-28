@@ -34,38 +34,9 @@ public class Blinkin extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
         SmartDashboard.putString("Current LED Mode",
                 getCurrentCommand() != null ? getCurrentCommand().getName() : "Idle");
-        if (m_isFiring){
-            setFiringAnim(true);
-        }
-        else if (DriverStation.isTeleopEnabled()){
-            double time = DriverStation.getMatchTime();
-            String gameData = DriverStation.getGameSpecificMessage();
-            if (gameData.isEmpty() || time > 130 || time <= 30) {
-                easyChoice(BlinkinConstants.kLedChoice);
-                return;
-            }
-            var myAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
-            boolean weAreInactiveFirst = gameData.startsWith(myAlliance == DriverStation.Alliance.Red ? "B" : "R");
-
-            int shift;
-            if (time > 105) shift = 1;
-            else if (time > 80) shift = 2;
-            else if (time > 55) shift = 3;
-            else shift = 4;
-
-            if (shift == 1 || shift == 3) {
-                if (weAreInactiveFirst) phaseMode();
-                else easyChoice(BlinkinConstants.kLedChoice);
-            } else {
-                if (weAreInactiveFirst) easyChoice(BlinkinConstants.kLedChoice);
-                else phaseMode();
-            }
-        } else if (DriverStation.isAutonomousEnabled()){
-            easyChoice(BlinkinConstants.kLedChoice);
-        }
+        updateLEDSignals();
     }
 
     /**
@@ -155,9 +126,54 @@ public class Blinkin extends SubsystemBase {
         }
     }
 
+    /**
+     * Holds all updates to the LED signals, this code was originally in {@link #periodic()} but I moved it into it's own method
+     */
+    public void updateLEDSignals(){
+        if (!DriverStation.isFMSAttached() && !DriverStation.isDSAttached()){
+            setPattern(blinkinPattern.HEARTBEAT_RED);
+            return;
+        }
+        else if (DriverStation.isDisabled()){
+            setPattern(blinkinPattern.ORANGE);
+            return;
+        }
+        else {
+            if (m_isFiring) {
+                setFiringAnim(true);
+            } else if (DriverStation.isTeleopEnabled()) {
+                double time = DriverStation.getMatchTime();
+                String gameData = DriverStation.getGameSpecificMessage();
+                if (gameData.isEmpty() || time > 130 || time <= 30) {
+                    easyChoice(BlinkinConstants.kLedChoice);
+                    return;
+                }
+                var myAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
+                boolean weAreInactiveFirst = gameData.startsWith(myAlliance == DriverStation.Alliance.Red ? "B" : "R");
+
+                int shift;
+                if (time > 105) shift = 1;
+                else if (time > 80) shift = 2;
+                else if (time > 55) shift = 3;
+                else shift = 4;
+
+                if (shift == 1 || shift == 3) {
+                    if (weAreInactiveFirst) phaseMode();
+                    else easyChoice(BlinkinConstants.kLedChoice);
+                } else {
+                    if (weAreInactiveFirst) easyChoice(BlinkinConstants.kLedChoice);
+                    else phaseMode();
+                }
+            } else if (DriverStation.isAutonomousEnabled()) {
+                easyChoice(BlinkinConstants.kLedChoice);
+            }
+        }
+    }
+
 }//Thank you 103 and 3201!
 /* Go ahead and add any patterns here that you want to use for competitions, I'll make methods for them :) - Riley
 Auton/Inactive/Endgame Alliance Colors - Breath Red/Blue (Default), Hot Pink/Purple (Goonettes)
 Firing Fuel - Shot Red/Blue
 Active Alliance Colors - Dark Green / Blue-Green
  */
+//TODO: When disconnecting from the field, make the LEDs flash red
