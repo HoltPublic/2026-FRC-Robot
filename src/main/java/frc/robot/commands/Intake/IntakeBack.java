@@ -1,46 +1,31 @@
 package frc.robot.commands.Intake;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import frc.robot.Constants;
 
 public class IntakeBack extends Command {
 
-  Intake m_motor;
-  double m_speed;
+  Intake m_intake;
 
-  /**
-   * Constructor for the Intake Motor to move backwards
-   * @param motor The Intake Motor
-   */
-  public IntakeBack(Intake motor) {
+  public IntakeBack(Intake intake) {
     // If this motor is in a subsystem, addRequirements(subsystem)
-    m_motor = motor;
-    m_speed = 0.67; //Um, that's a double, not a float
+    m_intake = intake;
   }
 
-  /**
-   * Cuts off the voltage
-   */
   @Override
-  public void initialize() {
-    m_motor.setSpeed(0);
-  }
+  public void initialize() {}
 
-  /**
-   * Sets the speed of the motor to what's specified in {@link #IntakeBack(Intake)}, moving it backwards
-   */
   @Override
   public void execute() {
-    m_motor.setSpeed(m_speed);
+    m_intake.intakeBack();
   }
 
-  /**
-   * When the code ends, cut off the voltage
-   * @param interrupted In the event the code is forcibly stopped
-   */
   @Override
   public void end(boolean interrupted) {
-    m_motor.setSpeed(0);
+    m_intake.intakeStop();
   }
 
   @Override

@@ -5,49 +5,24 @@ import frc.robot.subsystems.Intake;
 
 public class IntakeFore extends Command {
 
-  Intake m_motor;
-  double m_speed;
-  boolean run = false;
+  Intake m_intake;
 
-  /**
-   * A Constructor for the Intake Motor to move forward
-   * @param motor The Intake Motor
-   */
-  public IntakeFore(Intake motor) {
+  public IntakeFore(Intake intake) {
     // If this motor is in a subsystem, addRequirements(subsystem)
-    m_motor = motor;
-    m_speed = -0.67;
+    m_intake = intake;
   }
 
-  /**
-   * The Intake Motor sets it's speed to 0, then if running, it inverts it's signal
-   */
   @Override
-  public void initialize() {
-    m_motor.setSpeed(0);
-    if (run)
-      run = false;
-    else
-      run = true;
+  public void initialize() {}
 
-  }
-
-  /**
-   * If not running, then we return, elsewise, we set the speed to {@link #m_speed}, which moves the intake forward
-   */
   @Override
   public void execute() {
-    if(!run) return;
-    m_motor.setSpeed(m_speed);
+      m_intake.intakeFore();
   }
 
-  /**
-   * When interrupted, set the motor speed to 0
-   * @param interrupted In the event that the code is forcefully stopped
-   */
   @Override
   public void end(boolean interrupted) {
-    m_motor.setSpeed(0);
+    m_intake.intakeStop();
   }
 
   @Override

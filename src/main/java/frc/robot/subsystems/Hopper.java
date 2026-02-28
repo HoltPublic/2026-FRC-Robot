@@ -4,68 +4,103 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
-/**
- * The large box-like thingy that holds fuel
- */
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 public class Hopper extends SubsystemBase {
 
+  private final TalonFX HopperLeft = new TalonFX(52);
+  private final TalonFX HopperRight = new TalonFX(50);
 
-  TalonFX hopperMotor1;
-  TalonFX hopperMotor2;
-  private final PositionVoltage m_hopperPV = new PositionVoltage(0);
+  private final PositionVoltage m_HoperPV = new PositionVoltage(0);
 
-  /**
-   * Sets up the Hopper Motor to allow it to expand and retract
-   */
+  /** Creates a new Hopper. */
   public Hopper() {
-    //hopperMotor1 = new TalonFX(Constants.HopperConstants.kHopperMotorID1);
-    //hopperMotor2 = new TalonFX(Constants.HopperConstants.kHopperMotorID2);
+  TalonFXConfiguration rightConfigs = new TalonFXConfiguration();
 
-    TalonFXConfiguration hopperConfig1 = new TalonFXConfiguration();
-    TalonFXConfiguration hopperConfig2 = new TalonFXConfiguration();
+    rightConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    rightConfigs.Slot0.kP = 0.5; // An error of 0.5 rotations results in 1.2 volts output
+    rightConfigs.Slot0.kD = .000001; // A change of 1 rotation per second results in 0.1 volts output
 
-    hopperConfig1.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    hopperConfig2.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    rightConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  
+    // Peak output of 8 volts
+    rightConfigs.Voltage.PeakForwardVoltage = 16;
+    rightConfigs.Voltage.PeakReverseVoltage = -16;
+    rightConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    rightConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    hopperConfig1.Slot0.kP = 1;
-    hopperConfig1.Slot0.kD = 0.01;
-    hopperConfig2.Slot0.kP = 1;
-    hopperConfig2.Slot0.kD = 0.01;
+    rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    //hopperMotor2.setControl(new Follower(Constants.HopperConstants.kHopperMotorID1, MotorAlignmentValue.Opposed));
+    rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
 
-    hopperMotor1.getConfigurator().apply(hopperConfig1);
-    hopperMotor2.getConfigurator().apply(hopperConfig2);
+    HopperRight.setControl(new Follower(52, MotorAlignmentValue.Opposed));
+
+
+      TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
+
+    leftConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leftConfigs.Slot0.kP = 0.5; // An error Q!~of 0.5 rotations results in 1.2 volts output
+    leftConfigs.Slot0.kD = .000001; // A change of 1 rotation per second results in 0.1 volts output
+
+    leftConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  
+    // Peak output of 8 volts
+    leftConfigs.Voltage.PeakForwardVoltage = 16;
+    leftConfigs.Voltage.PeakReverseVoltage = -16;
+    leftConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    leftConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    leftConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+    leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
+    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
+    
+    HopperLeft.getConfigurator().apply(leftConfigs);
+    HopperRight.getConfigurator().apply(rightConfigs);
+
+    HopperLeft.setPosition(0);
+    HopperRight.setPosition(0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    //double mRot = HopperLeft.getPosition().getValueAsDouble();
+   // System.out.println(mRot);
   }
 
-  /**
-   * Changes the voltage to make the motors move faster or slower
-   * @param speed How fast it should go
-   */
-  public void setSpeed(double speed) {
-    hopperMotor1.setControl(new VoltageOut(speed));
+  public void hopperIn () {
+    HopperLeft.setControl(new VoltageOut(-1));
   }
 
-  /**
-   * Moves the hopper back to it's starting position
-   */
-  public void hZero () {
-    hopperMotor1.setControl(m_hopperPV.withPosition(0));
+  public void hopperStop () {
+    HopperLeft.setControl(new VoltageOut(0));
+  }
+
+  public void hopperOut () {
+    HopperLeft.setControl(new VoltageOut(1));
+  }
+
+  public void setHopperPosition (double position) {
+    HopperLeft.setControl(m_HoperPV.withPosition(position));
+  }
+
+  public void ZeroH () {
+    HopperLeft.setPosition(0);
+    HopperRight.setPosition(0);
   }
 }

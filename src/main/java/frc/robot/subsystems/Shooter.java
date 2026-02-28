@@ -1,122 +1,172 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+//import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
-    /**
-     * The Motor for adjusting the angle of the shooter
-     */
-    TalonFX angleAdjusterMotor;
-    /**
-     * The left motor for the wheels that shoot out the fuel
-     */
-    TalonFX fuelMotorLeft;
-    /**
-     * The right motor for the wheels that shoot out the fuel
-     */
-    TalonFX fuelMotorRight;
+private final TalonFX shooterLeft = new TalonFX(20);
+private final TalonFX shooterRight = new TalonFX(21);
+private final TalonFX shooterHood = new TalonFX(32);
 
-    private final VelocityVoltage m_leftMotorVoltage = new VelocityVoltage(0);
-    private final PositionVoltage m_angleVoltage = new PositionVoltage(0);
-    /**
-     * The target speed for rotations
-     */
-    private double m_targetRps = 0.0;
+//private final VelocityVoltage shooterRightVV = new VelocityVoltage(0);
+private final VelocityVoltage shooterLeftVV = new VelocityVoltage(0);
 
-    private double m_targetAngle = 0.0;
+private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
 
-    /**
-     * Sets up the IDs for the Shooter
-     */
-    public Shooter() {
-        TalonFXConfiguration angleMotorConfig = new TalonFXConfiguration();
-        angleMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        angleMotorConfig.Slot0.kP = 0.10;
-        angleMotorConfig.Slot0.kD = 0.01;
+private final InterpolatingDoubleTreeMap rpmTable = new InterpolatingDoubleTreeMap();
+private final InterpolatingDoubleTreeMap hoodAngleTable = new InterpolatingDoubleTreeMap();
 
-        angleMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  /** Creates a new Shooter. */
+  public Shooter() {
 
-        angleMotorConfig.Voltage.PeakForwardVoltage = 16;
-        angleMotorConfig.Voltage.PeakReverseVoltage = -16;
-        angleMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        angleMotorConfig.CurrentLimits.StatorCurrentLimit = 40;
-        angleMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
 
-        angleMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        angleMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    hoodConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    hoodConfigs.Slot0.kP = 0.10; // An error of 0.5 rotations results in 1.2 volts output
+    hoodConfigs.Slot0.kD = 0.01; // A change of 1 rotation per second results in 0.1 volts output
 
-        angleMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
-        angleMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1;
+    hoodConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  
+    // Peak output of 8 volts
+    hoodConfigs.Voltage.PeakForwardVoltage = 16;
+    hoodConfigs.Voltage.PeakReverseVoltage = -16;
+    hoodConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    hoodConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    hoodConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        TalonFXConfiguration rightFuelMotorConfig = new TalonFXConfiguration();
-        rightFuelMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        rightFuelMotorConfig.Slot0.kP = 0.2;
-        rightFuelMotorConfig.Slot0.kS = 0.05;
-        rightFuelMotorConfig.Slot0.kV = 0.12;
-        rightFuelMotorConfig.Slot0.kI = 0;
-        rightFuelMotorConfig.Slot0.kD = 0;
+    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-        rightFuelMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
+    hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1;
 
-        rightFuelMotorConfig.Voltage.PeakForwardVoltage = 16;
-        rightFuelMotorConfig.Voltage.PeakReverseVoltage = -16;
-        rightFuelMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        rightFuelMotorConfig.CurrentLimits.StatorCurrentLimit = 40;
-        rightFuelMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        fuelMotorRight.setControl(new Follower(20, MotorAlignmentValue.Opposed));
+TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
-        TalonFXConfiguration leftFuelMotorConfig = new TalonFXConfiguration();
-        leftFuelMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        leftFuelMotorConfig.Slot0.kP = 0.2;
-        leftFuelMotorConfig.Slot0.kS = 0.05;
-        leftFuelMotorConfig.Slot0.kV = 0.12;
-        leftFuelMotorConfig.Slot0.kI = 0;
-        leftFuelMotorConfig.Slot0.kD = 0;
+    rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    rightConfig.Slot0.kP = 0.2; // An error of 0.5 rotations results in 1.2 volts output
+    rightConfig.Slot0.kS = 0.05; // Add 0.05 V output to overcome static friction
+    rightConfig.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    rightConfig.Slot0.kI = 0; // no output for integrated error
+    rightConfig.Slot0.kD = 0; // no output for error derivative
 
-        leftFuelMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+    rightConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  
+    // Peak output of 8 volts
+    rightConfig.Voltage.PeakForwardVoltage = 16;
+    rightConfig.Voltage.PeakReverseVoltage = -16;
+    rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    rightConfig.CurrentLimits.StatorCurrentLimit = 40;
+    rightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    shooterRight.setControl(new Follower(20, MotorAlignmentValue.Opposed));
 
-        leftFuelMotorConfig.Voltage.PeakForwardVoltage = 16;
-        leftFuelMotorConfig.Voltage.PeakReverseVoltage = -16;
-        leftFuelMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        leftFuelMotorConfig.CurrentLimits.StatorCurrentLimit = 40;
-        leftFuelMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    TalonFXConfiguration leftConfig = new TalonFXConfiguration();
 
-        angleAdjusterMotor.getConfigurator().apply(angleMotorConfig);
-        fuelMotorRight.getConfigurator().apply(rightFuelMotorConfig);
-        fuelMotorLeft.getConfigurator().apply(leftFuelMotorConfig);
-    }
-    @Override
-    public void periodic(){
-        // This is unused. But gets called every 20ms
-    }
+    leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    leftConfig.Slot0.kP = 0.2; // An error of 0.5 rotations results in 1.2 volts output
+    leftConfig.Slot0.kS = 0.05; // Add 0.05 V output to overcome static friction
+    leftConfig.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    leftConfig.Slot0.kI = 0; // no output for integrated error
+    leftConfig.Slot0.kD = 0; // no output for error derivative
 
-    /**
-     * Sets the left motor voltage to 50, allowing to shoot fuel
-     */
-    public void shoot(){
-        fuelMotorLeft.setControl(m_leftMotorVoltage.withVelocity(50));
-    }
+    leftConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  
+    // Peak output of 8 volts
+    leftConfig.Voltage.PeakForwardVoltage = 16;
+    leftConfig.Voltage.PeakReverseVoltage = -16;
+    leftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    leftConfig.CurrentLimits.StatorCurrentLimit = 40;
+    leftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    /**
-     * Retracts fuel backwards at a speed of 10 (Technically -10)
-     */
-    public void retract(){
-        fuelMotorLeft.setControl(m_leftMotorVoltage.withVelocity(-10));
-    }
+    shooterHood.getConfigurator().apply(hoodConfigs);
+    shooterRight.getConfigurator().apply(rightConfig);
+    shooterLeft.getConfigurator().apply(leftConfig);
 
-    /**
-     * Stops the motor from shooting by setting the voltage to 0
-     */
-    public void stopShooting(){
-        fuelMotorLeft.setControl(m_leftMotorVoltage.withVelocity(0));
-    }
+// distance in meters to rpm of shooter
+    rpmTable.put(0.0, 500.0);
+    rpmTable.put(0.5, 750.0);
+    rpmTable.put(1.0, 1000.0);
+    rpmTable.put(1.5, 1250.0);
+    rpmTable.put(2.0, 1500.0);
+    rpmTable.put(2.5, 1750.0);
+    rpmTable.put(3.0, 2000.0);
+    rpmTable.put(3.5, 2250.0);
+    rpmTable.put(4.0, 2500.0);
+    rpmTable.put(4.5, 2750.0);
+    rpmTable.put(5.0, 3000.0);
+    rpmTable.put(5.5, 3250.0);
+    rpmTable.put(6.0, 3500.0);
+    rpmTable.put(6.5, 3750.0);
+    rpmTable.put(7.0, 4000.0);
+    rpmTable.put(7.5, 4250.0);
+
+
+
+
+    hoodAngleTable.put(0.0, 0.0);
+    hoodAngleTable.put(0.5, 1.0);
+    hoodAngleTable.put(1.0, 2.0);
+    hoodAngleTable.put(1.5, 3.0);
+    hoodAngleTable.put(2.0, 4.0);
+    hoodAngleTable.put(2.5, 5.0);
+    hoodAngleTable.put(3.0, 6.0);
+    hoodAngleTable.put(3.5, 7.0);
+    hoodAngleTable.put(4.0, 8.0);
+    hoodAngleTable.put(4.5, 9.0);
+    hoodAngleTable.put(5.0, 10.0);
+    hoodAngleTable.put(5.5, 11.0);
+    hoodAngleTable.put(6.0, 12.0);
+    hoodAngleTable.put(6.5, 13.0);
+    hoodAngleTable.put(7.0, 14.0);
+    hoodAngleTable.put(7.5, 15.0);
+
+ 
+
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+
+  public void shoot (double distance) {
+   double RPS =  distanceToRPM(distance) / 60;
+   double hoodAngle = distanceToHoodAngle(distance);
+    //shooterRight.setControl(shooterRightVV.withVelocity(150));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(RPS));//set 150
+    shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
+  }
+
+  public void shootIn () {
+   // shooterRight.setControl(shooterRightVV.withVelocity(-10));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(-10));
+  }
+
+  public void stopShoot () {
+   // shooterRight.setControl(shooterRightVV.withVelocity(0));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(0));
+  }
+
+  public double distanceToRPM (double distance) {
+    distance = Math.max(0.0, Math.min(7.5, distance));
+    return rpmTable.get(distance);
+  }
+
+  public double distanceToHoodAngle (double distance) {
+    distance = Math.max(0.0, Math.min(7.5, distance));
+    return hoodAngleTable.get(distance);
+  }
 }
