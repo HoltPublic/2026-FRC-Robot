@@ -17,19 +17,19 @@ import frc.robot.Constants.BlinkinConstants.blinkinPattern;
  */
 public class Blinkin extends SubsystemBase {
     private Spark m_ledController = new Spark(BlinkinConstants.kPwmPort);
-    private SendableChooser<blinkinPattern> patternChooser = new SendableChooser<>();
+    private SendableChooser<blinkinPattern> pattern_chooser = new SendableChooser<>();
     private double m_color = 0.0;
     private boolean m_isFiring = false;
 
     public Blinkin() {
-        patternChooser.setDefaultOption(blinkinPattern.LIME.displayName, blinkinPattern.LIME);
+        pattern_chooser.setDefaultOption(blinkinPattern.LIME.displayName, blinkinPattern.LIME);
         System.out.println("The LED Pattern widget has a lot of default values, so if you pick one, I added parentheses to each option to let you know what they are. \n(Fixed) means that it's one of the Fixed Palette Patterns, the ones with Color Pattern in them are self explanatory. \n(Solid) indicates that the choice is a solid color, and has no underlying pattern ");
         for (blinkinPattern pattern : blinkinPattern.values()){
             if (pattern != blinkinPattern.LIME) {
-                patternChooser.addOption(pattern.displayName, pattern);
+                pattern_chooser.addOption(pattern.displayName, pattern);
             }
         }
-        SmartDashboard.putData("LED Pattern", patternChooser);
+        SmartDashboard.putData("LED Pattern", pattern_chooser);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class Blinkin extends SubsystemBase {
      * Allows you to select from a custom pattern
      */
     public void setCustomColor(){
-        blinkinPattern selected = patternChooser.getSelected();
+        blinkinPattern selected = pattern_chooser.getSelected();
         if (selected != null){
             m_ledController.set(selected.value);
         }
