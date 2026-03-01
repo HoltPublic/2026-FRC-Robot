@@ -143,7 +143,19 @@ public final class Constants {
   public static class LEDConstants {
     public static final int kPWMPort = 0;
     public static final int kLEDLength = 60;
+    public static final boolean kIs2026 = true; //Change the variable name if there are phases in a future game, similarly to the 2026 game
 
+    /**
+     * A choice that affects {@link frc.robot.subsystems.AlternateLED#easyChoice(String) Easy Choice}.
+     * The choices are as follows, fully lowercase:<br>
+     * - default: The standard <font color="red">Alliance</font> <font color="blue">colors</font><br>
+     * - goonettes: specific <font color="#e25099">Alliance</font> <font color="#301934">color</font> for Goonettes
+     */
+    public static final String kChoice = "default";
+
+    /**
+     * An enum holding the values of a whole bunch of colors
+     */
     public enum Colors {
       kGold(new Color(212, 175, 55), "Gold"),
       kRed(Color.kFirstRed, "Red"),
@@ -153,8 +165,9 @@ public final class Constants {
       kGreen(Color.kGreen, "Green"),
       kWhite(Color.kWhite, "White"),
       kGray(new Color(163, 163, 163), "Gray"),
-      kLime(new Color(185, 251, 106), "Lime");
-
+      kLime(new Color(185, 251, 106), "Lime"),
+      kDarkHotPink(new Color(226, 80, 152), "Dark Hot Pink"),
+      kDarkPurple(new Color(48, 25, 52), "Dark Purple");
 
       public final Color color;
       public final String displayName;
@@ -166,41 +179,54 @@ public final class Constants {
     }
 
     /**
-     * A class to hold a bunch of fairly standard patterns I made
+     * A class to hold a bunch of fairly standard patterns I made, all of the ones in this class are just gradients to make waves
      */
     public static final class Patterns{
-      /**
-       * A Red-Gold Wave Pattern
-       */
       public static final LEDPattern kRedGoldWave = LEDPattern.gradient(
               LEDPattern.GradientType.kContinuous,
               Colors.kRed.color,
               Colors.kGold.color
       ).scrollAtRelativeSpeed(Hertz.of(0.5));
-      /**
-       * A Blue-Gold Wave Pattern
-       */
       public static final LEDPattern kBlueGoldWave = LEDPattern.gradient(
               LEDPattern.GradientType.kContinuous,
               Colors.kBlue.color,
               Colors.kGold.color
       ).scrollAtRelativeSpeed(Hertz.of(0.5));
-      /**
-       * A Red-Green Wave Pattern
-       */
       public static final LEDPattern kRedGreenWave = LEDPattern.gradient(
               LEDPattern.GradientType.kContinuous,
               Colors.kRed.color,
               Colors.kGreen.color
-      );
-      /**
-       * A Blue-Green Wave Pattern
-       */
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
       public static final LEDPattern kBlueGreenWave = LEDPattern.gradient(
         LEDPattern.GradientType.kContinuous,
         Colors.kBlue.color,
         Colors.kGreen.color
-      );
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+      public static final LEDPattern kDarkHotPinkGoldWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kDarkHotPink.color,
+              Colors.kGold.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+      public static final LEDPattern kDarkPurpleGoldWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kDarkPurple.color,
+              Colors.kGold.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+      public static final LEDPattern kDarkHotPinkGreenWave = LEDPattern.gradient(
+        LEDPattern.GradientType.kContinuous,
+        Colors.kDarkHotPink.color,
+        Colors.kGreen.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+      public static final LEDPattern kDarkPurpleGreenWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kDarkPurple.color,
+              Colors.kGreen.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
+      public static final LEDPattern kNotEnabledWave = LEDPattern.gradient(
+              LEDPattern.GradientType.kContinuous,
+              Colors.kOrange.color,
+              Colors.kWhite.color
+      ).scrollAtRelativeSpeed(Hertz.of(0.5));
 
     }
 

@@ -131,11 +131,7 @@ public class Blinkin extends SubsystemBase {
      * Holds all updates to the LED signals, this code was originally in {@link #periodic()} but I moved it into it's own method
      */
     public void updateLEDSignals(){
-        if (!DriverStation.isFMSAttached() && !DriverStation.isDSAttached()){
-            setPattern(blinkinPattern.HEARTBEAT_RED);
-            return;
-        }
-        else if (DriverStation.isDisabled()){
+        if (DriverStation.isDisabled()){
             setPattern(blinkinPattern.LIME);
             return;
         }
