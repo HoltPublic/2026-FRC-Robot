@@ -10,7 +10,7 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class setAngle extends Command {
-    private final Turret m_turret;
+  Turret m_turret;
     private final double m_angle;
   /** Creates a new setAngle. */
   public setAngle(Turret turret, double angle) {

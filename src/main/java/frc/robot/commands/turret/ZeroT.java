@@ -12,7 +12,7 @@ public class ZeroT extends Command {
   Turret m_Turret;
   /** Creates a new ZeroT. */
   public ZeroT(Turret Turret) {
-    Turret = m_Turret;
+    m_Turret = Turret;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

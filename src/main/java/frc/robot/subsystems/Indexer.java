@@ -37,8 +37,6 @@ public class Indexer extends SubsystemBase {
     rightConfigs.CurrentLimits.StatorCurrentLimit = 40;
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    IndexerRight.setControl(new Follower(56, MotorAlignmentValue.Aligned));
-
       TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
 
     leftConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -59,6 +57,7 @@ public class Indexer extends SubsystemBase {
 
     IndexerLeft.getConfigurator().apply(leftConfigs);
     IndexerRight.getConfigurator().apply(rightConfigs);
+        IndexerRight.setControl(new Follower(56, MotorAlignmentValue.Opposed));
   }
 
   @Override
@@ -67,11 +66,11 @@ public class Indexer extends SubsystemBase {
   }
 
   public void IndexerForwards () {
-    IndexerLeft.setControl(new VoltageOut(5));
+    IndexerLeft.setControl(new VoltageOut(10));
   }
 
   public void IndexerBack () {
-    IndexerLeft.setControl(new VoltageOut(-5));
+    IndexerLeft.setControl(new VoltageOut(-10));
   }
 
   public void IndexerStop () {

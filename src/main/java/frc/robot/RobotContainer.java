@@ -44,7 +44,12 @@ import frc.robot.commands.Indexer.IndexerBack;
 import frc.robot.commands.Indexer.IndexerForwards;
 import frc.robot.commands.Intake.IntakeBack;
 import frc.robot.commands.Intake.IntakeFore;
+import frc.robot.commands.shooter.HoodDown;
+import frc.robot.commands.shooter.HoodUp;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootClose;
+import frc.robot.commands.shooter.ShootFar;
+import frc.robot.commands.shooter.ShootMed;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
 import frc.robot.commands.turret.ZeroT;
@@ -58,8 +63,8 @@ public class RobotContainer {
     double slowDrive = 1;
 
 
-    private double MaxSpeed = 0.20 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.15).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = 0.60 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.45).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -101,6 +106,8 @@ public class RobotContainer {
      //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
      //   NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
+
+     /* 
         NamedCommands.registerCommand("Cord Set Angle", new cordSetAngle(m_turret, drivetrain));
         NamedCommands.registerCommand("Pass",Commands.either(
     new gyroSetAngle(m_turret, 180),
@@ -109,16 +116,19 @@ public class RobotContainer {
         NamedCommands.registerCommand("Hopper in", new HopperIn(m_Hopper));
         NamedCommands.registerCommand("Hopper out", new HopperOut(m_Hopper));
         NamedCommands.registerCommand("Shoot", new Shoot(m_shooter, drivetrain));
-        NamedCommands.registerCommand("Intake", new IntakeFore(m_Intake));
-        NamedCommands.registerCommand("Intake Reverse", new IntakeBack(m_Intake));
-        NamedCommands.registerCommand("Indexer Forwards", new IndexerForwards(m_Indexer));
-        NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(m_Indexer));
         
+        NamedCommands.registerCommand("Intake Reverse", new IntakeBack(m_Intake));
+        NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(m_Indexer));
+        */
+        NamedCommands.registerCommand("ShootMid", new ShootMed(m_shooter));
+        NamedCommands.registerCommand("Indexer Forwards", new IndexerForwards(m_Indexer));
+        NamedCommands.registerCommand("Intake", new IntakeFore(m_Intake));
+
     // Build an auto chooser. This will use Commands.none() as the default option.
-    //autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = AutoBuilder.buildAutoChooser();
  
-    autoChooser = new SendableChooser<>();
-    autoChooser.setDefaultOption("none", Commands.none());
+  //  autoChooser = new SendableChooser<>();
+  //  autoChooser.setDefaultOption("none", Commands.none());
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default         boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;Auto");
@@ -166,7 +176,7 @@ public class RobotContainer {
                     .withRotationalRate(-m_driver.getRightX() * MaxAngularRate * slowDrive) // Drive counterclockwise with negative X (left)
             )
         );
-
+/* 
         // Zone Commands
         mid.whileTrue(
 Commands.either(
@@ -188,10 +198,14 @@ Commands.either(
                 RobotModeTriggers.disabled().whileTrue(
                     drivetrain.applyRequest(() -> idle).ignoringDisable(true)
                 );
-
+*/
         // Operator Commands
             //shooter
-            new JoystickButton(m_operator, 1).whileTrue(new Shoot(m_shooter, drivetrain));
+            new JoystickButton(m_operator, 1).whileTrue(new ShootClose(m_shooter));
+            new JoystickButton(m_operator, 2).whileTrue(new ShootMed(m_shooter));
+            new JoystickButton(m_operator, 3).whileTrue(new ShootFar(m_shooter));
+            new JoystickButton(m_operator, 11).whileTrue(new HoodUp(m_shooter));
+            new JoystickButton(m_operator, 12).whileTrue(new HoodDown(m_shooter));
             //Hopper
             new JoystickButton(m_operator, 18).onTrue(new HopperIn(m_Hopper));
             new JoystickButton(m_operator, 17).onTrue(new HopperOut(m_Hopper));
@@ -210,12 +224,12 @@ Commands.either(
 
         // Driver Commmands
                 //Turret
-                new JoystickButton(m_driver, PS5Controller.Button.kL2.value).whileTrue(new TurretRight(m_turret));
-                new JoystickButton(m_driver, PS5Controller.Button.kR2.value).whileTrue(new TurretLeft(m_turret));
+                new JoystickButton(m_driver, PS5Controller.Button.kL2.value).whileTrue(new ShootClose(m_shooter));
+                new JoystickButton(m_driver, PS5Controller.Button.kR2.value).whileTrue(new ShootMed(m_shooter));
                 
                 new JoystickButton(m_driver, PS5Controller.Button.kR3.value).whileTrue(drivetrain.applyRequest(() -> brake));
                 //Shooter
-                new JoystickButton(m_driver, PS5Controller.Button.kR1.value).whileTrue(new Shoot(m_shooter, drivetrain));
+                new JoystickButton(m_driver, PS5Controller.Button.kR1.value).whileTrue(new ShootFar(m_shooter));
                 
 
                 new JoystickButton(m_driver, PS5Controller.Button.kL1.value).whileTrue(Commands.run(() -> slowDrive = 0.3))

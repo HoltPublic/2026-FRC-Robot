@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 //import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -18,12 +19,14 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-private final TalonFX shooterLeft = new TalonFX(20);
-private final TalonFX shooterRight = new TalonFX(21);
-private final TalonFX shooterHood = new TalonFX(32);
+private final TalonFX shooterLeft = new TalonFX(59);
+private final TalonFX shooterRight = new TalonFX(57);
+private final TalonFX shooterHood = new TalonFX(58);
 
 //private final VelocityVoltage shooterRightVV = new VelocityVoltage(0);
 private final VelocityVoltage shooterLeftVV = new VelocityVoltage(0);
+
+private final VelocityVoltage HoodVV = new VelocityVoltage(0);
 
 private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
 
@@ -51,8 +54,8 @@ TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
     hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
-    hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1;
+    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 100;
+    hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -100;
 
 TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
@@ -70,8 +73,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     rightConfig.Voltage.PeakReverseVoltage = -16;
     rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     rightConfig.CurrentLimits.StatorCurrentLimit = 40;
-    rightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    shooterRight.setControl(new Follower(20, MotorAlignmentValue.Opposed));
+    rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
 
@@ -89,11 +91,13 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     leftConfig.Voltage.PeakReverseVoltage = -16;
     leftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     leftConfig.CurrentLimits.StatorCurrentLimit = 40;
-    leftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    leftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     shooterHood.getConfigurator().apply(hoodConfigs);
     shooterRight.getConfigurator().apply(rightConfig);
     shooterLeft.getConfigurator().apply(leftConfig);
+
+    shooterRight.setControl(new Follower(59, MotorAlignmentValue.Opposed));
 
 // distance in meters to rpm of shooter
     rpmTable.put(0.0, 500.0);
@@ -147,7 +151,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
    double hoodAngle = distanceToHoodAngle(distance);
     //shooterRight.setControl(shooterRightVV.withVelocity(150));
     shooterLeft.setControl(shooterLeftVV.withVelocity(RPS));//set 150
-    shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
+   // shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
   }
 
   public void shootIn () {
@@ -168,5 +172,25 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
   public double distanceToHoodAngle (double distance) {
     distance = Math.max(0.0, Math.min(7.5, distance));
     return hoodAngleTable.get(distance);
+  }
+
+  public void shooterHoodUp () {
+    shooterHood.setControl(HoodVV.withVelocity(5));
+  }
+
+  public void shooterHoodDown () {
+    shooterHood.setControl(HoodVV.withVelocity(-5));
+  }
+
+  public void shooterHoodStop () {
+    shooterHood.setControl(new VoltageOut(0));
+  }
+
+  public void SetHoodAngle (double Angle) {
+    shooterHood.setControl(shooterHoodPV.withPosition(Angle));
+  }
+
+  public void SetShooterSpeed (double Speed) {
+    shooterLeft.setControl(shooterLeftVV.withVelocity(Speed));
   }
 }

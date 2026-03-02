@@ -39,14 +39,10 @@ public class Hopper extends SubsystemBase {
     rightConfigs.CurrentLimits.StatorCurrentLimit = 40;
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
     rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
-
-    HopperRight.setControl(new Follower(52, MotorAlignmentValue.Opposed));
-
 
       TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
 
@@ -63,17 +59,17 @@ public class Hopper extends SubsystemBase {
     leftConfigs.CurrentLimits.StatorCurrentLimit = 40;
     leftConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1;
     leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
     
     HopperLeft.getConfigurator().apply(leftConfigs);
     HopperRight.getConfigurator().apply(rightConfigs);
 
     HopperLeft.setPosition(0);
-    HopperRight.setPosition(0);
+
+    HopperRight.setControl(new Follower(52, MotorAlignmentValue.Opposed));
   }
 
   @Override
@@ -100,7 +96,7 @@ public class Hopper extends SubsystemBase {
   }
 
   public void ZeroH () {
+    HopperLeft.setControl(new VoltageOut(0));
     HopperLeft.setPosition(0);
-    HopperRight.setPosition(0);
   }
 }
