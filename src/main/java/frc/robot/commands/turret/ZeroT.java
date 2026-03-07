@@ -8,15 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class gyroSetAngle extends Command {
-  private final Turret m_turret;
-  private final double m_angle;
-  /** Creates a new gyroSetAngle. */
-  public gyroSetAngle(Turret turret, double angle) {
-    m_turret = turret;
-    m_angle = angle;
+public class ZeroT extends Command {
+  Turret m_Turret;
+  /** Creates a new ZeroT. */
+  public ZeroT(Turret Turret) {
+    Turret = m_Turret;
     // Use addRequirements() here to declare subsystem dependencies.
-   // addRequirements(m_turret);
   }
 
   // Called when the command is initially scheduled.
@@ -26,14 +23,12 @@ public class gyroSetAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_turret.gyroSetAngle(m_angle);
+    m_Turret.ZeroT();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_turret.stopSpin();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

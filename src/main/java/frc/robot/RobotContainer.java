@@ -16,6 +16,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,12 +28,13 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Blinkin;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.HopperIntake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.commands.Hopper.HopperIn;
@@ -39,17 +42,19 @@ import frc.robot.commands.Hopper.HopperOut;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
+import frc.robot.commands.turret.ZeroT;
 import frc.robot.commands.turret.cordSetAngle;
 import frc.robot.commands.turret.gyroSetAngle;
 import frc.robot.commands.turret.llSetAngle;
-import frc.robot.commands.turret.setAngle;
+
 
 public class RobotContainer {
 
-      private final Shooter m_shooter = new Shooter();
+    double slowDrive = 1;
+
 
     private double MaxSpeed = 0.20 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.25).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.15).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -61,7 +66,10 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+   // private final CommandXboxController joystick = new CommandXboxController(0);
+
+    private final PS5Controller m_driver = new PS5Controller(0);
+    private final Joystick m_operator = new Joystick(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -69,11 +77,20 @@ public class RobotContainer {
 
     private final limelight m_Limelight = new limelight(drivetrain);
 
+    private final Intake m_Intake = new Intake();
+
+    private final Hopper m_Hopper = new Hopper();
+
+    private final Indexer m_Indexer = new Indexer();
+
+    private final Shooter m_shooter = new Shooter();
+
     private final SendableChooser<Command> autoChooser;
     private final Blinkin m_blinkin = new Blinkin();
     private final HopperIntake m_hopper = new HopperIntake();
     
     public RobotContainer() {
+         
         // Register Named Commands
      //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
@@ -84,7 +101,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("Shoot", new Shoot(m_shooter, drivetrain));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser();
+    //autoChooser = AutoBuilder.buildAutoChooser();
+ 
+    autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("none", Commands.none());
 
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default         boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;Auto");
@@ -127,9 +147,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(m_driver.getLeftY() * MaxSpeed * slowDrive) // Drive forward with negative Y (forward)
+                    .withVelocityY(m_driver.getLeftX() * MaxSpeed * slowDrive) // Drive left with negative X (left)
+                    .withRotationalRate(-m_driver.getRightX() * MaxAngularRate * slowDrive) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -142,7 +162,7 @@ Commands.either(
 ) );
 
          opposingZone.whileTrue(
-            Commands.run(() -> System.out.println("Opposing zone"))
+            Commands.print("opposing Zone")
          );
 
         alienceZone.whileTrue(
@@ -154,6 +174,26 @@ Commands.either(
                 RobotModeTriggers.disabled().whileTrue(
                     drivetrain.applyRequest(() -> idle).ignoringDisable(true)
                 );
+
+        // Operator Commands
+            //shooter
+            new JoystickButton(m_operator, 1).whileTrue(new Shoot(m_shooter, drivetrain));
+            //Hopper
+            new JoystickButton(m_operator, 18).onTrue(new HopperIn(m_Hopper));
+            new JoystickButton(m_operator, 17).onTrue(new HopperOut(m_Hopper));
+            new JoystickButton(m_operator, 19).whileTrue(new MHopperIn(m_Hopper));
+            new JoystickButton(m_operator, 20).whileTrue(new MHopperOut(m_Hopper));
+            new JoystickButton(m_operator, 22).whileTrue(new ZeroH(m_Hopper));
+            //Turret
+            new JoystickButton(m_operator, 6).and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
+            new JoystickButton(m_operator, 23).whileTrue(new ZeroT(m_turret));
+            //Indexer
+            new JoystickButton(m_operator, 9).toggleOnTrue(new IndexerForwards(m_Indexer));
+            new JoystickButton(m_operator, 4).whileTrue(new IndexerBack(m_Indexer));
+            //Intake
+            new JoystickButton(m_operator, 10).toggleOnTrue(new IntakeFore(m_Intake));
+            new JoystickButton(m_operator, 5).whileTrue(new IntakeBack(m_Intake));
+
         // Driver Commmands
                 joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
                 joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
@@ -165,7 +205,7 @@ Commands.either(
                 joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
                 joystick.b().whileTrue(drivetrain.applyRequest(() ->
                     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-                ));
+                ));*/
         
                 // Run SysId routines when holding back/start and X/Y.
                 // Note that each routine should be run exactly once in a single log.
@@ -173,13 +213,9 @@ Commands.either(
               //  joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
               //  joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
               //  joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-            /* Whichever Button is going to be shoot, I'll leave this here: new StartEndCommand(
-                        () -> m_blinkin.setFiringAnim(true),
-                        () -> m_blinkin.setFiringAnim(false),
-                        m_blinkin
-                        */
+        
                 // Reset the field-centric heading on left bumper press.
-                joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+                new JoystickButton(m_driver, PS5Controller.Button.kCreate.value).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         
                 drivetrain.registerTelemetry(logger::telemeterize);
             }
