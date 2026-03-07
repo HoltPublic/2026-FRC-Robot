@@ -34,6 +34,7 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.commands.Hopper.HopperIn;
 import frc.robot.commands.Hopper.HopperOut;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.turret.TurretLeft;
@@ -78,9 +79,9 @@ public class RobotContainer {
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
      //   NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
         NamedCommands.registerCommand("Turret Align", new llSetAngle(m_turret, m_Limelight));
-        NamedCommands.registerCommand("Hopper out", new HopperOut(m_hopper));
-        NamedCommands.registerCommand("Pass", Commands.none());
-        NamedCommands.registerCommand("Intake", Commands.none());
+        NamedCommands.registerCommand("Hopper Out", new HopperOut(m_hopper));
+        NamedCommands.registerCommand("Hopper In", new HopperIn(m_hopper));
+        NamedCommands.registerCommand("Shoot", new Shoot(m_shooter, drivetrain));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
