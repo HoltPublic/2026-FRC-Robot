@@ -3,29 +3,31 @@ package frc.robot.commands.Intake;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.HopperIntake;
 import frc.robot.Constants;
 
 public class IntakeBack extends Command {
 
-  Intake m_intake;
+  HopperIntake m_intake;
+  double m_speed;
 
-  public IntakeBack(Intake intake) {
+  public IntakeBack(HopperIntake intake) {
     // If this motor is in a subsystem, addRequirements(subsystem)
     m_intake = intake;
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_intake.setIntakeState(HopperIntake.INTAKE_STATE_BACKWARD);
+  }
 
   @Override
   public void execute() {
-    m_intake.intakeBack();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_intake.intakeStop();
+    m_intake.setIntakeState(HopperIntake.INTAKE_STATE_STOP);
   }
 
   @Override

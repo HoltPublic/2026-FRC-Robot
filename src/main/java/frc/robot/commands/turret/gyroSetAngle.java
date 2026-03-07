@@ -16,7 +16,7 @@ public class gyroSetAngle extends Command {
     m_turret = turret;
     m_angle = angle;
     // Use addRequirements() here to declare subsystem dependencies.
-   // addRequirements(m_turret);
+    addRequirements(m_turret);
   }
 
   // Called when the command is initially scheduled.

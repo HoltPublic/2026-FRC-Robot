@@ -127,7 +127,7 @@ public void gyroSetAngle (double angle) {
   System.out.println(mSet + "MSET");
 }
 
-public void ZeroT () {
+public void tZero () {
   turret.setControl(m_turretPV.withPosition(0));
 }
 
