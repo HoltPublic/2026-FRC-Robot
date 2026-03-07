@@ -22,28 +22,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.HopperIntake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.commands.Hopper.HopperIn;
 import frc.robot.commands.Hopper.HopperOut;
-import frc.robot.commands.Hopper.MHopperIn;
-import frc.robot.commands.Hopper.MHopperOut;
-import frc.robot.commands.Hopper.ZeroH;
-import frc.robot.commands.Indexer.IndexerBack;
-import frc.robot.commands.Indexer.IndexerForwards;
-import frc.robot.commands.Intake.IntakeBack;
-import frc.robot.commands.Intake.IntakeFore;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
@@ -91,9 +86,8 @@ public class RobotContainer {
     private final Shooter m_shooter = new Shooter();
 
     private final SendableChooser<Command> autoChooser;
-
-
-
+    private final Blinkin m_blinkin = new Blinkin();
+    private final HopperIntake m_hopper = new HopperIntake();
     
     public RobotContainer() {
          
@@ -101,19 +95,11 @@ public class RobotContainer {
      //   NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
      //   NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
      //   NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
-        NamedCommands.registerCommand("Cord Set Angle", new cordSetAngle(m_turret, drivetrain));
-        NamedCommands.registerCommand("Pass",Commands.either(
-    new gyroSetAngle(m_turret, 180),
-    new gyroSetAngle(m_turret, 0),
-    () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue));
-        NamedCommands.registerCommand("Hopper in", new HopperIn(m_Hopper));
-        NamedCommands.registerCommand("Hopper out", new HopperOut(m_Hopper));
+        NamedCommands.registerCommand("Turret Align", new llSetAngle(m_turret, m_Limelight));
+        NamedCommands.registerCommand("Hopper Out", new HopperOut(m_hopper));
+        NamedCommands.registerCommand("Hopper In", new HopperIn(m_hopper));
         NamedCommands.registerCommand("Shoot", new Shoot(m_shooter, drivetrain));
-        NamedCommands.registerCommand("Intake", new IntakeFore(m_Intake));
-        NamedCommands.registerCommand("Intake Reverse", new IntakeBack(m_Intake));
-        NamedCommands.registerCommand("Indexer Forwards", new IndexerForwards(m_Indexer));
-        NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(m_Indexer));
-        
+
     // Build an auto chooser. This will use Commands.none() as the default option.
     //autoChooser = AutoBuilder.buildAutoChooser();
  
@@ -209,20 +195,15 @@ Commands.either(
             new JoystickButton(m_operator, 5).whileTrue(new IntakeBack(m_Intake));
 
         // Driver Commmands
-                //Turret
-                new JoystickButton(m_driver, PS5Controller.Button.kL2.value).whileTrue(new TurretRight(m_turret));
-                new JoystickButton(m_driver, PS5Controller.Button.kR2.value).whileTrue(new TurretLeft(m_turret));
-                
-                new JoystickButton(m_driver, PS5Controller.Button.kR3.value).whileTrue(drivetrain.applyRequest(() -> brake));
-                //Shooter
-                new JoystickButton(m_driver, PS5Controller.Button.kR1.value).whileTrue(new Shoot(m_shooter, drivetrain));
-                
-
-                new JoystickButton(m_driver, PS5Controller.Button.kL1.value).whileTrue(Commands.run(() -> slowDrive = 0.3))
-                .onFalse(Commands.runOnce(()-> slowDrive = 1));
-  
-
-              /*   joystick.b().whileTrue(drivetrain.applyRequest(() ->
+                joystick.rightBumper().and(() -> LimelightHelpers.getTV("limelight-two")).whileTrue(new llSetAngle(m_turret, m_Limelight));
+                joystick.rightTrigger().whileTrue( new TurretRight(m_turret));
+                joystick.leftTrigger().whileTrue( new TurretLeft(m_turret));
+        
+                joystick.y().whileTrue( new Shoot(m_shooter, drivetrain));
+                joystick.y().whileTrue(new StartEndCommand(() -> m_blinkin.setFiringAnim(true), () -> m_blinkin.setFiringAnim(false), m_blinkin));
+        
+                joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                joystick.b().whileTrue(drivetrain.applyRequest(() ->
                     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
                 ));*/
         
