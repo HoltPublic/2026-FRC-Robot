@@ -17,16 +17,13 @@ public class IndexerBack extends Command {
   }
 
   @Override
-  public void initialize() {}
-
- @Override
-  public void execute() {
-    m_indexer.IndexerBack();
+  public void initialize() {
+    m_indexer.setState(Indexer.STATE_INDEX_BACK);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_indexer.IndexerStop();
+    m_indexer.setState(Indexer.STATE_INDEX_STOP);
   }
 
   @Override

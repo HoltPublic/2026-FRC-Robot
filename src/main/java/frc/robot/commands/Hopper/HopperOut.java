@@ -5,32 +5,33 @@
 package frc.robot.commands.Hopper;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.HopperIntake;
 
 
 public class HopperOut extends Command {
 
-  Hopper m_hopper;
+  HopperIntake m_hopper;
   double m_speed;
   /** Creates a new HopperOut. */
-  public HopperOut(Hopper hopper) {
+  public HopperOut(HopperIntake hopper) {
     m_hopper = hopper;
-
-    addRequirements(m_hopper);
+    m_speed = m_hopper.maxHopperVoltage / 2;
   }
 
   @Override
   public void initialize() {
+    m_hopper.setHopperSpeed(0);
   }
 
   @Override
   public void execute() {
-    m_hopper.setHopperPosition(-23.8);
+    //simple manual hopper out command
+      m_hopper.setHopperState(HopperIntake.HOPPER_STATE_START_OUT);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_hopper.hopperStop();
+    m_hopper.setHopperSpeed(0);
   }
 
   @Override
