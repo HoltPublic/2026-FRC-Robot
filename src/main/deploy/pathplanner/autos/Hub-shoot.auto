@@ -11,15 +11,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Close"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootMid"
-                }
-              },
               {
                 "type": "named",
                 "data": {

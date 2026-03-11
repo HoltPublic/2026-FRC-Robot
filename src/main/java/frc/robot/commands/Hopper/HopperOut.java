@@ -25,7 +25,7 @@ public class HopperOut extends Command {
 
   @Override
   public void execute() {
-    m_hopper.setHopperPosition(-23.8);
+    m_hopper.setHopperPosition(-40);
   }
 
   @Override

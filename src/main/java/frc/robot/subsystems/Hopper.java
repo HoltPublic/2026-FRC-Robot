@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -17,9 +18,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hopper extends SubsystemBase {
 
-  private final TalonFX HopperLeft = new TalonFX(52);
-  private final TalonFX HopperRight = new TalonFX(50);
+  private final TalonFX HopperLeft = new TalonFX(55);
+  private final TalonFX HopperRight = new TalonFX(53);
 
+  private final VelocityVoltage HopperVV = new VelocityVoltage(0);
   private final PositionVoltage m_HoperPV = new PositionVoltage(0);
 
   /** Creates a new Hopper. */
@@ -40,7 +42,7 @@ public class Hopper extends SubsystemBase {
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
     rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
 
@@ -60,7 +62,7 @@ public class Hopper extends SubsystemBase {
     leftConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
     leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
     
@@ -69,18 +71,18 @@ public class Hopper extends SubsystemBase {
 
     HopperLeft.setPosition(0);
 
-    HopperRight.setControl(new Follower(52, MotorAlignmentValue.Opposed));
+    HopperRight.setControl(new Follower(55, MotorAlignmentValue.Opposed));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     //double mRot = HopperLeft.getPosition().getValueAsDouble();
-   // System.out.println(mRot);
+    //System.out.println(mRot);
   }
 
   public void hopperIn () {
-    HopperLeft.setControl(new VoltageOut(-1));
+    HopperLeft.setControl(HopperVV.withVelocity(-7));
   }
 
   public void hopperStop () {
@@ -88,7 +90,7 @@ public class Hopper extends SubsystemBase {
   }
 
   public void hopperOut () {
-    HopperLeft.setControl(new VoltageOut(1));
+    HopperLeft.setControl(HopperVV.withVelocity(7));
   }
 
   public void setHopperPosition (double position) {
@@ -98,5 +100,10 @@ public class Hopper extends SubsystemBase {
   public void ZeroH () {
     HopperLeft.setControl(new VoltageOut(0));
     HopperLeft.setPosition(0);
+  }
+
+  public void setHopperOut () {
+        HopperLeft.setControl(new VoltageOut(0));
+    HopperLeft.setPosition(-40);
   }
 }

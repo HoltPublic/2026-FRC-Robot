@@ -29,7 +29,7 @@ public class HoodDown extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooter.shooterHoodDown();
+    m_shooter.keepHoodUp();
   }
 
   // Returns true when the command should end.
