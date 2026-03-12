@@ -12,8 +12,8 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class cordSetAngle extends Command {
-  Turret m_turret;
- CommandSwerveDrivetrain m_drivetrain;
+  private final Turret m_turret;
+  private final CommandSwerveDrivetrain m_drivetrain;
   /** Creates a new cordSetAngle. */
   public cordSetAngle(Turret turret,CommandSwerveDrivetrain drivetrain) {
     m_turret = turret;
@@ -38,7 +38,7 @@ boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
     double targetX = DSBlue ? 4.621 : 11.919;
     double targetY = 4.029;
 
-    double fuelSpeed = 11; //meters per second //TODO
+    double fuelSpeed = 11; //meters per second
 
     double distance = pose.getTranslation().getDistance(new Translation2d(targetX, targetY));
 

@@ -5,19 +5,18 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShootLL extends Command {
-  Shooter m_shooter;
+public class Shoot extends Command {
+  private final CommandSwerveDrivetrain m_drivetrain;
+  private final Shooter m_shooter;
   /** Creates a new Shoot. */
-  public ShootLL(Shooter shooter) {
+  public Shoot(Shooter shooter, CommandSwerveDrivetrain drivetrain) {
+    m_drivetrain = drivetrain;
     m_shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_shooter);
@@ -30,7 +29,6 @@ public class ShootLL extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    /* 
     boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
       var pose = m_drivetrain.getState().Pose;
@@ -39,32 +37,9 @@ public class ShootLL extends Command {
     double targetX = DSBlue ? 4.621 : 11.919;
     double targetY = 4.029;
 
+
     double distance = pose.getTranslation().getDistance(new Translation2d(targetX, targetY));
-    */
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-turret");
-    NetworkTableEntry ty = table.getEntry("ty");
-    double targetOffsetAngle_Vertical = ty.getDouble(0.0);
-
-   // System.out.println(targetOffsetAngle_Vertical + "-TY");
-
-    // how many degrees back is your limelight rotated from perfectly vertical?
-    double limelightMountAngleDegrees = 11.0; 
-
-    // distance from the center of the Limelight lens to the floor
-    double limelightLensHeightInches = 20.5; 
-
-    // distance from the target to the floor
-    double goalHeightInches = 44.25; 
-
-    double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-    //calculate distance
-    double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-
-    //System.out.println(distanceFromLimelightToGoalInches + "-Inches");
-
-    m_shooter.shoot(distanceFromLimelightToGoalInches);
+    m_shooter.shoot(distance);
   }
 
   // Called once the command ends or is interrupted.

@@ -20,8 +20,8 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class LimelightConstants {
-  public static String LimelightBackLeft = "limelight-bleft";
-  public static String LimelightBackRight = "limelight-bright";
+  public static String LimelightFrontLeft = "limelight-fleft";
+  public static String LimelightFrontRight = "limelight-fright";
   public static String LimelightTurret = "limelight-turret";
   }
   public static class IndexConstants {

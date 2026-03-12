@@ -5,13 +5,13 @@
 package frc.robot.subsystems;
 
 
+import static edu.wpi.first.units.Units.Degrees;
 
 //import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 //import com.ctre.phoenix6.configs.TalonFXConfigurator;
 //import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 //import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -30,11 +30,9 @@ public class Turret extends SubsystemBase {
 
   boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
-  private final TalonFX turret = new TalonFX(54);
+  private final TalonFX turret = new TalonFX(25);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
-
- private final VelocityVoltage turretVV = new VelocityVoltage(0);
 
   private final PositionVoltage m_turretPV = new PositionVoltage(0);
 
@@ -44,12 +42,12 @@ public class Turret extends SubsystemBase {
   /** Creates a new Turret. */
   public Turret(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
-  turret.setPosition( 0);
+  turret.setPosition(DSBlue ? 0 : 180);
 
 TalonFXConfiguration configs = new TalonFXConfiguration();
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    configs.Slot0.kP = 0.20; // An error of 0.2 rotations results in 1.2 volts output
+    configs.Slot0.kP = 0.20; // An error of 0.5 rotations results in 1.2 volts output
     configs.Slot0.kD = 0.02; // A change of 1 rotation per second results in 0.1 volts output
 
     configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
@@ -64,40 +62,36 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);//TODO
-    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-180);//TODO
+    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(360);
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-360);
 
     turret.getConfigurator().apply(configs);
 
   }
 
     private double degToRot (double degrees) {
-    return (degrees/ 360) * (160/4);
+    return (degrees/ 360) * 12;//100 on turret
   }
-
-    private double rotToDeg (double rot) {
-      return (rot/ (160/4)) * 100;
-    }
 
   @Override
   public void periodic() {
-    double mRot = turret.getPosition().getValueAsDouble();
-    double mDeg = (mRot / (160/4)) * 360;
+   // double mRot = turret.getPosition().getValueAsDouble();
+    //double mDeg = (mRot / 100) * 360;
 
 
   // System.out.println(mSet + "-mSet");
-    System.out.println(mRot + "-mRot");
-    System.out.println(mDeg + "-mDeg");
+   // System.out.println(mRot + "-mRot");
+  //  System.out.println(mDeg + "-mDeg");
     //System.out.println(m_turret.getPosition());
     // This method will be called once per scheduler run
   }
 
   public void rightSpin () {
-    turret.setControl(turretVV.withVelocity(-15));
+    turret.setControl(new VoltageOut(-6));
   }
  
  public void leftSpin () {
-  turret.setControl(turretVV.withVelocity(15));
+  turret.setControl(new VoltageOut(6));
  }
 
  public void stopSpin () {
@@ -113,7 +107,7 @@ public void llSetAngle (double angle ) {
  // double mDeg = (mRot / 100) * 360;
 
 
-  angle = MathUtil.inputModulus(angle, -360, 360);//TODO
+  angle = MathUtil.inputModulus(angle, -360, 360);
 
   double mSet = angle;
  // turret.setControl(m_turretPV.withPosition(mSet));
@@ -125,12 +119,12 @@ public void gyroSetAngle (double angle) {
 
   double mSet = angle - robotYaw;
 
-  mSet = MathUtil.inputModulus(mSet, -180, 180);//TODO
 
-  mSet = degToRot(mSet);
+
+ // mSet = MathUtil.inputModulus(mSet, -180, 180);
 
   turret.setControl(m_turretPV.withPosition(mSet));
-  //System.out.println(mSet + "MSET");
+  System.out.println(mSet + "MSET");
 }
 
 public void tZero () {

@@ -9,8 +9,8 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class gyroSetAngle extends Command {
-  Turret m_turret;
-  double m_angle;
+  private final Turret m_turret;
+  private final double m_angle;
   /** Creates a new gyroSetAngle. */
   public gyroSetAngle(Turret turret, double angle) {
     m_turret = turret;
