@@ -4,37 +4,48 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 public class Indexer extends SubsystemBase {
+  private final TalonFX IndexerLow = new TalonFX(51);
+  private final TalonFX IndexerHigh = new TalonFX(60);
 
-  public int State;
-  
-  public static int STATE_INDEX_STOP = 0;
-  public static int STATE_INDEX_SLOW = 1;
-  public static int STATE_INDEX_MED = 2;
-  public static int STATE_INDEX_FAST = 3;
-  public static int STATE_INDEX_BACK = 4;
-
-  // speeds for states
-  public static final double slowSpeed = 0.33;
-  public static final double medSpeed = 0.66;
-  public static final double fastSpeed = 1;
-  public static final double backSpeed = -0.5;
-  
-  TalonFX indexMotor;
   /** Creates a new Indexer. */
   public Indexer() {
-    indexMotor = new TalonFX(Constants.IndexConstants.kIndexMotorID);
-    TalonFXConfiguration indexConfig = new TalonFXConfiguration();
-    indexConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    indexMotor.getConfigurator().apply(indexConfig);
+  
+
+      TalonFXConfiguration lowConfigs = new TalonFXConfiguration();
+      TalonFXConfiguration highConfigs = new TalonFXConfiguration();
+
+    lowConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    lowConfigs.Slot0.kP = 0.2; // An error of 0.5 rotations results in 1.2 volts output
+    lowConfigs.Slot0.kS = 0.05; // Add 0.05 V output to overcome static friction
+    lowConfigs.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    lowConfigs.Slot0.kI = 0; // no output for integrated error
+    lowConfigs.Slot0.kD = 0; // no output for error derivative
+
+    lowConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+  
+    // Peak output of 8 volts
+    lowConfigs.Voltage.PeakForwardVoltage = 16;
+    lowConfigs.Voltage.PeakReverseVoltage = -16;
+    lowConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    lowConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    lowConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    highConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    IndexerHigh.getConfigurator().apply(highConfigs);
+    IndexerLow.getConfigurator().apply(lowConfigs);
+    IndexerHigh.setControl(new Follower(51, MotorAlignmentValue.Aligned));
   }
 
   @Override
@@ -42,28 +53,15 @@ public class Indexer extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void setState(int state) {
-    State = state;
-    // what the states do are self-explanatory...
-    if (State == STATE_INDEX_STOP) {
-      setSpeed(0);
-    }
-    if (State == STATE_INDEX_BACK) {
-      setSpeed(backSpeed); /* failsafe */
-    }
-    else if (State == STATE_INDEX_SLOW) {
-      setSpeed(slowSpeed);
-    }
-    else if (State == STATE_INDEX_MED) {
-      setSpeed(medSpeed);
-    }
-    else if (State == STATE_INDEX_FAST) {
-      setSpeed(fastSpeed);
-    }
+  public void IndexerForwards () {
+    IndexerLow.setControl(new VoltageOut(10));
   }
 
-  public void setSpeed(double speed) {
-    //simple setSpeed command
-    indexMotor.setControl(new VoltageOut(speed));
+  public void IndexerBack () {
+    IndexerLow.setControl(new VoltageOut(-5));
+  }
+
+  public void IndexerStop () {
+    IndexerLow.setControl(new VoltageOut(0));
   }
 }

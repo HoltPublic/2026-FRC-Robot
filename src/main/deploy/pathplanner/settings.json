@@ -1,16 +1,12 @@
 {
-  "robotWidth": 0.686,
+  "robotWidth": 0.6858,
   "robotLength": 0.6858,
   "holonomicMode": true,
   "pathFolders": [
-    "New Folder",
-    "shoot p1",
-    "shoot p2",
-    "shoot p3"
+    "blue 1",
+    "blue 2"
   ],
-  "autoFolders": [
-    "shoot-climb"
-  ],
+  "autoFolders": [],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
@@ -21,7 +17,7 @@
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.048,
   "driveGearing": 5.143,
-  "maxDriveSpeed": 7.0,
+  "maxDriveSpeed": 5.45,
   "driveMotorType": "krakenX60",
   "driveCurrentLimit": 60.0,
   "wheelCOF": 1.2,

@@ -20,8 +20,8 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class LimelightConstants {
-  public static String LimelightFrontLeft = "limelight-fleft";
-  public static String LimelightFrontRight = "limelight-fright";
+  public static String LimelightBackLeft = "limelight-bleft";
+  public static String LimelightBackRight = "limelight-bright";
   public static String LimelightTurret = "limelight-turret";
   }
   public static class IndexConstants {
@@ -32,8 +32,8 @@ public final class Constants {
 
     public static final int kIntakeMotorID1 = 21;
     public static final int kIntakeMotorID2 = 457;
-    public static final int kHopperMotorID1 = 20;
-    public static final int kHopperMotorID2 = 456;
+    public static final int kHopperMotorID1 = 550;
+    public static final int kHopperMotorID2 = 552;
     public static final double kHopperAuto = 6;
   }
 
