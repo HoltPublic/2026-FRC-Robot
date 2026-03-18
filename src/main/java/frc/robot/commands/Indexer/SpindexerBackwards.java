@@ -5,28 +5,27 @@
 package frc.robot.commands.Indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.*;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class IndexerForwards extends Command {
-  Indexer m_indexer;
-  public IndexerForwards(Indexer indexer) {
-    m_indexer = indexer;
+public class SpindexerBackwards extends Command {
+  /** Creates a new SpindexerBackwards. */
+  public SpindexerBackwards() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
- @Override
-  public void execute() {
-    m_indexer.IndexerForwards();
-  }
-
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void end(boolean interrupted) {
-    m_indexer.IndexerStop();
-  }
+  public void execute() {}
 
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
