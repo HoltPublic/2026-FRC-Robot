@@ -47,10 +47,12 @@ import frc.robot.commands.Intake.IntakeBack;
 import frc.robot.commands.Intake.IntakeFore;
 import frc.robot.commands.shooter.HoodDown;
 import frc.robot.commands.shooter.HoodUp;
+import frc.robot.commands.shooter.Pass;
 import frc.robot.commands.shooter.ShootLL;
 import frc.robot.commands.shooter.ShootClose;
 import frc.robot.commands.shooter.ShootDrivetrain;
 import frc.robot.commands.shooter.ShootFar;
+import frc.robot.commands.shooter.ShootIn;
 import frc.robot.commands.shooter.ShootMed;
 import frc.robot.commands.turret.TurretLeft;
 import frc.robot.commands.turret.TurretRight;
@@ -120,6 +122,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Reverse", new IntakeBack(m_Intake));
         NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(m_Indexer));
         */
+        NamedCommands.registerCommand("LLSetAngle", new llSetAngle(m_turret, m_Limelight));
         NamedCommands.registerCommand("Hopper out", new HopperOut(m_Hopper));
         NamedCommands.registerCommand("Shoot Close", new ShootClose(m_shooter));
         NamedCommands.registerCommand("ShootMid", new ShootMed(m_shooter));
@@ -210,6 +213,8 @@ Commands.either(
             new JoystickButton(m_operator, 6).whileTrue(new ShootClose(m_shooter));
             new JoystickButton(m_operator, 7).whileTrue(new ShootMed(m_shooter));
             new JoystickButton(m_operator, 8).whileTrue(new ShootFar(m_shooter));
+            new JoystickButton(m_operator, 3).whileTrue(new Pass(m_shooter));
+            new JoystickButton(m_operator, 21).whileTrue(new ShootIn(m_shooter));
             //Shooter Manual
             new JoystickButton(m_operator, 11).whileTrue(new HoodUp(m_shooter));
             new JoystickButton(m_operator, 12).whileTrue(new HoodDown(m_shooter));
@@ -228,16 +233,16 @@ Commands.either(
             new JoystickButton(m_operator, 14).whileTrue(new TurretLeft(m_turret));//TODO
             new JoystickButton(m_operator, 16).whileTrue(new TurretRight(m_turret));//TODO
             new JoystickButton(m_operator, 13).whileTrue(new cordSetAngle(m_turret, drivetrain));//TODO
-            new JoystickButton(m_operator, 15).whileTrue(Commands.either(
-            new gyroSetAngle(m_turret, 180),
-            new gyroSetAngle(m_turret, 0),
-            () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue));
-            //new JoystickButton(m_operator, 39999).and(() -> LimelightHelpers.getTV("limelight-turret")).whileTrue(new llSetAngle(m_turret, m_Limelight));//TODO
+           // new JoystickButton(m_operator, 15).whileTrue(Commands.either(
+           ///+ new gyroSetAngle(m_turret, 180),
+           // new gyroSetAngle(m_turret, 0),
+           // () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue));
+            new JoystickButton(m_operator, 15).and(() -> LimelightHelpers.getTV("limelight-turret")).whileTrue(new llSetAngle(m_turret, m_Limelight));//TODO
             //Turret Zero
             new JoystickButton(m_operator, 23).whileTrue(new ZeroT(m_turret));
 
             //Indexer
-            new JoystickButton(m_operator, 9).toggleOnTrue(new IndexerForwards(m_Indexer));
+            new JoystickButton(m_operator, 9).whileTrue(new IndexerForwards(m_Indexer));
             new JoystickButton(m_operator, 4).whileTrue(new IndexerBack(m_Indexer));
 
             //Intake

@@ -16,7 +16,12 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.turret.TurretLeft;
 
 public class Shooter extends SubsystemBase {
 private final TalonFX shooterLeft = new TalonFX(58);
@@ -33,6 +38,11 @@ private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
 private final InterpolatingDoubleTreeMap rpmTable = new InterpolatingDoubleTreeMap();
 private final InterpolatingDoubleTreeMap hoodAngleTable = new InterpolatingDoubleTreeMap();
 
+private DoublePublisher shooterSupplyCurrentPub;
+private DoublePublisher shooterStatorCurrentPub;
+private DoublePublisher hoodSupplyCurrentPub;
+private DoublePublisher hoodStatorCurrentPub;
+
   /** Creates a new Shooter. */
   public Shooter() {
 
@@ -48,7 +58,7 @@ TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
     hoodConfigs.Voltage.PeakForwardVoltage = 16;
     hoodConfigs.Voltage.PeakReverseVoltage = -16;
     hoodConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    hoodConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    hoodConfigs.CurrentLimits.StatorCurrentLimit = 30;
     hoodConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -72,7 +82,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     rightConfig.Voltage.PeakForwardVoltage = 16;
     rightConfig.Voltage.PeakReverseVoltage = -16;
     rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfig.CurrentLimits.StatorCurrentLimit = 40;
+    rightConfig.CurrentLimits.StatorCurrentLimit = 30;
     rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
@@ -90,7 +100,9 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     leftConfig.Voltage.PeakForwardVoltage = 16;
     leftConfig.Voltage.PeakReverseVoltage = -16;
     leftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfig.CurrentLimits.StatorCurrentLimit = 40;
+    leftConfig.CurrentLimits.StatorCurrentLimit = 30;
+    leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    leftConfig.CurrentLimits.SupplyCurrentLimit = 30;
     leftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     shooterHood.getConfigurator().apply(hoodConfigs);
@@ -100,14 +112,14 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     shooterRight.setControl(new Follower(59, MotorAlignmentValue.Opposed));
 
 // distance in meters to rpm of shooter
-    rpmTable.put(25.0, 2060.0); 
-    rpmTable.put(50.0, 1925.0);
+    rpmTable.put(25.0, 2160.0); 
+    rpmTable.put(50.0, 2475.0);
     rpmTable.put(75.0, 2700.0);
-    rpmTable.put(100.0, 2825.0);
-    rpmTable.put(125.0, 2850.0);
-    rpmTable.put(150.0, 3250.0);
-    rpmTable.put(175.0, 3600.0);
-    rpmTable.put(200.0, 3750.0);
+    rpmTable.put(100.0, 2850.0);
+    rpmTable.put(125.0, 2950.0);
+    rpmTable.put(150.0, 3350.0);
+    rpmTable.put(175.0, 3700.0);
+    rpmTable.put(200.0, 3850.0);
     /* 
     rpmTable.put(3.0, 3115.0);
     rpmTable.put(3.5, 3410.0);
@@ -145,6 +157,23 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 */
  
     shooterHood.setPosition(0);
+
+    shooterSupplyCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Shooter/Current/Supply (A)")
+          .publish();
+    shooterStatorCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Shooter/Current/Stator (A)")
+          .publish();
+    hoodSupplyCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hood/Current/Supply (A)")
+          .publish();
+    hoodStatorCurrentPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hood/Current/Stator (A)")
+          .publish();
   }
 
   @Override
@@ -152,6 +181,16 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     //double mHoodRot = shooterHood.getPosition().getValueAsDouble();
     //System.out.println(mHoodRot);
     // This method will be called once per scheduler run
+    double shooterSupplyAmps = ((shooterLeft.getSupplyCurrent().getValueAsDouble() + shooterRight.getSupplyCurrent().getValueAsDouble()) / 2);
+    double shooterStatorAmps = ((shooterLeft.getStatorCurrent().getValueAsDouble() + shooterRight.getStatorCurrent().getValueAsDouble()) / 2);
+
+    double hoodSupplyAmps = shooterHood.getSupplyCurrent().getValueAsDouble();
+    double hoodStatorAmps = shooterHood.getStatorCurrent().getValueAsDouble();
+
+    shooterSupplyCurrentPub.set(shooterSupplyAmps);
+    shooterStatorCurrentPub.set(shooterStatorAmps);
+    hoodSupplyCurrentPub.set(hoodSupplyAmps);
+    hoodStatorCurrentPub.set(hoodStatorAmps);
   }
 
   public void shoot (double distance) {
@@ -166,7 +205,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
   public void shootIn () {
    // shooterRight.setControl(shooterRightVV.withVelocity(-10));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(-10));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(-53));
   }
 
   public void stopShoot () {
