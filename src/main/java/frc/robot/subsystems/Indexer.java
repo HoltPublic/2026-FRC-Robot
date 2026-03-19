@@ -14,11 +14,21 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Subsystem for controlling the robot's internal fuel transport.
+ * <p>The Indexer uses 2 motors to move fuel into or out of the robot.
+ * It handles the synchronization between the upper and lower roller.
+ * <p>This class is maintained by Henry M. of 6078
+ * @author 6078 - Riley A.
+ */
 public class Indexer extends SubsystemBase {
   private final TalonFX IndexerLow = new TalonFX(51);
   private final TalonFX IndexerHigh = new TalonFX(60);
 
-  /** Creates a new Indexer. */
+  /** Creates a new Indexer.
+   * <p>Configures the {@code IndexerLow} as the lead motor and {@code IndexerHigh}
+   * as a follower. Sets neutral modes to Brake, applies current limits for motor
+   * protection, and defines closed-loop ramp rates for smooth acceleration.*/
   public Indexer() {
   
 
@@ -53,14 +63,26 @@ public class Indexer extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Drives the indexer rollers forward to intake or feed fuel.
+   * Sets the lower motor to 10V; the upper motor follows automatically.
+   */
   public void IndexerForwards () {
     IndexerLow.setControl(new VoltageOut(10));
   }
 
+  /**
+   * Reverses the indexer rollers at half speed (-5V).
+   * <p>This is typically used for clearing jams or repositioning fuel
+   * that has traveled too far into the system</p>
+   */
   public void IndexerBack () {
     IndexerLow.setControl(new VoltageOut(-5));
   }
 
+  /**
+   * Stops all indexer movement immediately.
+   */
   public void IndexerStop () {
     IndexerLow.setControl(new VoltageOut(0));
   }
