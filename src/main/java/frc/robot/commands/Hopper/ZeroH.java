@@ -12,8 +12,9 @@ public class ZeroH extends Command {
   Hopper m_Hopper;
   /** Creates a new ZeroH. */
   public ZeroH(Hopper Hopper) {
-    Hopper = m_Hopper;
+    m_Hopper = Hopper;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_Hopper);
   }
 
   // Called when the command is initially scheduled.
@@ -33,6 +34,6 @@ public class ZeroH extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

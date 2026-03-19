@@ -18,25 +18,45 @@ import frc.robot.LimelightHelpers.RawFiducial;
 public class limelight extends SubsystemBase {
   private CommandSwerveDrivetrain drivetrain;
 
-  double fleftA = 0;
-  double frightA = 0;
+  double bleftA = 0;
+  double brightA = 0;
     /** Creates a new limelight. */
     public limelight(CommandSwerveDrivetrain drivetrain) {
       this.drivetrain = drivetrain;
      
+    LimelightHelpers.setCameraPose_RobotSpace(LimelightConstants.LimelightBackRight,
+    -0.3044698,    // Forward offset (meters)
+    0.3040634,    // Side offset (meters)
+    0.2007616,    // Height offset (meters)
+    0.0,    // Roll (degrees)
+    45,   // Pitch (degrees)
+    95     // Yaw (degrees)
+);
+
+
+    LimelightHelpers.setCameraPose_RobotSpace(LimelightConstants.LimelightBackLeft,
+    -0.3044698,    // Forward offset (meters)
+    -0.3040634,    // Side offset (meters)
+    0.2007616,    // Height offset (meters)
+    0.0,    // Roll (degrees)
+    45,   // Pitch (degrees)
+    -95     // Yaw (degrees)
+);
+
+LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret, new int[]{18, 27, 26, 25, 24, 21, 11, 2, 10, 9, 8, 5});
   }
 
 
   @Override
   public void periodic() {
-    ambiguityfleft();
-    ambiguityfright();
+    ambiguitybleft();
+    ambiguitybright();
 
 
-    if (frightA < fleftA) {
-    updatePose(LimelightConstants.LimelightFrontLeft);
-    } else if (fleftA < frightA) {
-    updatePose(LimelightConstants.LimelightFrontRight);
+    if (brightA < bleftA) {
+    updatePose(LimelightConstants.LimelightBackRight);
+    } else if (bleftA < brightA) {
+    updatePose(LimelightConstants.LimelightBackLeft);
     }
     // This method will be called once per scheduler run
   }
@@ -46,30 +66,30 @@ public class limelight extends SubsystemBase {
   }
 
 //gets how confident the limelight is
-private void ambiguityfleft () {
-if ( LimelightHelpers.getTV(LimelightConstants.LimelightFrontLeft)){
+private void ambiguitybleft () {
+if ( LimelightHelpers.getTV(LimelightConstants.LimelightBackLeft)){
     // Get raw AprilTag/Fiducial data
-RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightFrontLeft);
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightBackLeft);
 for (RawFiducial fiducial : fiducials) {
    double ambiguityleft = fiducial.ambiguity;   // Tag pose ambiguity
-    fleftA = ambiguityleft;
+    bleftA = ambiguityleft;
 }
 } else {
-  fleftA = 1;
+  bleftA = 1;
 }
 }
 
 //gets how confident the limelight is
-private void ambiguityfright () {
-if ( LimelightHelpers.getTV(LimelightConstants.LimelightFrontRight)){
+private void ambiguitybright () {
+if ( LimelightHelpers.getTV(LimelightConstants.LimelightBackRight)){
   // Get raw AprilTag/Fiducial data
-RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightFrontRight);
+RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightBackRight);
 for (RawFiducial fiducial : fiducials) {
    double ambiguityright = fiducial.ambiguity;   // Tag pose ambiguity
-    frightA = ambiguityright;
+    brightA = ambiguityright;
 }
 } else {
-    frightA = 1;
+    brightA = 1;
 }
 }
 //update where the robot is with lmelights
@@ -93,7 +113,7 @@ LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
 LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(name);
              }
 
-if (limelightMeasurement == null || limelightMeasurement.tagCount ==  0) {
+if (limelightMeasurement == null || limelightMeasurement.tagCount == 0) {
   return;
 }
 

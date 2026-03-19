@@ -14,7 +14,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final TalonFX intake = new TalonFX(53);
+  private final VelocityVoltage IntakeVV = new VelocityVoltage(0);
+
+  private final TalonFX intake = new TalonFX(52);
   /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration Config = new TalonFXConfiguration();
@@ -33,7 +35,7 @@ public class Intake extends SubsystemBase {
     Config.Voltage.PeakReverseVoltage = -16;
     Config.CurrentLimits.StatorCurrentLimitEnable = true;
     Config.CurrentLimits.StatorCurrentLimit = 40;
-    Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     intake.getConfigurator().apply(Config);
   }
@@ -44,11 +46,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void intakeFore () {
-    intake.setControl(new VoltageOut(10));
+    intake.setControl(IntakeVV.withVelocity(48));
   }
 
   public void intakeBack () {
-    intake.setControl(new VoltageOut(-10));
+    intake.setControl(IntakeVV.withVelocity(-48));
   }
 
   public void intakeStop () {
