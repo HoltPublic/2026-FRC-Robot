@@ -25,7 +25,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-
+/**
+ * Subsystem responsible for controlling Saturn's Turret mechanism
+ * <p>This subsystem utilizes a single TalonFX motor to provide rotation. It supports
+ * various control modes including manual velocity control, direct position control
+ * and field-relative orientation using gyro data from the drivetrain.
+ *
+ * <p>Uses Phoenix 6 control requests: {@link PositionVoltage} and {@link VelocityVoltage}.
+ * @author Henry M. - 6078 (Maintainer)
+ * @author Riley A. - 6078 (Documentation)
+ */
 public class Turret extends SubsystemBase {
 
   boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
@@ -41,7 +50,10 @@ public class Turret extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
 
  // private final VelocityVoltage m_turretVV = new VelocityVoltage(null);
-  /** Creates a new Turret. */
+  /**Creates a new Turret subsystem.
+   * <p>Initializes the motor with specific PID gains, current limits, and
+   * software limit switches to prevent mechanical damage (Despite the fact it broke twice already)</p>
+   * @param drivetrain The {@link CommandSwerveDrivetrain} used for field-related positioning calculations*/
   public Turret(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
   turret.setPosition( 0);
@@ -71,10 +83,20 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
 
   }
 
+    /**
+     * Converts degrees to motor rotations based on the turret's gear ratio
+     * @param degrees The target angle in degrees.
+     * @return The equivalent motor rotations.
+     */
     private double degToRot (double degrees) {
     return (degrees/ 360) * (160/4);
   }
 
+    /**
+     * Converts motor rotations to degrees based on the turret's gear ratio
+     * @param rot The target motor rotations
+     * @return The equivalent angle in degrees
+     */
     private double rotToDeg (double rot) {
       return (rot/ (160/4)) * 100;
     }
@@ -92,23 +114,43 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
     // This method will be called once per scheduler run
   }
 
+    /**
+     * Spins the turret to the right at a consistent velocity
+     */
   public void rightSpin () {
     turret.setControl(turretVV.withVelocity(-15));
   }
- 
+
+    /**
+     * Spins the turret to the left at a consistent velocity
+     */
  public void leftSpin () {
   turret.setControl(turretVV.withVelocity(15));
  }
 
+    /**
+     * Stops the turret's rotation by applying 0 voltage.
+     */
  public void stopSpin () {
   turret.setControl(new VoltageOut(0));
  }
 
-public void setAngle (double setangle) {
+    /**
+     * Sets the turret angle using direct motor units.
+     * @param setangle The target position in motor rotations
+     */
+    public void setAngle (double setangle) {
     turret.setControl(m_turretPV.withPosition(setangle));
 }
 
-public void llSetAngle (double angle ) {
+    /**
+     * Sets the turret angle based on specific input constraints
+     * <p>This method applies a modulus of [-360, 360] to the input angle
+     * to ensure the target remains within a single rotation's range before
+     * applying position control.</p>
+     * @param angle The target angle in degrees
+     */
+    public void llSetAngle (double angle ) {
  // double mRot = m_turret.getPosition().getValueAsDouble();
  // double mDeg = (mRot / 100) * 360;
 
@@ -120,7 +162,14 @@ public void llSetAngle (double angle ) {
   turret.setControl(new PositionVoltage(mSet));
 }
 
-public void gyroSetAngle (double angle) {
+    /**
+     * Sets the turret to a field-relative angle using the robot's gyro heading.
+     * <p>The method subtracts the current {@code robotYaw} from the target
+     * {@code angle} and wraps the results to [-180, 180] to find the shortest
+     * path for the turret to maintain its heading regardless of chassis rotation.</p>
+     * @param angle The desired field-relative heading in degrees.
+     */
+    public void gyroSetAngle (double angle) {
   double robotYaw = drivetrain.getState().Pose.getRotation().getDegrees();
 
   double mSet = angle - robotYaw;
@@ -133,7 +182,10 @@ public void gyroSetAngle (double angle) {
   //System.out.println(mSet + "MSET");
 }
 
-public void ZeroT () {
+    /**
+     * Returns the turret to its zero (home) position
+     */
+    public void ZeroT () {
   turret.setControl(m_turretPV.withPosition(0));
 }
 

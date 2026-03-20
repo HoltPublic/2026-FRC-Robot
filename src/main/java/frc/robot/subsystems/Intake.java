@@ -13,11 +13,32 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Subsystem responsible for Saturn's intake mechanism.
+ * <p>Utilizes a single TalonFX motor to drive the intake rollers. This class
+ * uses velocity-based control to maintain consistent intake/outtake speeds
+ * and includes a voltage ramp to reduce mechanical stress during sudden
+ * direction changes.</p>
+ *
+ * @author Henry M. - 6078 (Maintainer)
+ * @author Riley A. - 6078 (Documentation)
+ */
 public class Intake extends SubsystemBase {
   private final VelocityVoltage IntakeVV = new VelocityVoltage(0);
 
   private final TalonFX intake = new TalonFX(52);
-  /** Creates a new Intake. */
+
+  /**
+   * Constructs a new Intake subsystem and configures motor parameters.
+   *
+   * <p>Key configurations include:</p>
+   * <ul>
+   *     <li><b>Neutral Mode:</b> Set to {@code Brake} to ensure the rollers stop immediately.</li>
+   *     <li><b>PID Gains:</b> Configured in Slot 0 for accurate velocity tracking.</li>
+   *     <li><b>Voltage Limits:</b> Peak voltage is set to 16V, with a 0.3s ramp period for closed-loop control.</li>
+   *     <li><b>Current Limits:</b> A 40A stator current limit is enabled to protect the motor and gearbox.</li>
+   * </ul>
+   */
   public Intake() {
     TalonFXConfiguration Config = new TalonFXConfiguration();
 
@@ -45,14 +66,25 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  /**
+   * Runs the intake rollers forward at a target velocity to acquire fuel.
+   * <p>Target velocity is set to 48 rotations per second (RPS).</p>
+   */
   public void intakeFore () {
     intake.setControl(IntakeVV.withVelocity(48));
   }
 
+  /**
+   * Runs the intake rollers in reverse at a target velocity to expel fuel
+   * <p>Target velocity is set to -48 rotations per second (RPS).</p>
+   */
   public void intakeBack () {
     intake.setControl(IntakeVV.withVelocity(-48));
   }
 
+  /**
+   * Immediately stops the intake rollers by applying zero voltage.
+   */
   public void intakeStop () {
     intake.setControl(new VoltageOut(0));
   }

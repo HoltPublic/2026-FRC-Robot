@@ -13,9 +13,16 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  /**
+   * Constants related to Operator Input (Controllers)
+   */
   public static class OIConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  /**
+   * NetworkTable names for various Limelight camera units on Saturn.
+   */
   public static class LimelightConstants {
   public static String LimelightBackLeft = "limelight-bleft";
   public static String LimelightBackRight = "limelight-bright";
@@ -25,17 +32,25 @@ public final class Constants {
 
     public static final int kIndexMotorID = 21;
   }
+
+  /**
+   * Hardware IDs and configurations for the Hopper and Intake Mechanisms
+   */
   public static class HopperConstants {
 
     public static final int kIntakeMotorID1 = 21;
     public static final int kIntakeMotorID2 = 457;
     public static final int kHopperMotorID1 = 550;
     public static final int kHopperMotorID2 = 552;
+    /**
+     * Default speed for automated hopper movement.
+     */
     public static final double kHopperAuto = 6;
   }
 
   /**
    * Constants related to the REV Blinkin
+   * @author Riley A. - 6078 (Both Maintainer and Documentation)
    */
   public static class BlinkinConstants {
 
@@ -140,26 +155,6 @@ public final class Constants {
         this.displayName = displayName;
       }
     }
-
-  }
-  public static class ShooterConstants {
-    //IDs
-    public static final int kLeftFiringMotorID = 20;
-    public static final int kRightFiringMotorID = 21;
-    public static final int kHoodID = 32;
-    //Starting values
-    public static final int kStartingVelocity = 0;
-    public static final int kStartingPosition = 0;
-    //Gear Ratio
-    public static final double kHoodGearRadio = 50.0 / 1.0; //TODO: Change this to the real gear ratio
-
-    //Math
-    public static final double kRotationsToDegrees = 360.0 / kHoodGearRadio;
-    //Soft Limits (Specifically in Motor Rotations) for the hood, also, presumably, if the hood should move say, 30 degrees, it should be (30/360) * Gear Ratio to get Max Rotations
-    public static final double kHoodMaxRotations = 5.0; //TODO: Change to the recommended max rotations by Isiah
-    public static final double kHoodMinRotations = 0.0; //TODO: Change to what Isiah recommends
-
-
 
   }
 }
