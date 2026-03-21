@@ -49,22 +49,22 @@ LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret
 
   @Override
   public void periodic() {
-    ambiguitybleft();
-    ambiguitybright();
+    //ambiguitybleft();
+    //ambiguitybright();
 
 
-    if (brightA < bleftA) {
-    updatePose(LimelightConstants.LimelightBackRight);
-    } else if (bleftA < brightA) {
-    updatePose(LimelightConstants.LimelightBackLeft);
-    }
+   // if (brightA < bleftA) {
+    //updatePose(LimelightConstants.LimelightBackRight);
+   // } else if (bleftA < brightA) {
+    //updatePose(LimelightConstants.LimelightBackLeft);
+   // }
     // This method will be called once per scheduler run
   }
   //gets the offset of the robot to april tag
   public double turretTx () {
     return LimelightHelpers.getTX(LimelightConstants.LimelightTurret);
   }
-
+/* 
 //gets how confident the limelight is
 private void ambiguitybleft () {
 if ( LimelightHelpers.getTV(LimelightConstants.LimelightBackLeft)){
@@ -125,4 +125,5 @@ drivetrain.addVisionMeasurement(
 );
 
 }
+*/
 }

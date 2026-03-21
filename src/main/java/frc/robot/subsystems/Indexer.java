@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoublePredicate;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -12,11 +14,22 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Utils.NTDouble;
 
 public class Indexer extends SubsystemBase {
   private final TalonFX IndexerLow = new TalonFX(51);
   private final TalonFX IndexerHigh = new TalonFX(60);
+
+  private NTDouble indexerSupplyCurrent = new NTDouble("Indexer/Current/Supply (A)");
+  private NTDouble indexerStatorCurrent = new NTDouble("Indexer/Current/Stator (A)");
+  private NTDouble feederSupplyCurrent = new NTDouble("Feeder/Current/Supply (A)");
+  private NTDouble feederStatorCurrent = new NTDouble("Feeder/Current/Stator (A)");
+  private NTDouble indexerTargetVelocity = new NTDouble("Indexer/Velocity/Target");
+  private NTDouble indexerActualVelcoity = new NTDouble("Indexer/Velocity/Actual");
+  private NTDouble feederTargetVelocity = new NTDouble("Feeder/Velocity/Target");
+  private NTDouble feederActualVelocity = new NTDouble("Feeder/Velocity/Actual");
 
   /** Creates a new Indexer. */
   public Indexer() {
@@ -38,30 +51,55 @@ public class Indexer extends SubsystemBase {
     lowConfigs.Voltage.PeakForwardVoltage = 16;
     lowConfigs.Voltage.PeakReverseVoltage = -16;
     lowConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    lowConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    lowConfigs.CurrentLimits.StatorCurrentLimit = 25;
+    lowConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    lowConfigs.CurrentLimits.SupplyCurrentLimit = 25 ;
     lowConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
+    highConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    highConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    highConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    highConfigs.CurrentLimits.SupplyCurrentLimit = 30;
     highConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     IndexerHigh.getConfigurator().apply(highConfigs);
     IndexerLow.getConfigurator().apply(lowConfigs);
     IndexerHigh.setControl(new Follower(51, MotorAlignmentValue.Aligned));
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    double feederSupplyAmps = IndexerHigh.getSupplyCurrent().getValueAsDouble();
+    double feederStatorAmps = IndexerHigh.getStatorCurrent().getValueAsDouble();
+
+    double indexerSupplyAmps = IndexerLow.getSupplyCurrent().getValueAsDouble();
+    double indexerStatorAmps = IndexerLow.getStatorCurrent().getValueAsDouble();
+
+    indexerSupplyCurrent.set(indexerSupplyAmps);
+    indexerStatorCurrent.set(indexerStatorAmps);
+    feederSupplyCurrent.set(feederSupplyAmps);
+    feederStatorCurrent.set(feederStatorAmps);
+    indexerActualVelcoity.set(IndexerLow.getVelocity().getValueAsDouble());
+    feederActualVelocity.set(IndexerHigh.getVelocity().getValueAsDouble());
   }
 
   public void IndexerForwards () {
     IndexerLow.setControl(new VoltageOut(10));
+    indexerTargetVelocity.set(10);
+    feederTargetVelocity.set(10);
   }
 
   public void IndexerBack () {
     IndexerLow.setControl(new VoltageOut(-5));
+    indexerTargetVelocity.set(-5);
+    feederTargetVelocity.set(-5);
   }
 
   public void IndexerStop () {
     IndexerLow.setControl(new VoltageOut(0));
+    indexerTargetVelocity.set(0);
+    feederTargetVelocity.set(0);
   }
 }

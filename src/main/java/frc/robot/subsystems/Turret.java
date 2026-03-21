@@ -21,7 +21,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 //import com.ctre.phoenix6.sim.ChassisReference;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -40,17 +44,20 @@ public class Turret extends SubsystemBase {
 
   private final CommandSwerveDrivetrain drivetrain;
 
+  private DoublePublisher supplyCurrentPub;
+  private DoublePublisher statorCurrentPub;
+
  // private final VelocityVoltage m_turretVV = new VelocityVoltage(null);
   /** Creates a new Turret. */
   public Turret(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
-  turret.setPosition( 0);
+    turret.setPosition( 0);
 
-TalonFXConfiguration configs = new TalonFXConfiguration();
+    TalonFXConfiguration configs = new TalonFXConfiguration();
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    configs.Slot0.kP = 0.20; // An error of 0.2 rotations results in 1.2 volts output
-    configs.Slot0.kD = 0.02; // A change of 1 rotation per second results in 0.1 volts output
+    configs.Slot0.kP = 0.10; // An error of 0.2 rotations results in 1.2 volts output
+    configs.Slot0.kD = 0.03; // A change of 1 rotation per second results in 0.1 volts output
 
     configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
@@ -58,7 +65,9 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Voltage.PeakForwardVoltage = 16;
     configs.Voltage.PeakReverseVoltage = -16;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
-    configs.CurrentLimits.StatorCurrentLimit = 40;
+    configs.CurrentLimits.StatorCurrentLimit = 30;
+    configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    configs.CurrentLimits.SupplyCurrentLimit = 30;
     configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -69,6 +78,14 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
 
     turret.getConfigurator().apply(configs);
 
+    supplyCurrentPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Turret/Current/Supply (A)")
+          .publish();
+    statorCurrentPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Turret/Current/Stator (A)")
+          .publish();
   }
 
     private double degToRot (double degrees) {
@@ -81,23 +98,27 @@ TalonFXConfiguration configs = new TalonFXConfiguration();
 
   @Override
   public void periodic() {
-    double mRot = turret.getPosition().getValueAsDouble();
-    double mDeg = (mRot / (160/4)) * 360;
+    // double mRot = turret.getPosition().getValueAsDouble();
+    // double mDeg = (mRot / (160/4)) * 360;
+    double turretSupplyAmps = turret.getSupplyCurrent().getValueAsDouble();
+    double turretStatorAmps = turret.getStatorCurrent().getValueAsDouble();
 
+    supplyCurrentPub.set(turretSupplyAmps);
+    statorCurrentPub.set(turretStatorAmps);
 
   // System.out.println(mSet + "-mSet");
-    System.out.println(mRot + "-mRot");
-    System.out.println(mDeg + "-mDeg");
-    //System.out.println(m_turret.getPosition());
+    //System.out.println(mRot + "-mRot");
+    //System.out.println(mDeg + "-mDeg");
+    // System.out.println(turret.getPosition());
     // This method will be called once per scheduler run
   }
 
   public void rightSpin () {
-    turret.setControl(turretVV.withVelocity(-15));
+    turret.setControl(turretVV.withVelocity(-25));
   }
  
  public void leftSpin () {
-  turret.setControl(turretVV.withVelocity(15));
+  turret.setControl(turretVV.withVelocity(25));
  }
 
  public void stopSpin () {
@@ -113,9 +134,9 @@ public void llSetAngle (double angle ) {
  // double mDeg = (mRot / 100) * 360;
 
 
-  angle = MathUtil.inputModulus(angle, -360, 360);//TODO
+  angle = MathUtil.inputModulus(angle, -180, 180);//TODO
 
-  double mSet = angle;
+  double mSet = -angle;
  // turret.setControl(m_turretPV.withPosition(mSet));
   turret.setControl(new PositionVoltage(mSet));
 }
@@ -131,6 +152,10 @@ public void gyroSetAngle (double angle) {
 
   turret.setControl(m_turretPV.withPosition(mSet));
   //System.out.println(mSet + "MSET");
+}
+
+public void setAngleZero() {
+  turret.setControl(m_turretPV.withPosition(0));
 }
 
 public void ZeroT () {

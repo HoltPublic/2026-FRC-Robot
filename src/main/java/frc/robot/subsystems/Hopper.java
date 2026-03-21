@@ -14,6 +14,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -29,7 +32,12 @@ public class Hopper extends SubsystemBase {
   private final VelocityVoltage HopperVV = new VelocityVoltage(0);
   private final PositionVoltage m_HoperPV = new PositionVoltage(0);
 
-  /** Configures the Hopper's Motors, based on the names I assume that this is for the bottom two motors that control the hopper extending out and moving fuel to the Turret.<br><br> Documented by Riley A.*/
+  private DoublePublisher supplyCurrentPub;
+  private DoublePublisher statorCurrentPub;
+  private DoublePublisher targetPositionPub;
+  private DoublePublisher actualPositionPub;
+
+  /** Creates a new Hopper. */
   public Hopper() {
   TalonFXConfiguration rightConfigs = new TalonFXConfiguration();
 
@@ -43,7 +51,7 @@ public class Hopper extends SubsystemBase {
     rightConfigs.Voltage.PeakForwardVoltage = 16;
     rightConfigs.Voltage.PeakReverseVoltage = -16;
     rightConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    rightConfigs.CurrentLimits.StatorCurrentLimit = 30;
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
@@ -63,13 +71,15 @@ public class Hopper extends SubsystemBase {
     leftConfigs.Voltage.PeakForwardVoltage = 16;
     leftConfigs.Voltage.PeakReverseVoltage = -16;
     leftConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    leftConfigs.CurrentLimits.StatorCurrentLimit = 15;
+    leftConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    leftConfigs.CurrentLimits.SupplyCurrentLimit = 15;
     leftConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
+    leftConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -41;
     
     HopperLeft.getConfigurator().apply(leftConfigs);
     HopperRight.getConfigurator().apply(rightConfigs);
@@ -77,17 +87,23 @@ public class Hopper extends SubsystemBase {
     HopperLeft.setPosition(0);
 
     HopperRight.setControl(new Follower(55, MotorAlignmentValue.Opposed));
-  }
 
-    /**
-     * Runs about every 20 Milliseconds
-     * @deprecated  This method is unused in this subsystem
-     */
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    //double mRot = HopperLeft.getPosition().getValueAsDouble();
-    //System.out.println(mRot);
+    supplyCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hopper/Current/Supply (A)")
+          .publish();
+    statorCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hopper/Current/Stator (A)")
+          .publish();
+    targetPositionPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hopper/Position/Target")
+          .publish();
+    actualPositionPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hopper/Position/Actual")
+          .publish();
   }
 
     /**
@@ -116,6 +132,7 @@ public class Hopper extends SubsystemBase {
      * @param position A double representing the location of how far the hopper is extended out
      */
   public void setHopperPosition (double position) {
+    targetPositionPub.set(position);
     HopperLeft.setControl(m_HoperPV.withPosition(position));
   }
 
@@ -133,5 +150,19 @@ public class Hopper extends SubsystemBase {
   public void setHopperOut () {
         HopperLeft.setControl(new VoltageOut(0));
     HopperLeft.setPosition(-40);
+  }
+
+    @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    //double mRot = HopperLeft.getPosition().getValueAsDouble();
+    //System.out.println(mRot);
+    double supplyAmps = ((HopperLeft.getSupplyCurrent().getValueAsDouble() + HopperRight.getSupplyCurrent().getValueAsDouble()) / 2);
+    double statorAmps = ((HopperLeft.getStatorCurrent().getValueAsDouble() + HopperRight.getStatorCurrent().getValueAsDouble()) / 2);
+    double actualPosition = ((HopperLeft.getPosition().getValueAsDouble() + HopperRight.getPosition().getValueAsDouble()) / 2);
+
+    supplyCurrentPub.set(supplyAmps);
+    statorCurrentPub.set(statorAmps);
+    actualPositionPub.set(actualPosition);
   }
 }
