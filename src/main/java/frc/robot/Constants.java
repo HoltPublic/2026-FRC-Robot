@@ -37,6 +37,12 @@ public final class Constants {
     public static final double kHopperAuto = 6;
   }
 
+  public static class IntakeConstants {}
+
+  public static class IndexerConstants {}
+
+  public static class TurretConstants {}
+
   /**
    * Constants related to the REV Blinkin
    */
