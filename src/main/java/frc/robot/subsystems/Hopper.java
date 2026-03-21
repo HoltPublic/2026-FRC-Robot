@@ -19,8 +19,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ *  The Hopper Subsystem, which looks something along the lines of this based on the CAD Model: <br>
+ *  <img src="../doc-files/Hopper.png">
+ */
 public class Hopper extends SubsystemBase {
 
+    //Some motors. I don't know which one, as the name is kind of vague, that and looking at the CAD Model, there's 3. I'm going to have to document these motors, aren't I Henry?
   private final TalonFX HopperLeft = new TalonFX(55);
   private final TalonFX HopperRight = new TalonFX(53);
 
@@ -101,28 +106,47 @@ public class Hopper extends SubsystemBase {
           .publish();
   }
 
+    /**
+     * Moves the Hopper Back
+     */
   public void hopperIn () {
     HopperLeft.setControl(HopperVV.withVelocity(-7));
   }
 
+    /**
+     * Causes the Hopper  motors to stop
+     */
   public void hopperStop () {
     HopperLeft.setControl(new VoltageOut(0));
   }
 
+    /**
+     * Moves the hopper out
+     */
   public void hopperOut () {
     HopperLeft.setControl(HopperVV.withVelocity(7));
   }
 
+    /**
+     * Brings the hopper to an assumed position
+     * @param position A double representing the location of how far the hopper is extended out
+     */
   public void setHopperPosition (double position) {
     targetPositionPub.set(position);
     HopperLeft.setControl(m_HoperPV.withPosition(position));
   }
 
+    /**
+     * Moves the hopper back to where it considers itself at 0
+     */
   public void ZeroH () {
     HopperLeft.setControl(new VoltageOut(0));
     HopperLeft.setPosition(0);
   }
 
+    /**
+     *  Moves the hopper out all the way
+     */
   public void setHopperOut () {
         HopperLeft.setControl(new VoltageOut(0));
     HopperLeft.setPosition(-40);
