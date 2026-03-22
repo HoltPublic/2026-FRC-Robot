@@ -11,6 +11,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -28,17 +31,10 @@ public class Intake extends SubsystemBase {
 
   private final TalonFX intake = new TalonFX(52);
 
-  /**
-   * Constructs a new Intake subsystem and configures motor parameters.
-   *
-   * <p>Key configurations include:</p>
-   * <ul>
-   *     <li><b>Neutral Mode:</b> Set to {@code Brake} to ensure the rollers stop immediately.</li>
-   *     <li><b>PID Gains:</b> Configured in Slot 0 for accurate velocity tracking.</li>
-   *     <li><b>Voltage Limits:</b> Peak voltage is set to 16V, with a 0.3s ramp period for closed-loop control.</li>
-   *     <li><b>Current Limits:</b> A 40A stator current limit is enabled to protect the motor and gearbox.</li>
-   * </ul>
-   */
+  private DoublePublisher supplyCurrentPub;
+  private DoublePublisher statorCurrentPub;
+
+  /** Creates a new Intake. */
   public Intake() {
     TalonFXConfiguration Config = new TalonFXConfiguration();
 
@@ -55,15 +51,31 @@ public class Intake extends SubsystemBase {
     Config.Voltage.PeakForwardVoltage = 16;
     Config.Voltage.PeakReverseVoltage = -16;
     Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    Config.CurrentLimits.StatorCurrentLimit = 40;
+    Config.CurrentLimits.StatorCurrentLimit = 55;
+    Config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    Config.CurrentLimits.SupplyCurrentLimit = 55;
     Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     intake.getConfigurator().apply(Config);
+
+    supplyCurrentPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Intake/Current/Supply (A)")
+          .publish();
+    statorCurrentPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Intake/Current/Stator (A)")
+          .publish();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    double intakeSupplyAmps = intake.getSupplyCurrent().getValueAsDouble();
+    double intakeStatorAmps = intake.getStatorCurrent().getValueAsDouble();
+  
+    supplyCurrentPub.set(intakeSupplyAmps);
+    statorCurrentPub.set(intakeStatorAmps);
   }
 
   /**
@@ -71,7 +83,11 @@ public class Intake extends SubsystemBase {
    * <p>Target velocity is set to 48 rotations per second (RPS).</p>
    */
   public void intakeFore () {
+    //double mVol = intake.getMotorVoltage().getValueAsDouble();
+    //double mVel = intake.getVelocity().getValueAsDouble();
     intake.setControl(IntakeVV.withVelocity(48));
+    //System.out.println(mVel + "-Vel");
+    //System.out.println(mVol + "-Vol");
   }
 
   /**

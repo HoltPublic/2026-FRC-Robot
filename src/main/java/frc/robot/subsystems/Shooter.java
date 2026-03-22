@@ -16,7 +16,12 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.turret.TurretLeft;
 
 /**
  * Subsystem responsible for the Saturn's shooting mechanism, including dual-motor
@@ -43,23 +48,12 @@ private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
 private final InterpolatingDoubleTreeMap rpmTable = new InterpolatingDoubleTreeMap();
 private final InterpolatingDoubleTreeMap hoodAngleTable = new InterpolatingDoubleTreeMap();
 
-  /**
-   * Constructs a new {@code Shooter} subsystem and performs hardware initialization.
-   * <p>The constructor configures 3 {@link TalonFX} motors (left flywheel,
-   * right flywheel, and hood) with the following settings:</p>
-   * <ul>
-   *     <li><b>Neutral Modes:</b> The hood is set to {@code Brake} for position stability,
-   *     while flywheels are set to {@code Coast} to prevent mechanical strain.</li>
-   *     <li><b>Closed-Loop Control:</b> Applies PID gains (Slot 0) for velocity control
-   *     on the flywheels and position control on the hood.</li>
-   *     <li><b>Safety and Limits: </b>Enables stator current limits (40A) and software
-   *     forward/reverse limits for the hood to prevent over-extension (Or you know, to not break anything, cough, me with the climber last year, cough).</li>
-   *     <li><b>Automation:</b> Populates the {@link InterpolatingDoubleTreeMap} with
-   *     distance-to-RPM and distance-to-angle data points for automated shooting.</li>
-   * </ul>
-   * <p>Additionally, the right shooter motor is configured as an opposed follower
-   * to ensure synchronized flywheel rotation.</p>
-   */
+private DoublePublisher shooterSupplyCurrentPub;
+private DoublePublisher shooterStatorCurrentPub;
+private DoublePublisher hoodSupplyCurrentPub;
+private DoublePublisher hoodStatorCurrentPub;
+
+  /** Creates a new Shooter. */
   public Shooter() {
 
 TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
@@ -74,7 +68,7 @@ TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
     hoodConfigs.Voltage.PeakForwardVoltage = 16;
     hoodConfigs.Voltage.PeakReverseVoltage = -16;
     hoodConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    hoodConfigs.CurrentLimits.StatorCurrentLimit = 40;
+    hoodConfigs.CurrentLimits.StatorCurrentLimit = 30;
     hoodConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -98,7 +92,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     rightConfig.Voltage.PeakForwardVoltage = 16;
     rightConfig.Voltage.PeakReverseVoltage = -16;
     rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfig.CurrentLimits.StatorCurrentLimit = 40;
+    rightConfig.CurrentLimits.StatorCurrentLimit = 30;
     rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
@@ -116,7 +110,9 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     leftConfig.Voltage.PeakForwardVoltage = 16;
     leftConfig.Voltage.PeakReverseVoltage = -16;
     leftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfig.CurrentLimits.StatorCurrentLimit = 40;
+    leftConfig.CurrentLimits.StatorCurrentLimit = 30;
+    leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    leftConfig.CurrentLimits.SupplyCurrentLimit = 30;
     leftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     shooterHood.getConfigurator().apply(hoodConfigs);
@@ -126,14 +122,14 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     shooterRight.setControl(new Follower(59, MotorAlignmentValue.Opposed));
 
 // distance in meters to rpm of shooter
-    rpmTable.put(25.0, 2060.0); 
-    rpmTable.put(50.0, 1925.0);
+    rpmTable.put(25.0, 2160.0); 
+    rpmTable.put(50.0, 2475.0);
     rpmTable.put(75.0, 2700.0);
-    rpmTable.put(100.0, 2825.0);
-    rpmTable.put(125.0, 2850.0);
-    rpmTable.put(150.0, 3250.0);
-    rpmTable.put(175.0, 3600.0);
-    rpmTable.put(200.0, 3750.0);
+    rpmTable.put(100.0, 2850.0);
+    rpmTable.put(125.0, 2950.0);
+    rpmTable.put(150.0, 3350.0);
+    rpmTable.put(175.0, 3700.0);
+    rpmTable.put(200.0, 3850.0);
     /* 
     rpmTable.put(3.0, 3115.0);
     rpmTable.put(3.5, 3410.0);
@@ -171,6 +167,23 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 */
  
     shooterHood.setPosition(0);
+
+    shooterSupplyCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Shooter/Current/Supply (A)")
+          .publish();
+    shooterStatorCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Shooter/Current/Stator (A)")
+          .publish();
+    hoodSupplyCurrentPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hood/Current/Supply (A)")
+          .publish();
+    hoodStatorCurrentPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hood/Current/Stator (A)")
+          .publish();
   }
 
   @Override
@@ -178,6 +191,16 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     //double mHoodRot = shooterHood.getPosition().getValueAsDouble();
     //System.out.println(mHoodRot);
     // This method will be called once per scheduler run
+    double shooterSupplyAmps = ((shooterLeft.getSupplyCurrent().getValueAsDouble() + shooterRight.getSupplyCurrent().getValueAsDouble()) / 2);
+    double shooterStatorAmps = ((shooterLeft.getStatorCurrent().getValueAsDouble() + shooterRight.getStatorCurrent().getValueAsDouble()) / 2);
+
+    double hoodSupplyAmps = shooterHood.getSupplyCurrent().getValueAsDouble();
+    double hoodStatorAmps = shooterHood.getStatorCurrent().getValueAsDouble();
+
+    shooterSupplyCurrentPub.set(shooterSupplyAmps);
+    shooterStatorCurrentPub.set(shooterStatorAmps);
+    hoodSupplyCurrentPub.set(hoodSupplyAmps);
+    hoodStatorCurrentPub.set(hoodStatorAmps);
   }
 
     /**
@@ -201,7 +224,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
      */
   public void shootIn () {
    // shooterRight.setControl(shooterRightVV.withVelocity(-10));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(-10));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(-53));
   }
 
     /**
