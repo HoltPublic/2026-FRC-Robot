@@ -17,21 +17,32 @@ import frc.robot.Constants.BlinkinConstants.blinkinPattern;
  */
 public class Blinkin extends SubsystemBase {
     private Spark m_ledController = new Spark(BlinkinConstants.kPwmPort);
-    private SendableChooser<blinkinPattern> patternChooser = new SendableChooser<>();
+    private SendableChooser<blinkinPattern> pattern_chooser = new SendableChooser<>();
     private double m_color = 0.0;
     private boolean m_isFiring = false;
 
+    /**
+     * Sets up the Rev Blinkin LED Pattern Table
+     */
     public Blinkin() {
-        patternChooser.setDefaultOption(blinkinPattern.LIME.displayName, blinkinPattern.LIME);
+        pattern_chooser.setDefaultOption(blinkinPattern.LIME.displayName, blinkinPattern.LIME);
         System.out.println("The LED Pattern widget has a lot of default values, so if you pick one, I added parentheses to each option to let you know what they are. \n(Fixed) means that it's one of the Fixed Palette Patterns, the ones with Color Pattern in them are self explanatory. \n(Solid) indicates that the choice is a solid color, and has no underlying pattern ");
         for (blinkinPattern pattern : blinkinPattern.values()){
             if (pattern != blinkinPattern.LIME) {
-                patternChooser.addOption(pattern.displayName, pattern);
+                pattern_chooser.addOption(pattern.displayName, pattern);
             }
         }
-        SmartDashboard.putData("LED Pattern", patternChooser);
+        SmartDashboard.putData("LED Pattern", pattern_chooser);
     }
 
+    /**
+     * This class does quite a lot, it does the following:<br>
+     * 1. Gets the Current LED Mode, which is the name of the current command or idle. <br>
+     * 2. Checks if we are firing fuel, and if so, then the firing animation is true <br>
+     * 3. Checks if we're in TeleOP, then use a timer to determine each shift, and also our alliance and whether we're inactive first or not <br>
+     * 4. Changes the pattern displayed to either our active phase or whether we're inactive <br>
+     * 5. If we're not in Teleop, then we just set it to presumably the alliance colors, assuming the choice in {@link  BlinkinConstants} is default (Note, this is really onlu in Auton as PWM gets cut when the robot is disabled)
+     */
     @Override
     public void periodic() {
         
@@ -69,7 +80,7 @@ public class Blinkin extends SubsystemBase {
     }
 
     /**
-     * Sets the color of the LEDs based on the alliance
+     * Sets the color of the LEDs based on the alliance.
      */
     public void setAllianceColor(){
         var alliance = DriverStation.getAlliance();
@@ -101,7 +112,7 @@ public class Blinkin extends SubsystemBase {
      * Allows you to select from a custom pattern
      */
     public void setCustomColor(){
-        blinkinPattern selected = patternChooser.getSelected();
+        blinkinPattern selected = pattern_chooser.getSelected();
         if (selected != null){
             m_ledController.set(selected.value);
         }
@@ -123,7 +134,7 @@ public class Blinkin extends SubsystemBase {
 
     /**
      * Manual Override of the Pattern
-     * @param pattern
+     * @param pattern a Predefined pattern found in {@link BlinkinConstants.blinkinPattern}, if you do call this, you just need to call blinkinPattern.preDeterminedPattern
      */
     public void setPattern(blinkinPattern pattern){
         m_ledController.set(pattern.value);

@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
-import frc.robot.commands.Intake.IntakeBack;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -152,4 +149,28 @@ public final class Constants {
 
   }
 
+  /**
+   * Constants related to setting up the {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem guide Shooter Subsystem} with proper constants.
+   * @deprecated This was only used by {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem a Subsystem used by me to try and get Aidan to help make the Shooter Subsystem}, and I think the actual {@link frc.robot.subsystems.Shooter subsystem} uses magic numbers
+   */
+  public static class ShooterConstants {
+    //IDs
+    public static final int kLeftFiringMotorID = 20;
+    public static final int kRightFiringMotorID = 21;
+    public static final int kHoodID = 32;
+    //Starting values
+    public static final int kStartingVelocity = 0;
+    public static final int kStartingPosition = 0;
+    //Gear Ratio
+    public static final double kHoodGearRadio = 50.0 / 1.0; //TODO: Change this to the real gear ratio
+
+    //Math
+    public static final double kRotationsToDegrees = 360.0 / kHoodGearRadio;
+    //Soft Limits (Specifically in Motor Rotations) for the hood, also, presumably, if the hood should move say, 30 degrees, it should be (30/360) * Gear Ratio to get Max Rotations
+    public static final double kHoodMaxRotations = 5.0; //TODO: Change to the recommended max rotations by Isiah
+    public static final double kHoodMinRotations = 0.0; //TODO: Change to what Isiah recommends
+
+
+
+  }
 }
