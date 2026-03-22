@@ -24,6 +24,7 @@ Also yes this will pretty much be a documentation tutorial as well.
 
 /**A subsystem for the Shooter, but made by Riley and Aidan instead, I suppose meant for teaching others in the future what to look for.
  * Especially seeing as documentation is important for others and you to understand, look at the following meme:<br> <img src="../doc-files/programming-meme-2.jpg">
+ * @deprecated This entire subsystem is unused, and I suppose serves as a reference towards primarily documentation and a sort of tutorial for how to make a subsystem. Primarily documentation though
  */
 public class RileyAndAidanShooterSubsystem extends SubsystemBase {
   //Hardware Declarations

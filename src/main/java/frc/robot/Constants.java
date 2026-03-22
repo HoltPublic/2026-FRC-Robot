@@ -142,6 +142,11 @@ public final class Constants {
     }
 
   }
+
+  /**
+   * Constants related to setting up the {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem guide Shooter Subsystem} with proper constants.
+   * @deprecated This was only used by {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem a Subsystem used by me to try and get Aidan to help make the Shooter Subsystem}, and I think the actual {@link frc.robot.subsystems.Shooter subsystem} uses magic numbers
+   */
   public static class ShooterConstants {
     //IDs
     public static final int kLeftFiringMotorID = 20;
