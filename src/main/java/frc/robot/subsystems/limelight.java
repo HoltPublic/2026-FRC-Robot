@@ -72,15 +72,15 @@ LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret
      */
   @Override
   public void periodic() {
-    //ambiguitybleft();
-    //ambiguitybright();
+    ambiguitybleft();
+    ambiguitybright();
 
 
-   // if (brightA < bleftA) {
-    //updatePose(LimelightConstants.LimelightBackRight);
-   // } else if (bleftA < brightA) {
-    //updatePose(LimelightConstants.LimelightBackLeft);
-   // }
+    if (brightA < bleftA) {
+    updatePose(LimelightConstants.LimelightBackRight);
+    } else if (bleftA < brightA) {
+    updatePose(LimelightConstants.LimelightBackLeft);
+    }
     // This method will be called once per scheduler run
   }
 
@@ -91,8 +91,10 @@ LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret
   public double turretTx () {
     return LimelightHelpers.getTX(LimelightConstants.LimelightTurret);
   }
-/* 
-//gets how confident the limelight is
+    /**
+     * Calculates the pose ambiguity for the back-left Limelight.
+     * <p>If no target is visible, ambiguity defaults to 1 (lowest confidence)</p>
+     */
 private void ambiguitybleft () {
 if ( LimelightHelpers.getTV(LimelightConstants.LimelightBackLeft)){
     // Get raw AprilTag/Fiducial data
@@ -162,5 +164,4 @@ drivetrain.addVisionMeasurement(
 );
 
 }
-*/
 }

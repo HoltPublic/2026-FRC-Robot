@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 //import com.ctre.phoenix6.configs.TalonFXConfigurator;
 //import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 //import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -85,7 +86,7 @@ public class Turret extends SubsystemBase {
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);//TODO
+    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);//TODO Set the proper limit
     configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-180);//TODO
 
     turret.getConfigurator().apply(configs);
@@ -115,8 +116,8 @@ public class Turret extends SubsystemBase {
      * @return The equivalent angle in degrees
      */
     private double rotToDeg (double rot) {
-      return (rot/ (160/4)) * 100;
-    }
+      return (rot/ (160/4)) * 360;
+    } //Henry, why was this 100? Well, good thing this went unused elsewise, I don't want to know the horrors that would've happened (⊙_⊙)
 
   @Override
   public void periodic() {
@@ -128,6 +129,13 @@ public class Turret extends SubsystemBase {
     supplyCurrentPub.set(turretSupplyAmps);
     statorCurrentPub.set(turretStatorAmps);
 
+    //Turret Plate Status Thingy
+    if (Math.abs(turret.getMotorVoltage().getValueAsDouble()) > 1.0 && Math.abs(turret.getVelocity().getValueAsDouble()) < 0.05) {
+        SmartDashboard.putString("Turret Plate Status", "Cooked");
+        //If y'all feel it necessary, feel free to effectively stop the turret motor from running here, as currently, this just shows the status of the turret plate
+    } else {
+        SmartDashboard.putString("Turret Plate Status", "👌");
+    }
   // System.out.println(mSet + "-mSet");
     //System.out.println(mRot + "-mRot");
     //System.out.println(mDeg + "-mDeg");
@@ -176,8 +184,7 @@ public class Turret extends SubsystemBase {
  // double mDeg = (mRot / 100) * 360;
 
 
-  angle = MathUtil.inputModulus(angle, -180, 180);//TODO
-
+  angle = MathUtil.inputModulus(angle, -180, 180); //TODO
   double mSet = -angle;
  // turret.setControl(m_turretPV.withPosition(mSet));
   turret.setControl(new PositionVoltage(mSet));
@@ -195,7 +202,7 @@ public class Turret extends SubsystemBase {
 
   double mSet = angle - robotYaw;
 
-  mSet = MathUtil.inputModulus(mSet, -180, 180);//TODO
+  mSet = MathUtil.inputModulus(mSet, -180, 180);//TODO Set the Wrapper
 
   mSet = degToRot(mSet);
 
@@ -210,6 +217,6 @@ public void setAngleZero() {
 public void ZeroT () {
   turret.setControl(m_turretPV.withPosition(0));
 }
-
+//Wait, is setAngleZero and ZeroT the exact same method???
 
 }
