@@ -21,24 +21,70 @@ public final class Constants {
   public static String LimelightBackRight = "limelight-bright";
   public static String LimelightTurret = "limelight-turret";
   }
-  public static class IndexConstants {
 
-    public static final int kIndexMotorID = 21;
-  }
   public static class HopperConstants {
-
-    public static final int kIntakeMotorID1 = 21;
-    public static final int kIntakeMotorID2 = 457;
-    public static final int kHopperMotorID1 = 550;
-    public static final int kHopperMotorID2 = 552;
-    public static final double kHopperAuto = 6;
+    public static final int kHopperLeftID = 50; //TODO Set final ID
+    public static final int kHopperRightID = 55; //TODO Set final ID
+    public static final double kHopperIn = 0;//in motor rotations
+    public static final double kHopperOut = 40;// in motor rotations
+    public static final double kHopperInSpeed = -7;// with velocity
+    public static final double kHopperOutSpeed = 7;// with velocity
+    public static final double kHopperStopSpeed = 0;
   }
 
-  public static class IntakeConstants {}
+  public static class IntakeConstants {
+    public static final int kIntakeID = 52;//TODO Set final ID
+    public static final double kIntakeForwards = 48;// with velocity
+    public static final double kIntakeBackwards = -48;// with velocity
+    public static final double kIntakeStop = 0;
+  }
 
-  public static class IndexerConstants {}
+  public static class IndexerConstants {
+    public static final int kSpindexerID = 51;//TODO Set final ID
+    public static final int kFeederID = 60;//TODO Set final ID
+    public static final double kSpindexerForwards = 10;
+    public static final double kSpindexerBackwards = -5;
+    public static final double kSpindexerStop = 0;
+    public static final double kFeederForwards = 10;
+    public static final double kFeederBackwards = -5;
+    public static final double kFeederStop = 0;
+  }
 
-  public static class TurretConstants {}
+  public static class TurretConstants {
+    public static final int kTurretID = 54;//TODO Set final ID
+    public static final double kTurretForwardLimit = 180;//TODO set limits
+    public static final double kTurretReverseLimit = -180;//TODO set limits
+    public static final double kGearRatio = 100; //TODO set gear ratio
+    public static final double kRightSpeed = -25;// with velocity
+    public static final double kLeftSpeed = 25;// with velocity
+    public static final double kStopSpeed = 0;
+    public static final double kTurretZero = 0;//in motor rotations
+  }
+
+  public static class ShooterConstants {
+    public static final int kShooterLeftID = 58;//TODO Set final ID
+    public static final int kShooterRightID = 57;//TODO Set final ID
+    public static final int kShooterHoodID = 56;//TODO Set final ID
+    public static final double kHoodForwardLimit = 1.25;// in motor rotations
+    public static final double kRPMToRPS = 60;
+    public static final double kShootInSpeed = -53;// with velocity
+    public static final double kStopShoot = 0;
+    public static final double kHoodZero = 0;
+    public static final double kDistanceMax = 200;
+    public static final double kDistanceMin = 0;
+    public static final double kHoodUpSpeed = 4;// with velocity
+    public static final double kHoodDownSpeed = -4;// with velocity
+    public static final double kHoodStopSpeed = 0;
+    public static final double kPassSpeed = 60;// with velocity
+    public static final double kPassHoodAngle = 1.25;//in motor rotations
+    public static final double kShootCloseSpeed = 43;// with velocity
+    public static final double kShootCloseHoodAngle = 0;//in motor rotations
+    public static final double kShootMedSpeed = 52;// with velocity
+    public static final double kShootMedHoodAngle = 0.25;//in motor rotations
+    public static final double kShootFarSpeed = 63;// with velocity
+    public static final double kShootFarHoodAngle = 0;//in motor rotations
+
+  }
 
   /**
    * Constants related to the REV Blinkin
@@ -153,24 +199,4 @@ public final class Constants {
    * Constants related to setting up the {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem guide Shooter Subsystem} with proper constants.
    * @deprecated This was only used by {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem a Subsystem used by me to try and get Aidan to help make the Shooter Subsystem}, and I think the actual {@link frc.robot.subsystems.Shooter subsystem} uses magic numbers
    */
-  public static class ShooterConstants {
-    //IDs
-    public static final int kLeftFiringMotorID = 20;
-    public static final int kRightFiringMotorID = 21;
-    public static final int kHoodID = 32;
-    //Starting values
-    public static final int kStartingVelocity = 0;
-    public static final int kStartingPosition = 0;
-    //Gear Ratio
-    public static final double kHoodGearRadio = 50.0 / 1.0; //TODO: Change this to the real gear ratio
-
-    //Math
-    public static final double kRotationsToDegrees = 360.0 / kHoodGearRadio;
-    //Soft Limits (Specifically in Motor Rotations) for the hood, also, presumably, if the hood should move say, 30 degrees, it should be (30/360) * Gear Ratio to get Max Rotations
-    public static final double kHoodMaxRotations = 5.0; //TODO: Change to the recommended max rotations by Isiah
-    public static final double kHoodMinRotations = 0.0; //TODO: Change to what Isiah recommends
-
-
-
-  }
 }

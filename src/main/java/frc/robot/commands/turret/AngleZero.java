@@ -9,10 +9,10 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AngleZero extends Command {
-  Turret m_turret;
+  Turret Turret;
   /** Creates a new AngleZero. */
-  public AngleZero(Turret Turret) {
-    m_turret = Turret;
+  public AngleZero(Turret turret) {
+    Turret = turret;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,12 +23,14 @@ public class AngleZero extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_turret.setAngleZero();
+    Turret.setAngleZero();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    Turret.stopSpin();
+  }
 
   // Returns true when the command should end.
   @Override

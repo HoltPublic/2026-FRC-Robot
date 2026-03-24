@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants.IntakeConstants;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
   private final VelocityVoltage IntakeVV = new VelocityVoltage(0);
 
-  private final TalonFX intake = new TalonFX(52);
+  private final TalonFX intake = new TalonFX(IntakeConstants.kIntakeID);
 
   private DoublePublisher supplyCurrentPub;
   private DoublePublisher statorCurrentPub;
@@ -71,16 +72,16 @@ public class Intake extends SubsystemBase {
   public void intakeFore () {
     //double mVol = intake.getMotorVoltage().getValueAsDouble();
     //double mVel = intake.getVelocity().getValueAsDouble();
-    intake.setControl(IntakeVV.withVelocity(48));
+    intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeForwards));
     //System.out.println(mVel + "-Vel");
     //System.out.println(mVol + "-Vol");
   }
 
   public void intakeBack () {
-    intake.setControl(IntakeVV.withVelocity(-48));
+    intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeBackwards));
   }
 
   public void intakeStop () {
-    intake.setControl(new VoltageOut(0));
+    intake.setControl(new VoltageOut(IntakeConstants.kIntakeStop));
   }
 }

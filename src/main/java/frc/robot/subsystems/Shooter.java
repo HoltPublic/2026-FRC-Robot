@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -24,9 +25,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.turret.TurretLeft;
 
 public class Shooter extends SubsystemBase {
-private final TalonFX shooterLeft = new TalonFX(58);
-private final TalonFX shooterRight = new TalonFX(57);
-private final TalonFX shooterHood = new TalonFX(56);
+private final TalonFX shooterLeft = new TalonFX(ShooterConstants.kShooterLeftID);
+private final TalonFX shooterRight = new TalonFX(ShooterConstants.kShooterRightID);
+private final TalonFX shooterHood = new TalonFX(ShooterConstants.kShooterHoodID);
 
 //private final VelocityVoltage shooterRightVV = new VelocityVoltage(0);
 private final VelocityVoltage shooterLeftVV = new VelocityVoltage(0);
@@ -64,8 +65,8 @@ TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
     hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
-    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 1.25;
-    hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ShooterConstants.kHoodForwardLimit;
+    //hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
 TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
@@ -194,46 +195,44 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
   }
 
   public void shoot (double distance) {
-   double RPS =  distanceToRPM(distance) / 60;
+   double RPS =  distanceToRPM(distance) / ShooterConstants.kRPMToRPS;
    //System.out.println(RPS);
-   double hoodAngle = distanceToHoodAngle(distance);
    //System.out.println(hoodAngle);
-    //shooterRight.setControl(shooterRightVV.withVelocity(150));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(RPS));//set 150
+   double hoodAngle = distanceToHoodAngle(distance);
+    shooterLeft.setControl(shooterLeftVV.withVelocity(RPS));
     shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
   }
 
   public void shootIn () {
-   // shooterRight.setControl(shooterRightVV.withVelocity(-10));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(-53));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(ShooterConstants.kShootInSpeed));
   }
 
   public void stopShoot () {
    // shooterRight.setControl(shooterRightVV.withVelocity(0));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(0));
-    shooterHood.setControl(shooterHoodPV.withPosition(0));
+    shooterLeft.setControl(shooterLeftVV.withVelocity(ShooterConstants.kStopShoot));
+    shooterHood.setControl(shooterHoodPV.withPosition(ShooterConstants.kHoodZero));
   }
 
   public double distanceToRPM (double distance) {
-    distance = Math.max(0.0, Math.min(200, distance));
+    distance = Math.max(ShooterConstants.kDistanceMin, Math.min(ShooterConstants.kDistanceMax, distance));
     return rpmTable.get(distance);
   }
 
   public double distanceToHoodAngle (double distance) {
-    distance = Math.max(0.0, Math.min(200, distance));
+    distance = Math.max(ShooterConstants.kDistanceMin, Math.min(ShooterConstants.kDistanceMax, distance));
     return hoodAngleTable.get(distance);
   }
 
   public void shooterHoodUp () {
-    shooterHood.setControl(HoodVV.withVelocity(4));
+    shooterHood.setControl(HoodVV.withVelocity(ShooterConstants.kHoodUpSpeed));
   }
 
   public void shooterHoodDown () {
-    shooterHood.setControl(HoodVV.withVelocity(-4));
+    shooterHood.setControl(HoodVV.withVelocity(ShooterConstants.kHoodDownSpeed));
   }
 
   public void shooterHoodStop () {
-    shooterHood.setControl(new VoltageOut(0));
+    shooterHood.setControl(new VoltageOut(ShooterConstants.kHoodStopSpeed));
   }
 
   public void SetHoodAngle (double Angle) {

@@ -6,16 +6,17 @@ package frc.robot.commands.Hopper;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Hopper;
+import frc.robot.Constants.HopperConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class HopperIn extends Command {
 
-Hopper m_hopper;
+Hopper Hopper;
   /** Creates a new HopperIn. */
   public HopperIn(Hopper hopper) {
-    m_hopper = hopper;
+    Hopper = hopper;
 
-    addRequirements(m_hopper);
+    addRequirements(Hopper);
   }
 
   @Override
@@ -26,12 +27,12 @@ Hopper m_hopper;
 
   @Override
   public void execute() {
-m_hopper.setHopperPosition(0);
+  Hopper.setHopperPosition(HopperConstants.kHopperIn);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_hopper.hopperStop();
+    Hopper.hopperStop();
   }
 
   @Override

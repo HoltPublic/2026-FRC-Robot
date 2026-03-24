@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
+import frc.robot.Constants.HopperConstants;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Hopper extends SubsystemBase {
 
     //Some motors. I don't know which one, as the name is kind of vague, that and looking at the CAD Model, there's 3. I'm going to have to document these motors, aren't I Henry?
-  private final TalonFX HopperLeft = new TalonFX(55);
-  private final TalonFX HopperRight = new TalonFX(53);
+  private final TalonFX HopperLeft = new TalonFX(HopperConstants.kHopperLeftID);
+  private final TalonFX HopperRight = new TalonFX(HopperConstants.kHopperRightID);
 
   private final VelocityVoltage HopperVV = new VelocityVoltage(0);
   private final PositionVoltage m_HoperPV = new PositionVoltage(0);
@@ -62,7 +62,7 @@ public class Hopper extends SubsystemBase {
       TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
 
     leftConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    leftConfigs.Slot0.kP = 0.5; // An error Q!~of 0.5 rotations results in 1.2 volts output
+    leftConfigs.Slot0.kP = 0.5; // An error of 0.5 rotations results in 1.2 volts output
     leftConfigs.Slot0.kD = .000001; // A change of 1 rotation per second results in 0.1 volts output
 
     leftConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
@@ -107,24 +107,24 @@ public class Hopper extends SubsystemBase {
   }
 
     /**
-     * Moves the Hopper Back
+     Moves the Hopper Back
      */
   public void hopperIn () {
-    HopperLeft.setControl(HopperVV.withVelocity(-7));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperInSpeed));
   }
 
     /**
-     * Causes the Hopper  motors to stop
+     Causes the Hopper  motors to stop
      */
   public void hopperStop () {
-    HopperLeft.setControl(new VoltageOut(0));
+    HopperLeft.setControl(new VoltageOut(HopperConstants.kHopperStopSpeed));
   }
 
     /**
-     * Moves the hopper out
+     Moves the hopper out
      */
   public void hopperOut () {
-    HopperLeft.setControl(HopperVV.withVelocity(7));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperOutSpeed));
   }
 
     /**
@@ -137,19 +137,19 @@ public class Hopper extends SubsystemBase {
   }
 
     /**
-     * Moves the hopper back to where it considers itself at 0
+     set hopper encoder to 0
      */
   public void ZeroH () {
-    HopperLeft.setControl(new VoltageOut(0));
-    HopperLeft.setPosition(0);
+    HopperLeft.setControl(new VoltageOut(HopperConstants.kHopperStopSpeed));
+    HopperLeft.setPosition(HopperConstants.kHopperIn);
   }
 
     /**
-     *  Moves the hopper out all the way
+      set hopper encoder to -40 rotations
      */
   public void setHopperOut () {
-        HopperLeft.setControl(new VoltageOut(0));
-    HopperLeft.setPosition(-40);
+        HopperLeft.setControl(new VoltageOut(HopperConstants.kHopperStopSpeed));
+    HopperLeft.setPosition(HopperConstants.kHopperOut);
   }
 
     @Override

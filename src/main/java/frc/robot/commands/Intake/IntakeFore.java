@@ -5,11 +5,11 @@ import frc.robot.subsystems.Intake;
 
 public class IntakeFore extends Command {
 
-  Intake m_intake;
+  Intake Intake;
 
   public IntakeFore(Intake intake) {
     // If this motor is in a subsystem, addRequirements(subsystem)
-    m_intake = intake;
+    Intake = intake;
   }
 
   @Override
@@ -17,12 +17,12 @@ public class IntakeFore extends Command {
 
   @Override
   public void execute() {
-      m_intake.intakeFore();
+      Intake.intakeFore();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_intake.intakeStop();
+    Intake.intakeStop();
   }
 
   @Override

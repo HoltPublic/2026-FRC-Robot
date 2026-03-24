@@ -4,17 +4,18 @@
 
 package frc.robot.commands.shooter;
 
+import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShootClose extends Command {
-  Shooter m_shooter;
+  Shooter Shooter;
   /** Creates a new ShootClose. */
-  public ShootClose(Shooter Shooter) {
-    m_shooter = Shooter;
+  public ShootClose(Shooter shooter) {
+    Shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_shooter);
+    addRequirements(Shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -24,15 +25,14 @@ public class ShootClose extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.SetHoodAngle(0);
-    m_shooter.SetShooterSpeed(43);
+    Shooter.SetHoodAngle(ShooterConstants.kShootCloseHoodAngle);
+    Shooter.SetShooterSpeed(ShooterConstants.kShootCloseSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooter.stopShoot();
-    m_shooter.SetHoodAngle(0);
+    Shooter.stopShoot();
   }
 
   // Returns true when the command should end.

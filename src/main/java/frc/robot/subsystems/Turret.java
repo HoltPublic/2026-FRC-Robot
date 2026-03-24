@@ -28,13 +28,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants.TurretConstants;
 
 public class Turret extends SubsystemBase {
 
   boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
-  private final TalonFX turret = new TalonFX(54);
+  private final TalonFX turret = new TalonFX(TurretConstants.kTurretID);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
 
@@ -73,8 +73,8 @@ public class Turret extends SubsystemBase {
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);//TODO
-    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-180);//TODO
+    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(TurretConstants.kTurretForwardLimit);
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(TurretConstants.kTurretReverseLimit);
 
     turret.getConfigurator().apply(configs);
 
@@ -89,11 +89,11 @@ public class Turret extends SubsystemBase {
   }
 
     private double degToRot (double degrees) {
-    return (degrees/ 360) * (160/4);
+    return (degrees/ 360) * TurretConstants.kGearRatio;
   }
 
     private double rotToDeg (double rot) {
-      return (rot/ (160/4)) * 100;
+      return (rot/ TurretConstants.kGearRatio) * 360;
     }
 
   @Override
@@ -114,15 +114,15 @@ public class Turret extends SubsystemBase {
   }
 
   public void rightSpin () {
-    turret.setControl(turretVV.withVelocity(-25));
+    turret.setControl(turretVV.withVelocity(TurretConstants.kRightSpeed));
   }
  
  public void leftSpin () {
-  turret.setControl(turretVV.withVelocity(25));
+  turret.setControl(turretVV.withVelocity(TurretConstants.kLeftSpeed));
  }
 
  public void stopSpin () {
-  turret.setControl(new VoltageOut(0));
+  turret.setControl(new VoltageOut(TurretConstants.kStopSpeed));
  }
 
 public void setAngle (double setangle) {
@@ -134,7 +134,7 @@ public void llSetAngle (double angle ) {
  // double mDeg = (mRot / 100) * 360;
 
 
-  angle = MathUtil.inputModulus(angle, -180, 180);//TODO
+  angle = MathUtil.inputModulus(angle, TurretConstants.kTurretReverseLimit, TurretConstants.kTurretForwardLimit);
 
   double mSet = -angle;
  // turret.setControl(m_turretPV.withPosition(mSet));
@@ -146,7 +146,7 @@ public void gyroSetAngle (double angle) {
 
   double mSet = angle - robotYaw;
 
-  mSet = MathUtil.inputModulus(mSet, -180, 180);//TODO
+  angle = MathUtil.inputModulus(angle, TurretConstants.kTurretReverseLimit, TurretConstants.kTurretForwardLimit);
 
   mSet = degToRot(mSet);
 
@@ -155,11 +155,11 @@ public void gyroSetAngle (double angle) {
 }
 
 public void setAngleZero() {
-  turret.setControl(m_turretPV.withPosition(0));
+  turret.setControl(m_turretPV.withPosition(TurretConstants.kTurretZero));
 }
 
 public void ZeroT () {
-  turret.setControl(m_turretPV.withPosition(0));
+  turret.setControl(m_turretPV.withPosition(TurretConstants.kTurretZero));
 }
 
 

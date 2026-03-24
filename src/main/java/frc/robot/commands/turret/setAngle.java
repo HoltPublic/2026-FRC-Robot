@@ -10,20 +10,20 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class setAngle extends Command {
-  Turret m_turret;
-    private final double m_angle;
+  Turret Turret;
+    private final double Angle;
   /** Creates a new setAngle. */
   public setAngle(Turret turret, double angle) {
-    m_turret = turret;
-    m_angle = angle;
+    Turret = turret;
+    Angle = angle;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_turret);
+    addRequirements(Turret);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_turret.setAngle(m_angle);
+    Turret.setAngle(Angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -33,7 +33,7 @@ public class setAngle extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_turret.stopSpin();
+    Turret.stopSpin();
   }
 
   // Returns true when the command should end.

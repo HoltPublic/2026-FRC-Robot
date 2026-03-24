@@ -17,10 +17,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.NTDouble;
+import frc.robot.Constants.HopperConstants;
+import frc.robot.Constants.IndexerConstants;
 
 public class Indexer extends SubsystemBase {
-  private final TalonFX spindexer = new TalonFX(51);
-  private final TalonFX feeder = new TalonFX(60);
+  private final TalonFX spindexer = new TalonFX(IndexerConstants.kSpindexerID);
+  private final TalonFX feeder = new TalonFX(IndexerConstants.kFeederID);
 
   private NTDouble spindexerSupplyCurrent = new NTDouble("Indexer/Current/Supply (A)");
   private NTDouble spindexerStatorCurrent = new NTDouble("Indexer/Current/Stator (A)");
@@ -55,7 +57,7 @@ public class Indexer extends SubsystemBase {
     SpindexerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
     SpindexerConfigs.CurrentLimits.SupplyCurrentLimit = 25 ;
     SpindexerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-//////////////////
+
     FeederConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     FeederConfigs.Slot0.kP = 0.2; // An error of 0.5 rotations results in 1.2 volts output
     FeederConfigs.Slot0.kS = 0.05; // Add 0.05 V output to overcome static friction
@@ -96,32 +98,32 @@ public class Indexer extends SubsystemBase {
   }
 
   public void spindexerForwards () {
-    spindexer.setControl(new VoltageOut(10));
-    spindexerTargetVelocity.set(10);
+    spindexer.setControl(new VoltageOut(IndexerConstants.kSpindexerForwards));
+    spindexerTargetVelocity.set(IndexerConstants.kSpindexerForwards);
   }
 
   public void feederForwards () {
-    feeder.setControl(new VoltageOut(10));
-    feederTargetVelocity.set(10);
+    feeder.setControl(new VoltageOut(IndexerConstants.kFeederForwards));
+    feederTargetVelocity.set(IndexerConstants.kFeederForwards);
   }
 
   public void spindexerBack () {
-    spindexer.setControl(new VoltageOut(-5));
-    spindexerTargetVelocity.set(-5);
+    spindexer.setControl(new VoltageOut(IndexerConstants.kSpindexerBackwards));
+    spindexerTargetVelocity.set(IndexerConstants.kSpindexerBackwards);
   }
 
   public void feederBack () {
-    feeder.setControl(new VoltageOut(-5));
-    feederTargetVelocity.set(-5);
+    feeder.setControl(new VoltageOut(IndexerConstants.kFeederBackwards));
+    feederTargetVelocity.set(IndexerConstants.kFeederBackwards);
   }
 
   public void spindexerStop () {
-    spindexer.setControl(new VoltageOut(0));
-    spindexerTargetVelocity.set(0);
+    spindexer.setControl(new VoltageOut(IndexerConstants.kSpindexerStop));
+    spindexerTargetVelocity.set(IndexerConstants.kSpindexerStop);
   }
 
   public void feederStop () {
-    feeder.setControl(new VoltageOut(0));
-    feederTargetVelocity.set(0);
+    feeder.setControl(new VoltageOut(IndexerConstants.kFeederStop));
+    feederTargetVelocity.set(IndexerConstants.kFeederStop);
   }
 }

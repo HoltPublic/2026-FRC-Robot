@@ -6,17 +6,16 @@ package frc.robot.commands.Hopper;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Hopper;
-
+import frc.robot.Constants.HopperConstants;
 
 public class HopperOut extends Command {
 
-  Hopper m_hopper;
-  double m_speed;
+  Hopper Hopper;
   /** Creates a new HopperOut. */
   public HopperOut(Hopper hopper) {
-    m_hopper = hopper;
+    Hopper = hopper;
 
-    addRequirements(m_hopper);
+    addRequirements(Hopper);
   }
 
   @Override
@@ -25,12 +24,12 @@ public class HopperOut extends Command {
 
   @Override
   public void execute() {
-    m_hopper.setHopperPosition(-40);
+    Hopper.setHopperPosition(HopperConstants.kHopperOut);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_hopper.hopperStop();
+    Hopper.hopperStop();
   }
 
   @Override

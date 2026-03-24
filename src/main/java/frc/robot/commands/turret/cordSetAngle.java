@@ -12,12 +12,12 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class cordSetAngle extends Command {
-  Turret m_turret;
- CommandSwerveDrivetrain m_drivetrain;
+  Turret Turret;
+ CommandSwerveDrivetrain Drivetrain;
   /** Creates a new cordSetAngle. */
   public cordSetAngle(Turret turret,CommandSwerveDrivetrain drivetrain) {
-    m_turret = turret;
-    m_drivetrain = drivetrain;
+    Turret = turret;
+    Drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
    // addRequirements(m_turret);
   }
@@ -32,8 +32,8 @@ public class cordSetAngle extends Command {
 
 boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
-      var pose = m_drivetrain.getState().Pose;
-      var speed = m_drivetrain.getState().Speeds;
+      var pose = Drivetrain.getState().Pose;
+      var speed = Drivetrain.getState().Speeds;
       
     double targetX = DSBlue ? 4.621 : 11.919;
     double targetY = 4.029;
@@ -52,7 +52,7 @@ boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
 
     double poseAngle = Math.toDegrees(Math.atan2(offsetY, offsetX));
 
-    m_turret.gyroSetAngle(poseAngle);
+    Turret.gyroSetAngle(poseAngle);
    // System.out.println(poseAngle);
 
   }
@@ -60,7 +60,7 @@ boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_turret.stopSpin();
+    Turret.stopSpin();
   }
 
   // Returns true when the command should end.

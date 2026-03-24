@@ -9,10 +9,10 @@ import frc.robot.subsystems.Hopper;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class setHopperOut extends Command {
-  Hopper m_hopper;
+  Hopper Hopper;
   /** Creates a new setHopperOut. */
-  public setHopperOut(Hopper Hopper) {
-    m_hopper = Hopper;
+  public setHopperOut(Hopper hopper) {
+    Hopper = hopper;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,7 +23,7 @@ public class setHopperOut extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_hopper.setHopperOut();
+    Hopper.setHopperOut();
   }
 
   // Called once the command ends or is interrupted.
