@@ -62,12 +62,12 @@ public class Turret extends SubsystemBase {
     configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    configs.Voltage.PeakForwardVoltage = 16;
-    configs.Voltage.PeakReverseVoltage = -16;
+    configs.Voltage.PeakForwardVoltage = TurretConstants.kPeakForwardVoltage;
+    configs.Voltage.PeakReverseVoltage = TurretConstants.kPeakReverseVoltage;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
-    configs.CurrentLimits.StatorCurrentLimit = 30;
+    configs.CurrentLimits.StatorCurrentLimit = TurretConstants.kStatorCurrentLimit;
     configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    configs.CurrentLimits.SupplyCurrentLimit = 30;
+    configs.CurrentLimits.SupplyCurrentLimit = TurretConstants.kSupplyCurrentLimit;
     configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -122,7 +122,7 @@ public class Turret extends SubsystemBase {
  }
 
  public void stopSpin () {
-  turret.setControl(new VoltageOut(TurretConstants.kStopSpeed));
+  turret.setControl(turretVV.withVelocity(TurretConstants.kStopSpeed));
  }
 
 public void setAngle (double setangle) {

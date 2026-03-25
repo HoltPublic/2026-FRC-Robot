@@ -39,12 +39,12 @@ public class Intake extends SubsystemBase {
     Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    Config.Voltage.PeakForwardVoltage = 16;
-    Config.Voltage.PeakReverseVoltage = -16;
+    Config.Voltage.PeakForwardVoltage = IntakeConstants.kPeakForwardVoltage;
+    Config.Voltage.PeakReverseVoltage = IntakeConstants.kPeakReverseVoltage;
     Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    Config.CurrentLimits.StatorCurrentLimit = 55;
+    Config.CurrentLimits.StatorCurrentLimit = IntakeConstants.kStatorCurrentLimit;
     Config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    Config.CurrentLimits.SupplyCurrentLimit = 55;
+    Config.CurrentLimits.SupplyCurrentLimit = IntakeConstants.kSupplyCurrentLimit;
     Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     intake.getConfigurator().apply(Config);
@@ -82,6 +82,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void intakeStop () {
-    intake.setControl(new VoltageOut(IntakeConstants.kIntakeStop));
+    intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeStop));
   }
 }

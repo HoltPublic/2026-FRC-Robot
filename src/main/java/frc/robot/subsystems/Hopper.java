@@ -48,16 +48,18 @@ public class Hopper extends SubsystemBase {
     rightConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    rightConfigs.Voltage.PeakForwardVoltage = 16;
-    rightConfigs.Voltage.PeakReverseVoltage = -16;
+    rightConfigs.Voltage.PeakForwardVoltage = HopperConstants.kPeakForwardVoltage;
+    rightConfigs.Voltage.PeakReverseVoltage = HopperConstants.kPeakReverseVoltage;
     rightConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    rightConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.kStatorCurrentLimit;
+    rightConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rightConfigs.CurrentLimits.SupplyCurrentLimit = HopperConstants.kSupplyCurrentLimit;
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -41;
 
       TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
 
@@ -68,12 +70,12 @@ public class Hopper extends SubsystemBase {
     leftConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    leftConfigs.Voltage.PeakForwardVoltage = 16;
-    leftConfigs.Voltage.PeakReverseVoltage = -16;
+    leftConfigs.Voltage.PeakForwardVoltage = HopperConstants.kPeakForwardVoltage;
+    leftConfigs.Voltage.PeakReverseVoltage = HopperConstants.kPeakReverseVoltage;
     leftConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfigs.CurrentLimits.StatorCurrentLimit = 15;
+    leftConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.kStatorCurrentLimit;
     leftConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    leftConfigs.CurrentLimits.SupplyCurrentLimit = 15;
+    leftConfigs.CurrentLimits.SupplyCurrentLimit = HopperConstants.kSupplyCurrentLimit;
     leftConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
@@ -86,7 +88,7 @@ public class Hopper extends SubsystemBase {
 
     HopperLeft.setPosition(0);
 
-    HopperRight.setControl(new Follower(55, MotorAlignmentValue.Opposed));
+    HopperRight.setControl(new Follower(HopperConstants.kHopperLeftID, MotorAlignmentValue.Opposed));
 
     supplyCurrentPub =
       NetworkTableInstance.getDefault()
@@ -117,7 +119,7 @@ public class Hopper extends SubsystemBase {
      Causes the Hopper  motors to stop
      */
   public void hopperStop () {
-    HopperLeft.setControl(new VoltageOut(HopperConstants.kHopperStopSpeed));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperStopSpeed));
   }
 
     /**

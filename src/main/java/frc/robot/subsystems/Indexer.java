@@ -50,12 +50,12 @@ public class Indexer extends SubsystemBase {
     SpindexerConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    SpindexerConfigs.Voltage.PeakForwardVoltage = 16;
-    SpindexerConfigs.Voltage.PeakReverseVoltage = -16;
+    SpindexerConfigs.Voltage.PeakForwardVoltage = IndexerConstants.kPeakSpindexerForwardVoltage;
+    SpindexerConfigs.Voltage.PeakReverseVoltage = IndexerConstants.kPeakSpindexerReverseVoltage;
     SpindexerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    SpindexerConfigs.CurrentLimits.StatorCurrentLimit = 25;
+    SpindexerConfigs.CurrentLimits.StatorCurrentLimit = IndexerConstants.kSpindexerStatorCurrentLimit;
     SpindexerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    SpindexerConfigs.CurrentLimits.SupplyCurrentLimit = 25 ;
+    SpindexerConfigs.CurrentLimits.SupplyCurrentLimit = IndexerConstants.kSpindexerSupplyCurrentLimit;
     SpindexerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     FeederConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -68,12 +68,12 @@ public class Indexer extends SubsystemBase {
     FeederConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    FeederConfigs.Voltage.PeakForwardVoltage = 16;
-    FeederConfigs.Voltage.PeakReverseVoltage = -16;
+    FeederConfigs.Voltage.PeakForwardVoltage = IndexerConstants.kPeakFeederForwardVoltage;
+    FeederConfigs.Voltage.PeakReverseVoltage = IndexerConstants.kPeakFeederReverseVoltage;
     FeederConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    FeederConfigs.CurrentLimits.StatorCurrentLimit = 25;
+    FeederConfigs.CurrentLimits.StatorCurrentLimit = IndexerConstants.kFeederStatorCurrentLimit;
     FeederConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    FeederConfigs.CurrentLimits.SupplyCurrentLimit = 25 ;
+    FeederConfigs.CurrentLimits.SupplyCurrentLimit = IndexerConstants.kFeederSupplyCurrentLimit;
     FeederConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     spindexer.getConfigurator().apply(SpindexerConfigs);

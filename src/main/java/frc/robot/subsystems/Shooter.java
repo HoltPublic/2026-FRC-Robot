@@ -47,25 +47,27 @@ private DoublePublisher hoodStatorCurrentPub;
   /** Creates a new Shooter. */
   public Shooter() {
 
-TalonFXConfiguration hoodConfigs = new TalonFXConfiguration();
+TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
 
-    hoodConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    hoodConfigs.Slot0.kP = 1.0; // An error of 0.5 rotations results in 1.2 volts output
-    hoodConfigs.Slot0.kD = 0.01; // A change of 1 rotation per second results in 0.1 volts output
+    hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    hoodConfig.Slot0.kP = 1.0; // An error of 0.5 rotations results in 1.2 volts output
+    hoodConfig.Slot0.kD = 0.01; // A change of 1 rotation per second results in 0.1 volts output
 
-    hoodConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
+    hoodConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    hoodConfigs.Voltage.PeakForwardVoltage = 16;
-    hoodConfigs.Voltage.PeakReverseVoltage = -16;
-    hoodConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    hoodConfigs.CurrentLimits.StatorCurrentLimit = 30;
-    hoodConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    hoodConfig.Voltage.PeakForwardVoltage = ShooterConstants.kPeakHoodForwardVoltage;
+    hoodConfig.Voltage.PeakReverseVoltage = ShooterConstants.kPeakHoodReverseVoltage;
+    hoodConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    hoodConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.kHoodStatorCurrentLimit;
+    hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    hoodConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.kHoodSupplyCurrentLimit;
+    hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
-    hoodConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ShooterConstants.kHoodForwardLimit;
+    hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ShooterConstants.kHoodForwardLimit;
     //hoodConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
 TalonFXConfiguration rightConfig = new TalonFXConfiguration();
@@ -80,10 +82,12 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     rightConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    rightConfig.Voltage.PeakForwardVoltage = 16;
-    rightConfig.Voltage.PeakReverseVoltage = -16;
+    rightConfig.Voltage.PeakForwardVoltage = ShooterConstants.kPeakRightForwardVoltage;
+    rightConfig.Voltage.PeakReverseVoltage = ShooterConstants.kPeakRightReverseVoltage;
     rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfig.CurrentLimits.StatorCurrentLimit = 30;
+    rightConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.kRightStatorCurrentLimit;
+    rightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rightConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.kRightSupplyCurrentLimit;
     rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
@@ -98,19 +102,19 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     leftConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    leftConfig.Voltage.PeakForwardVoltage = 16;
-    leftConfig.Voltage.PeakReverseVoltage = -16;
+    leftConfig.Voltage.PeakForwardVoltage = ShooterConstants.kPeakLeftForwardVoltage;
+    leftConfig.Voltage.PeakReverseVoltage = ShooterConstants.kPeakLeftReverseVoltage;
     leftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfig.CurrentLimits.StatorCurrentLimit = 30;
+    leftConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.kLeftStatorCurrentLimit;
     leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    leftConfig.CurrentLimits.SupplyCurrentLimit = 30;
+    leftConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.kLeftSupplyCurrentLimit;
     leftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    shooterHood.getConfigurator().apply(hoodConfigs);
+    shooterHood.getConfigurator().apply(hoodConfig);
     shooterRight.getConfigurator().apply(rightConfig);
     shooterLeft.getConfigurator().apply(leftConfig);
 
-    shooterRight.setControl(new Follower(59, MotorAlignmentValue.Opposed));
+    shooterRight.setControl(new Follower(ShooterConstants.kShooterLeftID, MotorAlignmentValue.Opposed));
 
 // distance in meters to rpm of shooter
     rpmTable.put(25.0, 2160.0); 
@@ -232,7 +236,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
   }
 
   public void shooterHoodStop () {
-    shooterHood.setControl(new VoltageOut(ShooterConstants.kHoodStopSpeed));
+    shooterHood.setControl(HoodVV.withVelocity(ShooterConstants.kHoodStopSpeed));
   }
 
   public void SetHoodAngle (double Angle) {

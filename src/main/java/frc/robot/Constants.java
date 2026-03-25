@@ -25,39 +25,59 @@ public final class Constants {
   public static class HopperConstants {
     public static final int kHopperLeftID = 50; //TODO Set final ID
     public static final int kHopperRightID = 55; //TODO Set final ID
+    public static final double kPeakForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kStatorCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kSupplyCurrentLimit = 15;//TODO Set Voltage Limits
     public static final double kHopperIn = 0;//in motor rotations
     public static final double kHopperOut = 40;// in motor rotations
     public static final double kHopperInSpeed = -7;// with velocity
     public static final double kHopperOutSpeed = 7;// with velocity
-    public static final double kHopperStopSpeed = 0;
+    public static final double kHopperStopSpeed = 0;// with velocity
   }
 
   public static class IntakeConstants {
     public static final int kIntakeID = 52;//TODO Set final ID
+    public static final double kPeakForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kStatorCurrentLimit = 55;//TODO Set Voltage Limits
+    public static final double kSupplyCurrentLimit = 55;//TODO Set Voltage Limits
     public static final double kIntakeForwards = 48;// with velocity
     public static final double kIntakeBackwards = -48;// with velocity
-    public static final double kIntakeStop = 0;
+    public static final double kIntakeStop = 0;// with velocity
   }
 
   public static class IndexerConstants {
     public static final int kSpindexerID = 51;//TODO Set final ID
     public static final int kFeederID = 60;//TODO Set final ID
-    public static final double kSpindexerForwards = 10;
-    public static final double kSpindexerBackwards = -5;
-    public static final double kSpindexerStop = 0;
-    public static final double kFeederForwards = 10;
-    public static final double kFeederBackwards = -5;
-    public static final double kFeederStop = 0;
+    public static final double kPeakFeederForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakFeederReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kFeederStatorCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kFeederSupplyCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kPeakSpindexerForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakSpindexerReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kSpindexerStatorCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kSpindexerSupplyCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kSpindexerForwards = 10;//With Voltage
+    public static final double kSpindexerBackwards = -5;//With Voltage
+    public static final double kSpindexerStop = 0;//With Voltage
+    public static final double kFeederForwards = 10;//With Voltage
+    public static final double kFeederBackwards = -5;//With Voltage
+    public static final double kFeederStop = 0;//With Voltage
   }
 
   public static class TurretConstants {
     public static final int kTurretID = 54;//TODO Set final ID
+    public static final double kPeakForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kStatorCurrentLimit = 30;//TODO Set Voltage Limits
+    public static final double kSupplyCurrentLimit = 30;//TODO Set Voltage Limits    
     public static final double kTurretForwardLimit = 180;//TODO set limits
     public static final double kTurretReverseLimit = -180;//TODO set limits
     public static final double kGearRatio = 100; //TODO set gear ratio
     public static final double kRightSpeed = -25;// with velocity
     public static final double kLeftSpeed = 25;// with velocity
-    public static final double kStopSpeed = 0;
+    public static final double kStopSpeed = 0;// with velocity
     public static final double kTurretZero = 0;//in motor rotations
   }
 
@@ -65,16 +85,28 @@ public final class Constants {
     public static final int kShooterLeftID = 58;//TODO Set final ID
     public static final int kShooterRightID = 57;//TODO Set final ID
     public static final int kShooterHoodID = 56;//TODO Set final ID
+    public static final double kPeakHoodForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakHoodReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kHoodStatorCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kHoodSupplyCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kPeakRightForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakRightReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kRightStatorCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kRightSupplyCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kPeakLeftForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakLeftReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kLeftStatorCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kLeftSupplyCurrentLimit = 15;//TODO Set Voltage Limits
     public static final double kHoodForwardLimit = 1.25;// in motor rotations
     public static final double kRPMToRPS = 60;
     public static final double kShootInSpeed = -53;// with velocity
-    public static final double kStopShoot = 0;
-    public static final double kHoodZero = 0;
-    public static final double kDistanceMax = 200;
-    public static final double kDistanceMin = 0;
+    public static final double kStopShoot = 0;// with velocity
+    public static final double kHoodZero = 0;//in motor rotations
+    public static final double kDistanceMax = 200;//In Inches
+    public static final double kDistanceMin = 0;//In Inches
     public static final double kHoodUpSpeed = 4;// with velocity
     public static final double kHoodDownSpeed = -4;// with velocity
-    public static final double kHoodStopSpeed = 0;
+    public static final double kHoodStopSpeed = 0;// with velocity
     public static final double kPassSpeed = 60;// with velocity
     public static final double kPassHoodAngle = 1.25;//in motor rotations
     public static final double kShootCloseSpeed = 43;// with velocity
