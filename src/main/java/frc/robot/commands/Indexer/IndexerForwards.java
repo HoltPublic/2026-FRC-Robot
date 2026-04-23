@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Indexer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.*;
@@ -15,13 +15,17 @@ public class IndexerForwards extends Command {
   }
 
   @Override
-  public void initialize() {
-    // cycles through the four states (stop, slow, medium, fast)
-    m_indexer.setState((m_indexer.State + 1) % 4);
+  public void initialize() {}
+
+ @Override
+  public void execute() {
+    m_indexer.IndexerForwards();
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_indexer.IndexerStop();
+  }
 
   @Override
   public boolean isFinished() {
