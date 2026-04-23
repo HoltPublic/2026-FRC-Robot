@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
-import frc.robot.commands.Intake.IntakeBack;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -16,29 +13,44 @@ import frc.robot.commands.Intake.IntakeBack;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  /**
+   * Constants related to Operator Input (Controllers)
+   */
   public static class OIConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  /**
+   * NetworkTable names for various Limelight camera units on Saturn.
+   */
   public static class LimelightConstants {
-  public static String LimelightFrontLeft = "limelight-fleft";
-  public static String LimelightFrontRight = "limelight-fright";
+  public static String LimelightBackLeft = "limelight-bleft";
+  public static String LimelightBackRight = "limelight-bright";
   public static String LimelightTurret = "limelight-turret";
   }
   public static class IndexConstants {
 
     public static final int kIndexMotorID = 21;
   }
+
+  /**
+   * Hardware IDs and configurations for the Hopper and Intake Mechanisms
+   */
   public static class HopperConstants {
 
     public static final int kIntakeMotorID1 = 21;
     public static final int kIntakeMotorID2 = 457;
-    public static final int kHopperMotorID1 = 20;
-    public static final int kHopperMotorID2 = 456;
+    public static final int kHopperMotorID1 = 550;
+    public static final int kHopperMotorID2 = 552;
+    /**
+     * Default speed for automated hopper movement.
+     */
     public static final double kHopperAuto = 6;
   }
 
   /**
    * Constants related to the REV Blinkin
+   * @author Riley A. - 6078 (Both Maintainer and Documentation)
    */
   public static class BlinkinConstants {
 
@@ -145,5 +157,4 @@ public final class Constants {
     }
 
   }
-
 }

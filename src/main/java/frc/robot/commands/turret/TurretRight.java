@@ -9,7 +9,7 @@ import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretRight extends Command {
-  private Turret m_turret;
+  Turret m_turret;
   /** Creates a new TurretRight. */
   public TurretRight(Turret turret) {
     m_turret = turret;
