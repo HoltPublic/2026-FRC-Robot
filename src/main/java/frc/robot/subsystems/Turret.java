@@ -44,6 +44,8 @@ public class Turret extends SubsystemBase {
 
   private final CommandSwerveDrivetrain drivetrain;
 
+  private DoublePublisher targetPositionPub;
+  private DoublePublisher actualPositionPub;
   private DoublePublisher supplyCurrentPub;
   private DoublePublisher statorCurrentPub;
 
@@ -56,9 +58,11 @@ public class Turret extends SubsystemBase {
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    configs.Slot0.kP = 0.10; // An error of 0.2 rotations results in 1.2 volts output
+    configs.Slot0.kP = 0.30; // An error of 0.2 rotations results in 1.2 volts output
+    configs.Slot0.kI = 0; // No kI value
     configs.Slot0.kD = 0.03; // A change of 1 rotation per second results in 0.1 volts output
-
+    configs.Slot0.kS = 0.2; // Add 0.05 V output to overcome static friction
+    configs.Slot0.kV = 0.12; // Gives motor 0.12V for every 1 RPS desired
     configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
@@ -78,6 +82,14 @@ public class Turret extends SubsystemBase {
 
     turret.getConfigurator().apply(configs);
 
+    targetPositionPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Turret/Position/Target")
+          .publish();
+    actualPositionPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Turret/Position/Actual")
+          .publish();
     supplyCurrentPub = 
       NetworkTableInstance.getDefault()
         .getDoubleTopic("Turret/Current/Supply (A)")
@@ -98,11 +110,13 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // double mRot = turret.getPosition().getValueAsDouble();
-    // double mDeg = (mRot / (160/4)) * 360;
+     //double mRot = turret.getPosition().getValueAsDouble();
+     //double mDeg = (mRot / TurretConstants.kGearRatio) * 360;
+    double actualPosition = ((turret.getPosition().getValueAsDouble() / TurretConstants.kGearRatio) * 360);
     double turretSupplyAmps = turret.getSupplyCurrent().getValueAsDouble();
     double turretStatorAmps = turret.getStatorCurrent().getValueAsDouble();
 
+    actualPositionPub.set(actualPosition);
     supplyCurrentPub.set(turretSupplyAmps);
     statorCurrentPub.set(turretStatorAmps);
 
@@ -127,10 +141,11 @@ public class Turret extends SubsystemBase {
 
 public void setAngle (double setangle) {
     turret.setControl(m_turretPV.withPosition(setangle));
+    targetPositionPub.set(setangle);
 }
 
 public void llSetAngle (double angle ) {
- // double mRot = m_turret.getPosition().getValueAsDouble();
+ // double mRot = turret.getPosition().getValueAsDouble();
  // double mDeg = (mRot / 100) * 360;
 
 
@@ -139,6 +154,11 @@ public void llSetAngle (double angle ) {
   double mSet = -angle;
  // turret.setControl(m_turretPV.withPosition(mSet));
   turret.setControl(new PositionVoltage(mSet));
+}
+
+public void KeepTurret () {
+  double mRot = turret.getPosition().getValueAsDouble();
+  turret.setControl(m_turretPV.withPosition(mRot));
 }
 
 public void gyroSetAngle (double angle) {

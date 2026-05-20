@@ -5,15 +5,22 @@
 package frc.robot.commands.shooter;
 
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.turret.llSetAngle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.limelight;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShootMed extends Command {
   Shooter Shooter;
+  limelight Limelight;
+  Turret Turret;
   /** Creates a new ShootMed. */
-  public ShootMed(Shooter shooter) {
+  public ShootMed(Shooter shooter, limelight limelight, Turret turret) {
     Shooter = shooter;
+    Limelight = limelight;
+    Turret = turret;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Shooter);
   }
@@ -27,6 +34,7 @@ public class ShootMed extends Command {
   public void execute() {
     Shooter.SetHoodAngle(ShooterConstants.kShootMedHoodAngle);
     Shooter.SetShooterSpeed(ShooterConstants.kShootMedSpeed);
+    Turret.llSetAngle(Limelight.turretTx());
   }
 
   // Called once the command ends or is interrupted.

@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -39,8 +40,12 @@ private final PositionVoltage shooterHoodPV = new PositionVoltage(0);
 private final InterpolatingDoubleTreeMap rpmTable = new InterpolatingDoubleTreeMap();
 private final InterpolatingDoubleTreeMap hoodAngleTable = new InterpolatingDoubleTreeMap();
 
+private DoublePublisher shooterTargetRPMPub;
+private DoublePublisher shooterActualRPMPub;
 private DoublePublisher shooterSupplyCurrentPub;
 private DoublePublisher shooterStatorCurrentPub;
+private DoublePublisher hoodTargetPositionPub;
+private DoublePublisher hoodActualPositionPub;
 private DoublePublisher hoodSupplyCurrentPub;
 private DoublePublisher hoodStatorCurrentPub;
 
@@ -73,9 +78,9 @@ TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
 TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
     rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    rightConfig.Slot0.kP = 0.2; // An error of 0.5 rotations results in 1.2 volts output
-    rightConfig.Slot0.kS = 0.05; // Add 0.05 V output to overcome static friction
-    rightConfig.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
+    rightConfig.Slot0.kP = 0.5; // An error of 0.5 rotations results in 1.2 volts output
+    rightConfig.Slot0.kS = 0.001; // Add 0.05 V output to overcome static friction
+    rightConfig.Slot0.kV = 0.001; // A velocity target of 1 rps results in 0.12 V output
     rightConfig.Slot0.kI = 0; // no output for integrated error
     rightConfig.Slot0.kD = 0; // no output for error derivative
 
@@ -93,11 +98,11 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     TalonFXConfiguration leftConfig = new TalonFXConfiguration();
 
     leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    leftConfig.Slot0.kP = 0.2; // An error of 0.5 rotations results in 1.2 volts output
-    leftConfig.Slot0.kS = 0.05; // Add 0.05 V output to overcome static friction
+    leftConfig.Slot0.kP = 6.0; // An error of 0.5 rotations results in 1.2 volts output
+    leftConfig.Slot0.kS = 0.0001; // Add 0.05 V output to overcome static friction
     leftConfig.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-    leftConfig.Slot0.kI = 0; // no output for integrated error
-    leftConfig.Slot0.kD = 0; // no output for error derivative
+    leftConfig.Slot0.kI = 0.005; // no output for integrated error
+    leftConfig.Slot0.kD = 0.4; // no output for error derivative
 
     leftConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
@@ -163,6 +168,14 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
  
     shooterHood.setPosition(0);
 
+    shooterTargetRPMPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Shooter/RPM/Target")
+          .publish();
+    shooterActualRPMPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Shooter/RPM/Actual")
+          .publish();
     shooterSupplyCurrentPub =
       NetworkTableInstance.getDefault()
         .getDoubleTopic("Shooter/Current/Supply (A)")
@@ -170,6 +183,14 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     shooterStatorCurrentPub =
       NetworkTableInstance.getDefault()
         .getDoubleTopic("Shooter/Current/Stator (A)")
+          .publish();
+    hoodTargetPositionPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hood/Position/Target")
+          .publish();
+    hoodActualPositionPub =
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Hood/Position/Actual")
           .publish();
     hoodSupplyCurrentPub =
       NetworkTableInstance.getDefault()
@@ -186,14 +207,18 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     //double mHoodRot = shooterHood.getPosition().getValueAsDouble();
     //System.out.println(mHoodRot);
     // This method will be called once per scheduler run
+    double shooterActualRPM = ((shooterLeft.getVelocity().getValueAsDouble() + shooterRight.getVelocity().getValueAsDouble()) / 2);
     double shooterSupplyAmps = ((shooterLeft.getSupplyCurrent().getValueAsDouble() + shooterRight.getSupplyCurrent().getValueAsDouble()) / 2);
     double shooterStatorAmps = ((shooterLeft.getStatorCurrent().getValueAsDouble() + shooterRight.getStatorCurrent().getValueAsDouble()) / 2);
 
+    double hoodActualPosition = shooterHood.getVelocity().getValueAsDouble();
     double hoodSupplyAmps = shooterHood.getSupplyCurrent().getValueAsDouble();
     double hoodStatorAmps = shooterHood.getStatorCurrent().getValueAsDouble();
 
+    shooterActualRPMPub.set(shooterActualRPM);
     shooterSupplyCurrentPub.set(shooterSupplyAmps);
     shooterStatorCurrentPub.set(shooterStatorAmps);
+    hoodActualPositionPub.set(hoodActualPosition);
     hoodSupplyCurrentPub.set(hoodSupplyAmps);
     hoodStatorCurrentPub.set(hoodStatorAmps);
   }
@@ -213,7 +238,7 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
   public void stopShoot () {
    // shooterRight.setControl(shooterRightVV.withVelocity(0));
-    shooterLeft.setControl(shooterLeftVV.withVelocity(ShooterConstants.kStopShoot));
+    shooterLeft.setControl( new VoltageOut(ShooterConstants.kStopShoot));
     shooterHood.setControl(shooterHoodPV.withPosition(ShooterConstants.kHoodZero));
   }
 
@@ -241,10 +266,20 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
 
   public void SetHoodAngle (double Angle) {
     shooterHood.setControl(shooterHoodPV.withPosition(Angle));
+    hoodTargetPositionPub.set(Angle);
   }
 
   public void SetShooterSpeed (double Speed) {
     shooterLeft.setControl(shooterLeftVV.withVelocity(Speed));
+    shooterTargetRPMPub.set(Speed);
+  }
+
+  public boolean atSetpoint () {
+    if (shooterLeft.getVelocity().getValueAsDouble() == Constants.ShooterConstants.kShootCloseSpeed) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public void keepHoodUp () {

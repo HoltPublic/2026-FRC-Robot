@@ -8,6 +8,7 @@ import java.util.function.DoublePredicate;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -32,6 +33,9 @@ public class Indexer extends SubsystemBase {
   private NTDouble spindexerActualVelcoity = new NTDouble("Indexer/Velocity/Actual");
   private NTDouble feederTargetVelocity = new NTDouble("Feeder/Velocity/Target");
   private NTDouble feederActualVelocity = new NTDouble("Feeder/Velocity/Actual");
+
+    private final VelocityVoltage FeederVV = new VelocityVoltage(0);
+      private final VelocityVoltage SpindexerVV = new VelocityVoltage(0);
 
   /** Creates a new Indexer. */
   public Indexer() {
@@ -98,32 +102,35 @@ public class Indexer extends SubsystemBase {
   }
 
   public void spindexerForwards () {
-    spindexer.setControl(new VoltageOut(IndexerConstants.kSpindexerForwards));
+    spindexer.setControl(SpindexerVV.withVelocity(IndexerConstants.kSpindexerForwards));
+    //feeder.setControl(new VoltageOut(IndexerConstants.kFeederForwards));
     spindexerTargetVelocity.set(IndexerConstants.kSpindexerForwards);
   }
 
   public void feederForwards () {
-    feeder.setControl(new VoltageOut(IndexerConstants.kFeederForwards));
+    feeder.setControl(FeederVV.withVelocity(IndexerConstants.kFeederForwards));
     feederTargetVelocity.set(IndexerConstants.kFeederForwards);
   }
 
   public void spindexerBack () {
-    spindexer.setControl(new VoltageOut(IndexerConstants.kSpindexerBackwards));
+    spindexer.setControl(SpindexerVV.withVelocity(IndexerConstants.kSpindexerBackwards));
+    //feeder.setControl(new VoltageOut(IndexerConstants.kFeederBackwards));
     spindexerTargetVelocity.set(IndexerConstants.kSpindexerBackwards);
   }
 
   public void feederBack () {
-    feeder.setControl(new VoltageOut(IndexerConstants.kFeederBackwards));
+    feeder.setControl(FeederVV.withVelocity(IndexerConstants.kFeederBackwards));
     feederTargetVelocity.set(IndexerConstants.kFeederBackwards);
   }
 
   public void spindexerStop () {
-    spindexer.setControl(new VoltageOut(IndexerConstants.kSpindexerStop));
+    spindexer.setControl(SpindexerVV.withVelocity(IndexerConstants.kSpindexerStop));
+    //feeder.setControl(new VoltageOut(IndexerConstants.kFeederStop));
     spindexerTargetVelocity.set(IndexerConstants.kSpindexerStop);
   }
 
   public void feederStop () {
-    feeder.setControl(new VoltageOut(IndexerConstants.kFeederStop));
+    feeder.setControl(FeederVV.withVelocity(IndexerConstants.kFeederStop));
     feederTargetVelocity.set(IndexerConstants.kFeederStop);
   }
 }

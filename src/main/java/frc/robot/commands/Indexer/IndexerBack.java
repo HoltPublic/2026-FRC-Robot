@@ -28,7 +28,7 @@ public class IndexerBack extends Command {
   @Override
   public void end(boolean interrupted) {
     Indexer.spindexerStop();
-    Indexer.feederBack();
+    Indexer.feederStop();
   }
 
   @Override

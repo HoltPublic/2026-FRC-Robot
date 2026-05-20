@@ -9,6 +9,11 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
@@ -16,13 +21,32 @@ import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 
 public class limelight extends SubsystemBase {
-  private CommandSwerveDrivetrain drivetrain;
+  // private CommandSwerveDrivetrain drivetrain;
+
+  private DoublePublisher turretDistancePub;
+  private BooleanPublisher turretTargetPub;
+
+          NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight-turret");
+      NetworkTableEntry ty = table.getEntry("ty");
+    double targetOffsetAngle_Vertical = ty.getDouble(0.0);
+
+      // how many degrees back is your limelight rotated from perfectly vertical?
+    double limelightMountAngleDegrees = 11.0; 
+
+    // distance from the center of the Limelight lens to the floor
+    double limelightLensHeightInches = 20.5; 
+
+    // distance from the target to the floor
+    double goalHeightInches = 44.25; 
+
+    double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+    double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
   double bleftA = 0;
   double brightA = 0;
     /** Creates a new limelight. */
     public limelight(CommandSwerveDrivetrain drivetrain) {
-      this.drivetrain = drivetrain;
+      // this.drivetrain = drivetrain;
      
     LimelightHelpers.setCameraPose_RobotSpace(LimelightConstants.LimelightBackRight,
     -0.3044698,    // Forward offset (meters)
@@ -42,13 +66,32 @@ public class limelight extends SubsystemBase {
     45,   // Pitch (degrees)
     -95     // Yaw (degrees)
 );
+LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret, new int[]{25});
 
-LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret, new int[]{18, 27, 26, 25, 24, 21, 11, 2, 10, 9, 8, 5});
+//LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret, new int[]{18, 27, 26, 25, 24, 21, 11, 2, 10, 9, 8, 5});
+
+  turretDistancePub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Limelight/Turret/Distance")
+          .publish();
+
+  turretTargetPub =
+      NetworkTableInstance.getDefault()
+        .getBooleanTopic("Limelight/Turret/Target")
+          .publish();
   }
 
+  public double getDistance() {
+    return (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+  }
 
   @Override
   public void periodic() {
+    double distance = getDistance();
+    boolean target = LimelightHelpers.getTV("limelight-turret");
+
+    turretTargetPub.set(target);
+    turretDistancePub.set(distance);
     //ambiguitybleft();
     //ambiguitybright();
 

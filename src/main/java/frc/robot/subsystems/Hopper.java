@@ -59,13 +59,13 @@ public class Hopper extends SubsystemBase {
     rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -41;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = HopperConstants.kHopperReverseLimit;
 
       TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
 
     leftConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     leftConfigs.Slot0.kP = 0.5; // An error of 0.5 rotations results in 1.2 volts output
-    leftConfigs.Slot0.kD = .000001; // A change of 1 rotation per second results in 0.1 volts output
+    leftConfigs.Slot0.kD = .01; // A change of 1 rotation per second results in 0.1 volts output
 
     leftConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
@@ -109,7 +109,7 @@ public class Hopper extends SubsystemBase {
   }
 
     /**
-     Moves the Hopper Back
+     Moves the Hopper in
      */
   public void hopperIn () {
     HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperInSpeed));
@@ -142,23 +142,24 @@ public class Hopper extends SubsystemBase {
      set hopper encoder to 0
      */
   public void ZeroH () {
-    HopperLeft.setControl(new VoltageOut(HopperConstants.kHopperStopSpeed));
-    HopperLeft.setPosition(HopperConstants.kHopperIn);
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperStopSpeed));
+    // HopperLeft.setPosition(HopperConstants.kHopperIn);
+    HopperLeft.setPosition(0);
   }
 
     /**
       set hopper encoder to -40 rotations
      */
   public void setHopperOut () {
-        HopperLeft.setControl(new VoltageOut(HopperConstants.kHopperStopSpeed));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperStopSpeed));
     HopperLeft.setPosition(HopperConstants.kHopperOut);
   }
 
     @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //double mRot = HopperLeft.getPosition().getValueAsDouble();
-    //System.out.println(mRot);
+    double mRot = HopperLeft.getPosition().getValueAsDouble();
+    System.out.println(mRot);
     double supplyAmps = ((HopperLeft.getSupplyCurrent().getValueAsDouble() + HopperRight.getSupplyCurrent().getValueAsDouble()) / 2);
     double statorAmps = ((HopperLeft.getStatorCurrent().getValueAsDouble() + HopperRight.getStatorCurrent().getValueAsDouble()) / 2);
     double actualPosition = ((HopperLeft.getPosition().getValueAsDouble() + HopperRight.getPosition().getValueAsDouble()) / 2);

@@ -25,6 +25,24 @@
                 "data": {
                   "name": "Shoot Close"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Indexer Backwards"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Turret Zero"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Hopper Auton Out"
+                }
               }
             ]
           }
@@ -43,6 +61,18 @@
                 "type": "named",
                 "data": {
                   "name": "Shoot Close"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Turret Zero"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
                 }
               }
             ]

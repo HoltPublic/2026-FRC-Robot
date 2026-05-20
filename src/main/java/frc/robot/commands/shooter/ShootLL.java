@@ -62,7 +62,7 @@ public class ShootLL extends Command {
     //calculate distance
     double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
 
-    //System.out.println(distanceFromLimelightToGoalInches + "-Inches");
+    System.out.println(distanceFromLimelightToGoalInches + "-Inches");
 
     Shooter.shoot(distanceFromLimelightToGoalInches);
   }
