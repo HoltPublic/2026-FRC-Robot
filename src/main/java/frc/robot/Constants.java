@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -28,9 +30,35 @@ public final class Constants {
   public static String LimelightBackRight = "limelight-bright";
   public static String LimelightTurret = "limelight-turret";
   }
-  public static class IndexConstants {
 
-    public static final int kIndexMotorID = 21;
+  public static class IntakeConstants {
+    //Device CAN IDs
+    public static final int kRollerMotorID = 52;
+    public static final int kPivotLeaderID = 55; //Originally labeled as HopperLeft
+    public static final int kPivotFollowerID = 53; // Originally labeled as HopperRight
+
+    //Motor Inversion & Mechanical Layout
+    public static final boolean kMotorsAreMirroredOnChassis = true;
+    public static final MotorAlignmentValue kPivotAlignment = kMotorsAreMirroredOnChassis ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned;
+
+    //Target Positions (Rotations)
+    public static final double kPivotStowedPosition = 0.0;
+    public static final double kPivotDeployedPosition = 15.0; //TODO: Tune This variable
+
+    //Speed Targets (Rotations Per Second)
+    public static final double kIntakeVelocityRPS = 48.0;
+    public static final double kOuttakeVelocityRPS = -48.0;
+
+    //Motion Magic Profiles & PID Gains
+    public static final double kPivotKP = 4.0;
+    public static final double kPivotKI = 0.0;
+    public static final double kPivotKD = 0.1;
+    public static final double kPivotKV = 0.12;
+
+    public static final double kPivotCruiseVelocity = 40.0;
+    public static final double kPivotAcceleration = 80.0;
+    public static final double kPivotJerk = 800.0;
+
   }
 
   /**
