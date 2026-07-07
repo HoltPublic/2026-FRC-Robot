@@ -31,49 +31,130 @@ public final class Constants {
   public static String LimelightTurret = "limelight-turret";
   }
 
-  public static class IntakeConstants {
-    //Device CAN IDs
-    public static final int kRollerMotorID = 52;
-    public static final int kPivotLeaderID = 55; //Originally labeled as HopperLeft
-    public static final int kPivotFollowerID = 53; // Originally labeled as HopperRight
-
-    //Motor Inversion & Mechanical Layout
-    public static final boolean kMotorsAreMirroredOnChassis = true;
-    public static final MotorAlignmentValue kPivotAlignment = kMotorsAreMirroredOnChassis ? MotorAlignmentValue.Opposed : MotorAlignmentValue.Aligned;
-
-    //Target Positions (Rotations)
-    public static final double kPivotStowedPosition = 0.0;
-    public static final double kPivotDeployedPosition = 15.0; //TODO: Tune This variable
-
-    //Speed Targets (Rotations Per Second)
-    public static final double kIntakeVelocityRPS = 48.0;
-    public static final double kOuttakeVelocityRPS = -48.0;
-
-    //Motion Magic Profiles & PID Gains
-    public static final double kPivotKP = 4.0;
-    public static final double kPivotKI = 0.0;
-    public static final double kPivotKD = 0.1;
-    public static final double kPivotKV = 0.12;
-
-    public static final double kPivotCruiseVelocity = 40.0;
-    public static final double kPivotAcceleration = 80.0;
-    public static final double kPivotJerk = 800.0;
-
+  public static class HopperConstants {
+    //Motor IDs
+    public static final int kHopperLeftID = 55; 
+    public static final int kHopperRightID = 51; 
+    //Current Limits
+    public static final double kPeakForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kStatorCurrentLimit = 15;//TODO Set Voltage Limits
+    public static final double kSupplyCurrentLimit = 15;//TODO Set Voltage Limits
+    //Motor Rotation Limits
+    public static final double kHopperReverseLimit = -31.13;
+    //Auto Positions
+    public static final double kHopperIn = 0;//in motor rotations
+    public static final double kHopperOut = -31;// in motor rotations
+    public static final double kHopperAutonOut = -13;
+    //Hopper Manual speeds
+    public static final double kHopperInSpeed = -7;// with velocity
+    public static final double kHopperOutSpeed = 7;// with velocity
+    public static final double kHopperStopSpeed = 0;// with velocity
   }
 
-  /**
-   * Hardware IDs and configurations for the Hopper and Intake Mechanisms
-   */
-  public static class HopperConstants {
+  public static class IntakeConstants {
+    //Motor IDs
+    public static final int kIntakeID = 52;
+    //Current Limits
+    public static final double kPeakForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kStatorCurrentLimit = 55;//TODO Set Voltage Limits
+    public static final double kSupplyCurrentLimit = 55;//TODO Set Voltage Limits
+    //Intake Manual speeds
+    public static final double kIntakeForwards = 48;// with velocity
+    public static final double kIntakeBackwards = -48;// with velocity
+    public static final double kIntakeStop = 0;// with velocity
+  }
 
-    public static final int kIntakeMotorID1 = 21;
-    public static final int kIntakeMotorID2 = 457;
-    public static final int kHopperMotorID1 = 550;
-    public static final int kHopperMotorID2 = 552;
-    /**
-     * Default speed for automated hopper movement.
-     */
-    public static final double kHopperAuto = 6;
+  public static class IndexerConstants {
+    //Motor IDs
+    public static final int kSpindexerID = 54;
+    public static final int kFeederID = 53;
+    //Current Limits
+    public static final double kPeakFeederForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakFeederReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kFeederStatorCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kFeederSupplyCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kPeakSpindexerForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakSpindexerReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kSpindexerStatorCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kSpindexerSupplyCurrentLimit = 25;//TODO Set Voltage Limits
+    //Spindexer Manual speeds
+    public static final double kSpindexerForwards = 20;//With Voltage
+    public static final double kSpindexerBackwards = -20;//With Voltage
+    public static final double kSpindexerStop = 0;//With Voltage
+    //Feeder Manual speeds
+    public static final double kFeederForwards = 30;//With Voltage
+    public static final double kFeederBackwards = -30;//With Voltage
+    public static final double kFeederStop = 0;//With Voltage
+  }
+
+  public static class TurretConstants {
+    //Motor IDs
+    public static final int kTurretID = 56;
+    //Current Limits
+    public static final double kPeakForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kStatorCurrentLimit = 30;//TODO Set Voltage Limits
+    public static final double kSupplyCurrentLimit = 30;//TODO Set Voltage Limits  
+    //Motor rotation limits  
+    public static final double kTurretForwardLimit = 90;//TODO set limits
+    public static final double kTurretReverseLimit = -180;//TODO set limits
+    //Turret Gear ratio
+    public static final double kGearRatio = 4; 
+    //Turret Manual speeds
+    public static final double kRightSpeed = -25;// with velocity
+    public static final double kLeftSpeed = 25;// with velocity
+    public static final double kStopSpeed = 0;// with velocity
+    public static final double kTurretZero = 0;//in motor rotations
+  }
+
+  public static class ShooterConstants {
+    //Motor IDs
+    public static final int kShooterLeftID = 57;
+    public static final int kShooterRightID = 59;
+    public static final int kShooterHoodID = 58;
+    //Current Limits
+    public static final double kPeakHoodForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakHoodReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kHoodStatorCurrentLimit = 70;//TODO Set Voltage Limits
+    public static final double kHoodSupplyCurrentLimit = 70;//TODO Set Voltage Limits
+    public static final double kPeakRightForwardVoltage = 20;//TODO Set Voltage Limits
+    public static final double kPeakRightReverseVoltage = -20;//TODO Set Voltage Limits
+    public static final double kRightStatorCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kRightSupplyCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kPeakLeftForwardVoltage = 16;//TODO Set Voltage Limits
+    public static final double kPeakLeftReverseVoltage = -16;//TODO Set Voltage Limits
+    public static final double kLeftStatorCurrentLimit = 25;//TODO Set Voltage Limits
+    public static final double kLeftSupplyCurrentLimit = 25;//TODO Set Voltage Limits
+    //Motor Rotation limit
+    public static final double kHoodForwardLimit = 1.25;// in motor rotations
+    //RPM-RPS
+    public static final double kRPMToRPS = 60;
+    //Distance Min and Max
+    public static final double kDistanceMax = 200;//In Inches
+    public static final double kDistanceMin = 0;//In Inches
+    //Stop Shoot
+    public static final double kStopShoot = 0;// with velocity
+    public static final double kHoodZero = 0;//in motor rotations
+    //Shoot in
+    public static final double kShootInSpeed = -53;// with velocity
+    //Hood Manual Speeds
+    public static final double kHoodUpSpeed = 4;// with velocity
+    public static final double kHoodDownSpeed = -4;// with velocity
+    public static final double kHoodStopSpeed = 0;// with velocity
+    //Pass
+    public static final double kPassSpeed = 50;// with velocity
+    public static final double kPassHoodAngle = 1.25;//in motor rotations
+    //Shoot close
+    public static final double kShootCloseSpeed = 43;// with velocity
+    public static final double kShootCloseHoodAngle = 0;//in motor rotations
+    //Shoot medium
+    public static final double kShootMedSpeed = 52;// with velocity
+    public static final double kShootMedHoodAngle = 0.25;//in motor rotations
+    //Shoot Far
+    public static final double kShootFarSpeed = 63;// with velocity
+    public static final double kShootFarHoodAngle = 0;//in motor rotations
   }
 
   /**
@@ -185,4 +266,9 @@ public final class Constants {
     }
 
   }
+
+  /**
+   * Constants related to setting up the {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem guide Shooter Subsystem} with proper constants.
+   * @deprecated This was only used by {@link frc.robot.subsystems.RileyAndAidanShooterSubsystem a Subsystem used by me to try and get Aidan to help make the Shooter Subsystem}, and I think the actual {@link frc.robot.subsystems.Shooter subsystem} uses magic numbers
+   */
 }

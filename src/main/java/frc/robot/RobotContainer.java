@@ -29,12 +29,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.limelight;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.LimelightHelpers;
+import frc.robot.commands.Hopper.AutonHopperOut;
 import frc.robot.commands.Hopper.HopperIn;
 import frc.robot.commands.Hopper.HopperOut;
 import frc.robot.commands.Hopper.MHopperIn;
@@ -60,6 +61,7 @@ import frc.robot.commands.turret.ZeroT;
 import frc.robot.commands.turret.cordSetAngle;
 import frc.robot.commands.turret.gyroSetAngle;
 import frc.robot.commands.turret.llSetAngle;
+import frc.robot.commands.turret.setAngle;
 
 /**
  * <pre>{@code
@@ -92,11 +94,11 @@ import frc.robot.commands.turret.llSetAngle;
  Oh right, that was the Delta Rune, anyways, um, this is the Robot Container Class
  */
 public class RobotContainer {
-
+    //TODO Go to states
     double slowDrive = 1;
 
-    private double MaxSpeed = 0.60 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.45).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = 0.55 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.55).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -123,7 +125,7 @@ public class RobotContainer {
 
     private final Hopper m_Hopper = new Hopper();
 
-    private final Indexer m_Indexer = new Indexer();
+    private final Indexer Indexer = new Indexer();
 
     private final Shooter m_shooter = new Shooter();
 
@@ -152,13 +154,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(m_Indexer));
         */
         NamedCommands.registerCommand("LLSetAngle", new llSetAngle(m_turret, m_Limelight));
+        NamedCommands.registerCommand("Turret Zero", new setAngle(m_turret, 0));
         NamedCommands.registerCommand("Hopper out", new HopperOut(m_Hopper));
         NamedCommands.registerCommand("Shoot Close", new ShootClose(m_shooter));
-        NamedCommands.registerCommand("ShootMid", new ShootMed(m_shooter));
-        NamedCommands.registerCommand("Indexer Forwards", new IndexerForwards(m_Indexer));
+        NamedCommands.registerCommand("ShootMid", new ShootMed(m_shooter, m_Limelight, m_turret));
+        NamedCommands.registerCommand("Indexer Forwards", new IndexerForwards(Indexer));
+        NamedCommands.registerCommand("Indexer Backwards", new IndexerBack(Indexer));
         NamedCommands.registerCommand("Intake", new IntakeFore(m_Intake));
         NamedCommands.registerCommand("cordSetAngle", new cordSetAngle(m_turret, drivetrain));
         NamedCommands.registerCommand("ShootDrivetrain", new ShootDrivetrain(m_shooter, drivetrain));
+        NamedCommands.registerCommand("Hopper Auton Out", new AutonHopperOut(m_Hopper));
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -240,13 +245,14 @@ Commands.either(
             new JoystickButton(m_operator, 2).whileTrue(new ShootLL(m_shooter));
             new JoystickButton(m_operator, 1).whileTrue(new ShootDrivetrain(m_shooter, drivetrain));
             new JoystickButton(m_operator, 6).whileTrue(new ShootClose(m_shooter));
-            new JoystickButton(m_operator, 7).whileTrue(new ShootMed(m_shooter));
+            new JoystickButton(m_operator, 7).whileTrue(new ShootMed(m_shooter, m_Limelight, m_turret));
             new JoystickButton(m_operator, 8).whileTrue(new ShootFar(m_shooter));
             new JoystickButton(m_operator, 3).whileTrue(new Pass(m_shooter));
             new JoystickButton(m_operator, 21).whileTrue(new ShootIn(m_shooter));
             //Shooter Manual
             new JoystickButton(m_operator, 11).whileTrue(new HoodUp(m_shooter));
             new JoystickButton(m_operator, 12).whileTrue(new HoodDown(m_shooter));
+           // new JoystickButton(m_driver, PS5Controller.Button.kR1.value).whileTrue(new command);
 
             //Hopper
             new JoystickButton(m_operator, 18).onTrue(new HopperIn(m_Hopper));
@@ -261,18 +267,18 @@ Commands.either(
             //Turret
             new JoystickButton(m_operator, 14).whileTrue(new TurretLeft(m_turret));//TODO
             new JoystickButton(m_operator, 16).whileTrue(new TurretRight(m_turret));//TODO
-            new JoystickButton(m_operator, 13).whileTrue(new cordSetAngle(m_turret, drivetrain));//TODO
-           // new JoystickButton(m_operator, 15).whileTrue(Commands.either(
-           ///+ new gyroSetAngle(m_turret, 180),
-           // new gyroSetAngle(m_turret, 0),
-           // () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue));
-            new JoystickButton(m_operator, 15).and(() -> LimelightHelpers.getTV("limelight-turret")).whileTrue(new llSetAngle(m_turret, m_Limelight));//TODO
+            new JoystickButton(m_operator, 1000).whileTrue(new cordSetAngle(m_turret, drivetrain));//TODO
+            new JoystickButton(m_operator, 15).whileTrue(Commands.either(
+            new gyroSetAngle(m_turret, 180),
+            new gyroSetAngle(m_turret, 0),
+            () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue));
+            new JoystickButton(m_operator, 13).toggleOnTrue(new llSetAngle(m_turret, m_Limelight) );//TODO
             //Turret Zero
             new JoystickButton(m_operator, 23).whileTrue(new ZeroT(m_turret));
 
             //Indexer
-            new JoystickButton(m_operator, 9).whileTrue(new IndexerForwards(m_Indexer));
-            new JoystickButton(m_operator, 4).whileTrue(new IndexerBack(m_Indexer));
+            new JoystickButton(m_operator, 9).whileTrue(new IndexerForwards(Indexer));
+            new JoystickButton(m_operator, 4).whileTrue(new IndexerBack(Indexer));
 
             //Intake
             new JoystickButton(m_operator, 10).toggleOnTrue(new IntakeFore(m_Intake));
@@ -280,11 +286,11 @@ Commands.either(
 
         // Driver Commmands
                 //Triggers
-                new JoystickButton(m_driver, PS5Controller.Button.kL2.value).whileTrue(new HopperOut(m_Hopper));
-                new JoystickButton(m_driver, PS5Controller.Button.kR2.value).whileTrue(new HopperIn(m_Hopper));
+                new JoystickButton(m_driver, PS5Controller.Button.kL2.value).whileTrue(new IntakeFore(m_Intake));
+                new JoystickButton(m_driver, PS5Controller.Button.kR2.value).whileTrue(new IntakeBack(m_Intake));
                 //Bumpers
                 new JoystickButton(m_driver, PS5Controller.Button.kR1.value).whileTrue(new ShootLL(m_shooter));
-                new JoystickButton(m_driver, PS5Controller.Button.kL1.value).whileTrue(Commands.run(() -> slowDrive = 0.3))
+                new JoystickButton(m_driver, PS5Controller.Button.kL1.value).toggleOnTrue(Commands.run(() -> slowDrive = 0.3))
                 .onFalse(Commands.runOnce(()-> slowDrive = 1));
                 //Joystick Button
                 new JoystickButton(m_driver, PS5Controller.Button.kR3.value).whileTrue(drivetrain.applyRequest(() -> brake));

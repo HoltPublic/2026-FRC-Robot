@@ -12,14 +12,14 @@ import frc.robot.subsystems.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShootDrivetrain extends Command {
-  Shooter m_shooter;
-  CommandSwerveDrivetrain m_drivetrain;
+  Shooter Shooter;
+  CommandSwerveDrivetrain Drivetrain;
   /** Creates a new ShootDrivetrain. */
-  public ShootDrivetrain(Shooter Shooter, CommandSwerveDrivetrain drivetrain) {
-    m_shooter = Shooter;
-    m_drivetrain = drivetrain;
+  public ShootDrivetrain(Shooter shooter, CommandSwerveDrivetrain drivetrain) {
+    Shooter = shooter;
+    Drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_shooter);
+    addRequirements(Shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +31,7 @@ public class ShootDrivetrain extends Command {
   public void execute() {
       boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
-      var pose = m_drivetrain.getState().Pose;
+      var pose = Drivetrain.getState().Pose;
       System.out.println(pose);
       
     double targetX = DSBlue ? 4.621 : 11.919;
@@ -40,13 +40,13 @@ public class ShootDrivetrain extends Command {
     double MDistance = pose.getTranslation().getDistance(new Translation2d(targetX, targetY));
     double IDistance = MDistance * 39.3701;
 
-    m_shooter.shoot(IDistance);
+    Shooter.shoot(IDistance);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-        m_shooter.stopShoot();
+        Shooter.stopShoot();
   }
 
   // Returns true when the command should end.

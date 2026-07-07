@@ -9,9 +9,9 @@ import frc.robot.subsystems.*;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IndexerForwards extends Command {
-  Indexer m_indexer;
+  Indexer Indexer;
   public IndexerForwards(Indexer indexer) {
-    m_indexer = indexer;
+    Indexer = indexer;
   }
 
   @Override
@@ -19,12 +19,14 @@ public class IndexerForwards extends Command {
 
  @Override
   public void execute() {
-    m_indexer.IndexerForwards();
+    Indexer.spindexerForwards();
+    Indexer.feederForwards();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_indexer.IndexerStop();
+    Indexer.spindexerStop();
+    Indexer.feederStop();
   }
 
   @Override

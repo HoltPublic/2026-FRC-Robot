@@ -29,22 +29,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.TurretConstants;
 
-/**
- * Subsystem responsible for controlling Saturn's Turret mechanism
- * <p>This subsystem utilizes a single TalonFX motor to provide rotation. It supports
- * various control modes including manual velocity control, direct position control
- * and field-relative orientation using gyro data from the drivetrain.
- *
- * <p>Uses Phoenix 6 control requests: {@link PositionVoltage} and {@link VelocityVoltage}.
- * @author Henry M. - 6078 (Maintainer)
- * @author Riley A. - 6078 (Documentation)
- */
 public class Turret extends SubsystemBase {
 
   boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
-  private final TalonFX turret = new TalonFX(54);
+  private final TalonFX turret = new TalonFX(TurretConstants.kTurretID);
 
  // private final DutyCycleOut m_turretOut = new DutyCycleOut(0);
 
@@ -54,6 +45,8 @@ public class Turret extends SubsystemBase {
 
   private final CommandSwerveDrivetrain drivetrain;
 
+  private DoublePublisher targetPositionPub;
+  private DoublePublisher actualPositionPub;
   private DoublePublisher supplyCurrentPub;
   private DoublePublisher statorCurrentPub;
 
@@ -69,28 +62,38 @@ public class Turret extends SubsystemBase {
     TalonFXConfiguration configs = new TalonFXConfiguration();
 
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    configs.Slot0.kP = 0.10; // An error of 0.2 rotations results in 1.2 volts output
+    configs.Slot0.kP = 0.30; // An error of 0.2 rotations results in 1.2 volts output
+    configs.Slot0.kI = 0; // No kI value
     configs.Slot0.kD = 0.03; // A change of 1 rotation per second results in 0.1 volts output
-
+    configs.Slot0.kS = 0.2; // Add 0.05 V output to overcome static friction
+    configs.Slot0.kV = 0.12; // Gives motor 0.12V for every 1 RPS desired
     configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    configs.Voltage.PeakForwardVoltage = 16;
-    configs.Voltage.PeakReverseVoltage = -16;
+    configs.Voltage.PeakForwardVoltage = TurretConstants.kPeakForwardVoltage;
+    configs.Voltage.PeakReverseVoltage = TurretConstants.kPeakReverseVoltage;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
-    configs.CurrentLimits.StatorCurrentLimit = 30;
+    configs.CurrentLimits.StatorCurrentLimit = TurretConstants.kStatorCurrentLimit;
     configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    configs.CurrentLimits.SupplyCurrentLimit = 30;
+    configs.CurrentLimits.SupplyCurrentLimit = TurretConstants.kSupplyCurrentLimit;
     configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(180);//TODO Set the proper limit
-    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(-180);//TODO
+    configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = degToRot(TurretConstants.kTurretForwardLimit);
+    configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = degToRot(TurretConstants.kTurretReverseLimit);
 
     turret.getConfigurator().apply(configs);
 
+    targetPositionPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Turret/Position/Target")
+          .publish();
+    actualPositionPub = 
+      NetworkTableInstance.getDefault()
+        .getDoubleTopic("Turret/Position/Actual")
+          .publish();
     supplyCurrentPub = 
       NetworkTableInstance.getDefault()
         .getDoubleTopic("Turret/Current/Supply (A)")
@@ -107,7 +110,7 @@ public class Turret extends SubsystemBase {
      * @return The equivalent motor rotations.
      */
     private double degToRot (double degrees) {
-    return (degrees/ 360) * (160/4);
+    return (degrees/ 360) * TurretConstants.kGearRatio;
   }
 
     /**
@@ -116,16 +119,18 @@ public class Turret extends SubsystemBase {
      * @return The equivalent angle in degrees
      */
     private double rotToDeg (double rot) {
-      return (rot/ (160/4)) * 360;
-    } //Henry, why was this 100? Well, good thing this went unused elsewise, I don't want to know the horrors that would've happened (⊙_⊙)
+      return (rot/ TurretConstants.kGearRatio) * 360;
+    }
 
   @Override
   public void periodic() {
-    // double mRot = turret.getPosition().getValueAsDouble();
-    // double mDeg = (mRot / (160/4)) * 360;
+     //double mRot = turret.getPosition().getValueAsDouble();
+     //double mDeg = (mRot / TurretConstants.kGearRatio) * 360;
+    double actualPosition = ((turret.getPosition().getValueAsDouble() / TurretConstants.kGearRatio) * 360);
     double turretSupplyAmps = turret.getSupplyCurrent().getValueAsDouble();
     double turretStatorAmps = turret.getStatorCurrent().getValueAsDouble();
 
+    actualPositionPub.set(actualPosition);
     supplyCurrentPub.set(turretSupplyAmps);
     statorCurrentPub.set(turretStatorAmps);
 
@@ -147,21 +152,21 @@ public class Turret extends SubsystemBase {
      * Spins the turret to the right at a consistent velocity
      */
   public void rightSpin () {
-    turret.setControl(turretVV.withVelocity(-25));
+    turret.setControl(turretVV.withVelocity(TurretConstants.kRightSpeed));
   }
 
     /**
      * Spins the turret to the left at a consistent velocity
      */
  public void leftSpin () {
-  turret.setControl(turretVV.withVelocity(25));
+  turret.setControl(turretVV.withVelocity(TurretConstants.kLeftSpeed));
  }
 
     /**
      * Stops the turret's rotation by applying 0 voltage.
      */
  public void stopSpin () {
-  turret.setControl(new VoltageOut(0));
+  turret.setControl(turretVV.withVelocity(TurretConstants.kStopSpeed));
  }
 
     /**
@@ -170,39 +175,32 @@ public class Turret extends SubsystemBase {
      */
     public void setAngle (double setangle) {
     turret.setControl(m_turretPV.withPosition(setangle));
+    targetPositionPub.set(setangle);
 }
 
-    /**
-     * Sets the turret angle based on specific input constraints
-     * <p>This method applies a modulus of [-360, 360] to the input angle
-     * to ensure the target remains within a single rotation's range before
-     * applying position control.</p>
-     * @param angle The target angle in degrees
-     */
-    public void llSetAngle (double angle ) {
- // double mRot = m_turret.getPosition().getValueAsDouble();
+public void llSetAngle (double angle ) {
+ // double mRot = turret.getPosition().getValueAsDouble();
  // double mDeg = (mRot / 100) * 360;
 
 
-  angle = MathUtil.inputModulus(angle, -180, 180); //TODO
+  angle = MathUtil.inputModulus(angle, TurretConstants.kTurretReverseLimit, TurretConstants.kTurretForwardLimit);
+
   double mSet = -angle;
  // turret.setControl(m_turretPV.withPosition(mSet));
   turret.setControl(new PositionVoltage(mSet));
 }
 
-    /**
-     * Sets the turret to a field-relative angle using the robot's gyro heading.
-     * <p>The method subtracts the current {@code robotYaw} from the target
-     * {@code angle} and wraps the results to [-180, 180] to find the shortest
-     * path for the turret to maintain its heading regardless of chassis rotation.</p>
-     * @param angle The desired field-relative heading in degrees.
-     */
-    public void gyroSetAngle (double angle) {
+public void KeepTurret () {
+  double mRot = turret.getPosition().getValueAsDouble();
+  turret.setControl(m_turretPV.withPosition(mRot));
+}
+
+public void gyroSetAngle (double angle) {
   double robotYaw = drivetrain.getState().Pose.getRotation().getDegrees();
 
   double mSet = angle - robotYaw;
 
-  mSet = MathUtil.inputModulus(mSet, -180, 180);//TODO Set the Wrapper
+  angle = MathUtil.inputModulus(angle, TurretConstants.kTurretReverseLimit, TurretConstants.kTurretForwardLimit);
 
   mSet = degToRot(mSet);
 
@@ -211,11 +209,11 @@ public class Turret extends SubsystemBase {
 }
 
 public void setAngleZero() {
-  turret.setControl(m_turretPV.withPosition(0));
+  turret.setControl(m_turretPV.withPosition(TurretConstants.kTurretZero));
 }
 
 public void ZeroT () {
-  turret.setControl(m_turretPV.withPosition(0));
+  turret.setControl(m_turretPV.withPosition(TurretConstants.kTurretZero));
 }
 //Wait, is setAngleZero and ZeroT the exact same method???
 

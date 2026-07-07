@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
+import frc.robot.Constants.HopperConstants;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -31,8 +31,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Hopper extends SubsystemBase {
 
     //Some motors. I don't know which one, as the name is kind of vague, that and looking at the CAD Model, there's 3. I'm going to have to document these motors, aren't I Henry?
-  private final TalonFX HopperLeft = new TalonFX(55);
-  private final TalonFX HopperRight = new TalonFX(53);
+  private final TalonFX HopperLeft = new TalonFX(HopperConstants.kHopperLeftID);
+  private final TalonFX HopperRight = new TalonFX(HopperConstants.kHopperRightID);
 
   private final VelocityVoltage HopperVV = new VelocityVoltage(0);
   private final PositionVoltage m_HoperPV = new PositionVoltage(0);
@@ -53,32 +53,34 @@ public class Hopper extends SubsystemBase {
     rightConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    rightConfigs.Voltage.PeakForwardVoltage = 16;
-    rightConfigs.Voltage.PeakReverseVoltage = -16;
+    rightConfigs.Voltage.PeakForwardVoltage = HopperConstants.kPeakForwardVoltage;
+    rightConfigs.Voltage.PeakReverseVoltage = HopperConstants.kPeakReverseVoltage;
     rightConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfigs.CurrentLimits.StatorCurrentLimit = 30;
+    rightConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.kStatorCurrentLimit;
+    rightConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rightConfigs.CurrentLimits.SupplyCurrentLimit = HopperConstants.kSupplyCurrentLimit;
     rightConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     rightConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -27;
+    rightConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = HopperConstants.kHopperReverseLimit;
 
       TalonFXConfiguration leftConfigs = new TalonFXConfiguration();
 
     leftConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    leftConfigs.Slot0.kP = 0.5; // An error Q!~of 0.5 rotations results in 1.2 volts output
-    leftConfigs.Slot0.kD = .000001; // A change of 1 rotation per second results in 0.1 volts output
+    leftConfigs.Slot0.kP = 0.5; // An error of 0.5 rotations results in 1.2 volts output
+    leftConfigs.Slot0.kD = .01; // A change of 1 rotation per second results in 0.1 volts output
 
     leftConfigs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    leftConfigs.Voltage.PeakForwardVoltage = 16;
-    leftConfigs.Voltage.PeakReverseVoltage = -16;
+    leftConfigs.Voltage.PeakForwardVoltage = HopperConstants.kPeakForwardVoltage;
+    leftConfigs.Voltage.PeakReverseVoltage = HopperConstants.kPeakReverseVoltage;
     leftConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfigs.CurrentLimits.StatorCurrentLimit = 15;
+    leftConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.kStatorCurrentLimit;
     leftConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-    leftConfigs.CurrentLimits.SupplyCurrentLimit = 15;
+    leftConfigs.CurrentLimits.SupplyCurrentLimit = HopperConstants.kSupplyCurrentLimit;
     leftConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     leftConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
@@ -91,7 +93,7 @@ public class Hopper extends SubsystemBase {
 
     HopperLeft.setPosition(0);
 
-    HopperRight.setControl(new Follower(55, MotorAlignmentValue.Opposed));
+    HopperRight.setControl(new Follower(HopperConstants.kHopperLeftID, MotorAlignmentValue.Opposed));
 
     supplyCurrentPub =
       NetworkTableInstance.getDefault()
@@ -112,29 +114,24 @@ public class Hopper extends SubsystemBase {
   }
 
     /**
-     * Moves the Hopper inward toward the robot at a set velocity.
-     * Uses closed-loop velocity control (-7 rotations per second).
+     Moves the Hopper in
      */
   public void hopperIn () {
-    HopperLeft.setControl(HopperVV.withVelocity(-7));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperInSpeed));
   }
 
     /**
-     * Immediately stops all Hopper motor output.
-     * <p>Overrides any active Velocity or Position commands by setting the lead motor to 0 Volts.
-     * Because the motors are in {@code NeutralModeValue.Brake}
-     * the hopper will resist manual movement once stopped.
+     Causes the Hopper  motors to stop
      */
   public void hopperStop () {
-    HopperLeft.setControl(new VoltageOut(0));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperStopSpeed));
   }
 
     /**
-     * Moves the Hopper outward to feed fuel at a set velocity.
-     * Uses closed-loop velocity control (7 rotations per second).
+     Moves the hopper out
      */
   public void hopperOut () {
-    HopperLeft.setControl(HopperVV.withVelocity(7));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperOutSpeed));
   }
 
     /**
@@ -147,35 +144,27 @@ public class Hopper extends SubsystemBase {
   }
 
     /**
-     * Calibrates the Hopper's zero-point by resetting the internal encoders.
-     * <p>This method performs two actions:
-     * <ol>
-     *     <li>Immediately halts motor output (0V).</li>
-     *     <li>Sets the {@code HopperLeft} integrated sensor position to <b>0.0 rotations</b>.</li>
-     * </ol>
-     * <p><b>Warning:</b> Ensure the Hopper is physically at its 'home' or fully retracted
-     * position before calling this method, as all subsequent position-based movement
-     * will be relative to this point.
+     set hopper encoder to 0
      */
   public void ZeroH () {
-    HopperLeft.setControl(new VoltageOut(0));
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperStopSpeed));
+    // HopperLeft.setPosition(HopperConstants.kHopperIn);
     HopperLeft.setPosition(0);
   }
 
     /**
-     *  Commands the hopper to its fully extended position.
-     *  <p>Note: This method resets the internal encoder position to -40 after stopping motor output.
+      set hopper encoder to -40 rotations
      */
   public void setHopperOut () {
-        HopperLeft.setControl(new VoltageOut(0));
-    HopperLeft.setPosition(-40);
+    HopperLeft.setControl(HopperVV.withVelocity(HopperConstants.kHopperStopSpeed));
+    HopperLeft.setPosition(HopperConstants.kHopperOut);
   }
 
     @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //double mRot = HopperLeft.getPosition().getValueAsDouble();
-    //System.out.println(mRot);
+    double mRot = HopperLeft.getPosition().getValueAsDouble();
+    System.out.println(mRot);
     double supplyAmps = ((HopperLeft.getSupplyCurrent().getValueAsDouble() + HopperRight.getSupplyCurrent().getValueAsDouble()) / 2);
     double statorAmps = ((HopperLeft.getStatorCurrent().getValueAsDouble() + HopperRight.getStatorCurrent().getValueAsDouble()) / 2);
     double actualPosition = ((HopperLeft.getPosition().getValueAsDouble() + HopperRight.getPosition().getValueAsDouble()) / 2);

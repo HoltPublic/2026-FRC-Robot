@@ -9,10 +9,10 @@ import frc.robot.subsystems.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class HoodDown extends Command {
-  Shooter m_shooter;
+  Shooter Shooter;
   /** Creates a new HoodDown. */
-  public HoodDown(Shooter Shooter) {
-    m_shooter = Shooter;
+  public HoodDown(Shooter shooter) {
+    Shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,13 +23,13 @@ public class HoodDown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.shooterHoodDown();
+    Shooter.shooterHoodDown();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooter.keepHoodUp();
+    Shooter.keepHoodUp();
   }
 
   // Returns true when the command should end.

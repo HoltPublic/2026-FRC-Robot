@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants.IntakeConstants;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
   private final VelocityVoltage IntakeVV = new VelocityVoltage(0);
 
-  private final TalonFX intake = new TalonFX(52);
+  private final TalonFX intake = new TalonFX(IntakeConstants.kIntakeID);
 
   private DoublePublisher supplyCurrentPub;
   private DoublePublisher statorCurrentPub;
@@ -48,12 +49,12 @@ public class Intake extends SubsystemBase {
     Config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.3;
   
     // Peak output of 8 volts
-    Config.Voltage.PeakForwardVoltage = 16;
-    Config.Voltage.PeakReverseVoltage = -16;
+    Config.Voltage.PeakForwardVoltage = IntakeConstants.kPeakForwardVoltage;
+    Config.Voltage.PeakReverseVoltage = IntakeConstants.kPeakReverseVoltage;
     Config.CurrentLimits.StatorCurrentLimitEnable = true;
-    Config.CurrentLimits.StatorCurrentLimit = 55;
+    Config.CurrentLimits.StatorCurrentLimit = IntakeConstants.kStatorCurrentLimit;
     Config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    Config.CurrentLimits.SupplyCurrentLimit = 55;
+    Config.CurrentLimits.SupplyCurrentLimit = IntakeConstants.kSupplyCurrentLimit;
     Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     intake.getConfigurator().apply(Config);
@@ -85,7 +86,7 @@ public class Intake extends SubsystemBase {
   public void intakeFore () {
     //double mVol = intake.getMotorVoltage().getValueAsDouble();
     //double mVel = intake.getVelocity().getValueAsDouble();
-    intake.setControl(IntakeVV.withVelocity(48));
+    intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeForwards));
     //System.out.println(mVel + "-Vel");
     //System.out.println(mVol + "-Vol");
   }
@@ -95,13 +96,13 @@ public class Intake extends SubsystemBase {
    * <p>Target velocity is set to -48 rotations per second (RPS).</p>
    */
   public void intakeBack () {
-    intake.setControl(IntakeVV.withVelocity(-48));
+    intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeBackwards));
   }
 
   /**
    * Immediately stops the intake rollers by applying zero voltage.
    */
   public void intakeStop () {
-    intake.setControl(new VoltageOut(0));
+    intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeStop));
   }
 }

@@ -15,12 +15,12 @@ import frc.robot.subsystems.Shooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ShootLL extends Command {
-  Shooter m_shooter;
+  Shooter Shooter;
   /** Creates a new Shoot. */
   public ShootLL(Shooter shooter) {
-    m_shooter = shooter;
+    Shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_shooter);
+    addRequirements(Shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -62,15 +62,15 @@ public class ShootLL extends Command {
     //calculate distance
     double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
 
-    //System.out.println(distanceFromLimelightToGoalInches + "-Inches");
+    System.out.println(distanceFromLimelightToGoalInches + "-Inches");
 
-    m_shooter.shoot(distanceFromLimelightToGoalInches);
+    Shooter.shoot(distanceFromLimelightToGoalInches);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooter.stopShoot();
+    Shooter.stopShoot();
   }
 
   // Returns true when the command should end.

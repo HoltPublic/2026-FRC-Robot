@@ -13,17 +13,17 @@ import frc.robot.subsystems.limelight;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class llSetAngle extends Command {
 
-  Turret m_turret;
-  limelight m_Limelight;
+  Turret Turret;
+  limelight Limelight;
   /** Creates a new setAngle. */
   public llSetAngle (Turret turret, limelight limelight) {
 
 
     
-     m_turret = turret;
-     m_Limelight = limelight;
+     Turret = turret;
+     Limelight = limelight;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_turret);
+    addRequirements(Turret);
   }
 
   // Called when the command is initially scheduled.
@@ -33,7 +33,7 @@ public class llSetAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_turret.llSetAngle(m_Limelight.turretTx());
+    Turret.llSetAngle(Limelight.turretTx());
     //System.out.println(m_Limelight.tx());
   }
 
@@ -41,7 +41,7 @@ public class llSetAngle extends Command {
   @Override
   public void end(boolean interrupted) {
     //m_turret.tZero();
-    m_turret.stopSpin();
+    Turret.stopSpin();
   }
 
   // Returns true when the command should end.
