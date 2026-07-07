@@ -63,7 +63,36 @@ import frc.robot.commands.turret.gyroSetAngle;
 import frc.robot.commands.turret.llSetAngle;
 import frc.robot.commands.turret.setAngle;
 
-
+/**
+ * <pre>{@code
+ *
+ *
+ *
+ * .#@@@*-.:@@#-.                       .-%@@..-#@@@#
+ * .+@@@@@@-+@@@@@-.                 .-@@@@@+-@@@@@@+
+ *    :*%@@@@#*%@@@%-.   ..:::..   .-%@@@%*%@@@@%+:
+ *     .:==--+*%@*%%@=  :%@@@@@@-. =@%%*@%*+--==:.
+ *     .*@@@@@@#++-@@= :@@@@@@@@@- =@@:++#@@@@@@*.
+ *       :+++#%%%#:@@= =@@@@@@@@@# =@@:#%%%#++=:
+ *         .-#@%+=-*@#:.@@@@@@@@%.:#@*-=+%@#-.
+ *             .+##+*@- .-@@@@@-. =@++##+.
+ *             ..:..        ..       ..:..
+ *
+ *
+ *                 ...              ...
+ *                .=@+.            .*@-
+ *               .+@@@+.          .*@@@=.
+ *              .*@@@@@+         .*@@@@@+.
+ *               .......         ........
+ *
+ *                       .#@@@@*.
+ *                        .*@@=.
+ *                         .*=.
+ *
+ *
+ }</pre><br>
+ Oh right, that was the Delta Rune, anyways, um, this is the Robot Container Class
+ */
 public class RobotContainer {
     //TODO Go to states
     double slowDrive = 1;

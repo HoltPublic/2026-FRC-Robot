@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 //import com.ctre.phoenix6.configs.TalonFXConfigurator;
 //import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 //import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -50,7 +51,10 @@ public class Turret extends SubsystemBase {
   private DoublePublisher statorCurrentPub;
 
  // private final VelocityVoltage m_turretVV = new VelocityVoltage(null);
-  /** Creates a new Turret. */
+  /**Creates a new Turret subsystem.
+   * <p>Initializes the motor with specific PID gains, current limits, and
+   * software limit switches to prevent mechanical damage (Despite the fact it broke twice already)</p>
+   * @param drivetrain The {@link CommandSwerveDrivetrain} used for field-related positioning calculations*/
   public Turret(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
     turret.setPosition( 0);
@@ -100,10 +104,20 @@ public class Turret extends SubsystemBase {
           .publish();
   }
 
+    /**
+     * Converts degrees to motor rotations based on the turret's gear ratio
+     * @param degrees The target angle in degrees.
+     * @return The equivalent motor rotations.
+     */
     private double degToRot (double degrees) {
     return (degrees/ 360) * TurretConstants.kGearRatio;
   }
 
+    /**
+     * Converts motor rotations to degrees based on the turret's gear ratio
+     * @param rot The target motor rotations
+     * @return The equivalent angle in degrees
+     */
     private double rotToDeg (double rot) {
       return (rot/ TurretConstants.kGearRatio) * 360;
     }
@@ -120,6 +134,13 @@ public class Turret extends SubsystemBase {
     supplyCurrentPub.set(turretSupplyAmps);
     statorCurrentPub.set(turretStatorAmps);
 
+    //Turret Plate Status Thingy
+    if (Math.abs(turret.getMotorVoltage().getValueAsDouble()) > 1.0 && Math.abs(turret.getVelocity().getValueAsDouble()) < 0.05) {
+        SmartDashboard.putString("Turret Plate Status", "Cooked");
+        //If y'all feel it necessary, feel free to effectively stop the turret motor from running here, as currently, this just shows the status of the turret plate
+    } else {
+        SmartDashboard.putString("Turret Plate Status", "👌");
+    }
   // System.out.println(mSet + "-mSet");
     //System.out.println(mRot + "-mRot");
     //System.out.println(mDeg + "-mDeg");
@@ -127,19 +148,32 @@ public class Turret extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+    /**
+     * Spins the turret to the right at a consistent velocity
+     */
   public void rightSpin () {
     turret.setControl(turretVV.withVelocity(TurretConstants.kRightSpeed));
   }
- 
+
+    /**
+     * Spins the turret to the left at a consistent velocity
+     */
  public void leftSpin () {
   turret.setControl(turretVV.withVelocity(TurretConstants.kLeftSpeed));
  }
 
+    /**
+     * Stops the turret's rotation by applying 0 voltage.
+     */
  public void stopSpin () {
   turret.setControl(turretVV.withVelocity(TurretConstants.kStopSpeed));
  }
 
-public void setAngle (double setangle) {
+    /**
+     * Sets the turret angle using direct motor units.
+     * @param setangle The target position in motor rotations
+     */
+    public void setAngle (double setangle) {
     turret.setControl(m_turretPV.withPosition(setangle));
     targetPositionPub.set(setangle);
 }
@@ -181,6 +215,6 @@ public void setAngleZero() {
 public void ZeroT () {
   turret.setControl(m_turretPV.withPosition(TurretConstants.kTurretZero));
 }
-
+//Wait, is setAngleZero and ZeroT the exact same method???
 
 }

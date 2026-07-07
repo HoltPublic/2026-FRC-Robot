@@ -14,6 +14,7 @@ import frc.robot.Constants.BlinkinConstants.blinkinPattern;
 
 /**
  * Primary class for the Rev Blinkin
+ * @author 6078 - Riley Specifically
  */
 public class Blinkin extends SubsystemBase {
     private Spark m_ledController = new Spark(BlinkinConstants.kPwmPort);

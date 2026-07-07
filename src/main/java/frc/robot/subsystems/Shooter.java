@@ -25,6 +25,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.turret.TurretLeft;
 
+/**
+ * Subsystem responsible for the Saturn's shooting mechanism, including dual-motor
+ * flywheels and an adjustable hood for trajectory control.
+ *
+ * <p>This class features automated shooting logic that utilizes interpolation tables
+ * to determine the optimal flywheel RPM and hood angle based on the distance from the target.</p>
+ *<br>Visual Reference:<br> <img src="../doc-files/turret-shooter.png">
+ * @author Henry M. - 6078 (Maintainer)
+ * @author Riley A. - 6078 (Documentation)
+ */
 public class Shooter extends SubsystemBase {
 private final TalonFX shooterLeft = new TalonFX(ShooterConstants.kShooterLeftID);
 private final TalonFX shooterRight = new TalonFX(ShooterConstants.kShooterRightID);
@@ -223,6 +233,12 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     hoodStatorCurrentPub.set(hoodStatorAmps);
   }
 
+    /**
+     * Executes a shooting sequence at a calculated intensity for a given distance.
+     * <p>Automatically adjusts flywheel velocity (converted to RPS) and hood position
+     * based on predefined {@link InterpolatingDoubleTreeMap} Lookups.</p>
+     * @param distance The distance to the target, used to interpolate motor settings
+     */
   public void shoot (double distance) {
    double RPS =  distanceToRPM(distance) / ShooterConstants.kRPMToRPS;
    //System.out.println(RPS);
@@ -232,43 +248,78 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     shooterHood.setControl(shooterHoodPV.withPosition(hoodAngle));
   }
 
+    /**
+     * Commands the flywheels to take in fuel by spinning in reverse.
+     */
   public void shootIn () {
     shooterLeft.setControl(shooterLeftVV.withVelocity(ShooterConstants.kShootInSpeed));
   }
 
+    /**
+     * Stops the flywheel motors and returns the hood to its home (0) position.
+     */
   public void stopShoot () {
    // shooterRight.setControl(shooterRightVV.withVelocity(0));
     shooterLeft.setControl( new VoltageOut(ShooterConstants.kStopShoot));
     shooterHood.setControl(shooterHoodPV.withPosition(ShooterConstants.kHoodZero));
   }
 
+    /**
+     * Maps a given distance to a target flywheel speed using an interpolation table.
+     * @param distance The distance in meters (clamped between 0 & 200).
+     * @return The interpolated target speed in Rotations Per Minute.
+     */
   public double distanceToRPM (double distance) {
     distance = Math.max(ShooterConstants.kDistanceMin, Math.min(ShooterConstants.kDistanceMax, distance));
     return rpmTable.get(distance);
   }
 
+    /**
+     * Maps a given distance to a target hood orientation using an interpolation table.
+     * @param distance The distance in meters (clamped between 0 & 200).
+     * @return The interpolated target hood position in motor rotations.
+     */
   public double distanceToHoodAngle (double distance) {
     distance = Math.max(ShooterConstants.kDistanceMin, Math.min(ShooterConstants.kDistanceMax, distance));
     return hoodAngleTable.get(distance);
   }
 
+    /**
+     * Actuates the hood upwards at a constant velocity.
+     */
   public void shooterHoodUp () {
     shooterHood.setControl(HoodVV.withVelocity(ShooterConstants.kHoodUpSpeed));
   }
 
+    /**
+     * Actuates the hood downwards at a constant velocity.
+     */
   public void shooterHoodDown () {
     shooterHood.setControl(HoodVV.withVelocity(ShooterConstants.kHoodDownSpeed));
   }
 
+    /**
+     * Immediately stops all hood movement.
+     */
   public void shooterHoodStop () {
     shooterHood.setControl(HoodVV.withVelocity(ShooterConstants.kHoodStopSpeed));
   }
 
+    /**
+     * Commands the shooter hood to a specific angular position using a position closed-loop.
+     * <p>This allows for manual adjustment of the hood's tilt, independent of the
+     * automated distance-based interpolation logic.</p>
+     * @param Angle The target position for the hood in motor rotations.
+     */
   public void SetHoodAngle (double Angle) {
     shooterHood.setControl(shooterHoodPV.withPosition(Angle));
     hoodTargetPositionPub.set(Angle);
   }
 
+    /**
+     * Sets the target velocity for the shooter's flywheel motors.
+     * @param Speed
+     */
   public void SetShooterSpeed (double Speed) {
     shooterLeft.setControl(shooterLeftVV.withVelocity(Speed));
     shooterTargetRPMPub.set(Speed);
@@ -282,6 +333,9 @@ TalonFXConfiguration rightConfig = new TalonFXConfiguration();
     }
   }
 
+    /**
+     * Holds the hood at its current rotational position using a position closed-loop
+     */
   public void keepHoodUp () {
     double mHoodRot = shooterHood.getPosition().getValueAsDouble();
     shooterHood.setControl(shooterHoodPV.withPosition(mHoodRot));
