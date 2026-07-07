@@ -20,6 +20,7 @@ import frc.robot.Constants.IntakeConstants;
  * Effectively a new intake meant for our new 4-bar intake.
  * <p>Consolidates the old Intake and the Hopper into a single subsystem
  * using a motor-driven pivot linkage and rolling intake wheels.</p>
+ * @author Riley of Team 6078
  */
 public class NewIntake extends SubsystemBase {
     // --- Hardware Devices ---

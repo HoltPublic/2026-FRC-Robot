@@ -64,34 +64,7 @@ import frc.robot.commands.turret.llSetAngle;
 import frc.robot.commands.turret.setAngle;
 
 /**
- * <pre>{@code
- *
- *
- *
- * .#@@@*-.:@@#-.                       .-%@@..-#@@@#
- * .+@@@@@@-+@@@@@-.                 .-@@@@@+-@@@@@@+
- *    :*%@@@@#*%@@@%-.   ..:::..   .-%@@@%*%@@@@%+:
- *     .:==--+*%@*%%@=  :%@@@@@@-. =@%%*@%*+--==:.
- *     .*@@@@@@#++-@@= :@@@@@@@@@- =@@:++#@@@@@@*.
- *       :+++#%%%#:@@= =@@@@@@@@@# =@@:#%%%#++=:
- *         .-#@%+=-*@#:.@@@@@@@@%.:#@*-=+%@#-.
- *             .+##+*@- .-@@@@@-. =@++##+.
- *             ..:..        ..       ..:..
- *
- *
- *                 ...              ...
- *                .=@+.            .*@-
- *               .+@@@+.          .*@@@=.
- *              .*@@@@@+         .*@@@@@+.
- *               .......         ........
- *
- *                       .#@@@@*.
- *                        .*@@=.
- *                         .*=.
- *
- *
- }</pre><br>
- Oh right, that was the Delta Rune, anyways, um, this is the Robot Container Class
+ * Contains all things the robot needs to do, 
  */
 public class RobotContainer {
     //TODO Go to states
