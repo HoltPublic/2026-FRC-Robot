@@ -20,15 +20,6 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.RawFiducial;
 
-/**
- * Subsystem for managing Limelight vision cameras and integrating vision data
- * into the drivetrain's pose estimator.
- * <p>This class handles multiple limelight units, filters for specific AprilTags,
- * and uses "MegaTag2" localization to update Saturn's field position based on
- * the camera with the lowest pose ambiguity.</p>
- * @author Henry M. - 6078 (Maintainer)
- * @author Riley A. - 6078 (Documentation)
- */
 public class limelight extends SubsystemBase {
   // private CommandSwerveDrivetrain drivetrain;
 
@@ -53,15 +44,7 @@ public class limelight extends SubsystemBase {
 
   double bleftA = 0;
   double brightA = 0;
-    /**
-     * Constructs the Limelight subsystem and initializes camera offsets.
-     * <p>Defines the physical 3D transformations (position and rotation) for
-     * 'BackRight' and 'BackLeft' cameras relative to Saturn's center. It also
-     * sets up AprilTag ID filtering for the turret camera.</p>
-     *
-     * @param drivetrain The {@link CommandSwerveDrivetrain} instance used for
-     *                   integrating vision measurements.
-     */
+    /** Creates a new limelight. */
     public limelight(CommandSwerveDrivetrain drivetrain) {
       // this.drivetrain = drivetrain;
      
@@ -113,25 +96,19 @@ LimelightHelpers.SetFiducialIDFiltersOverride(LimelightConstants.LimelightTurret
     //ambiguitybright();
 
 
-    if (brightA < bleftA) {
-    updatePose(LimelightConstants.LimelightBackRight);
-    } else if (bleftA < brightA) {
-    updatePose(LimelightConstants.LimelightBackLeft);
-    }
+   // if (brightA < bleftA) {
+    //updatePose(LimelightConstants.LimelightBackRight);
+   // } else if (bleftA < brightA) {
+    //updatePose(LimelightConstants.LimelightBackLeft);
+   // }
     // This method will be called once per scheduler run
   }
-
-    /**
-     * Retrieves the horizontal offset (tx) from the turret's Limelight.
-     * @return Retrieves the horizontal offset (tx) from the turret's limelight.
-     */
+  //gets the offset of the robot to april tag
   public double turretTx () {
     return LimelightHelpers.getTX(LimelightConstants.LimelightTurret);
   }
-    /**
-     * Calculates the pose ambiguity for the back-left Limelight.
-     * <p>If no target is visible, ambiguity defaults to 1 (lowest confidence)</p>
-     */
+/* 
+//gets how confident the limelight is
 private void ambiguitybleft () {
 if ( LimelightHelpers.getTV(LimelightConstants.LimelightBackLeft)){
     // Get raw AprilTag/Fiducial data
@@ -145,11 +122,8 @@ for (RawFiducial fiducial : fiducials) {
 }
 }
 
-    /**
-     * Calculates the pose ambiguity for the back-right Limelight.
-     * <p>If no target is visible, ambiguity defaults to 1 (Lowest confidence)</p>
-     */
-    private void ambiguitybright () {
+//gets how confident the limelight is
+private void ambiguitybright () {
 if ( LimelightHelpers.getTV(LimelightConstants.LimelightBackRight)){
   // Get raw AprilTag/Fiducial data
 RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LimelightConstants.LimelightBackRight);
@@ -161,15 +135,8 @@ for (RawFiducial fiducial : fiducials) {
     brightA = 1;
 }
 }
-
-    /**
-     * Updates the drivetrain's pose estimator using MegaTag2 vision data.
-     * <p>Calculates Saturn's pose based on the current alliance color and
-     * gyro heading. If the valid targets are seen, the measurement is added to
-     * the drivetrain with specific standard deviations to weight and vision data.</p>
-     * @param name The name/ID of the Limelight camera to use for the update.
-     */
-    private void updatePose(String name) {
+//update where the robot is with lmelights
+private void updatePose(String name) {
   boolean DSBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
 
@@ -201,4 +168,5 @@ drivetrain.addVisionMeasurement(
 );
 
 }
+*/
 }

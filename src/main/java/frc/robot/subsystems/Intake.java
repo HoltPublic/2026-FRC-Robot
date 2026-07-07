@@ -17,16 +17,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-/**
- * Subsystem responsible for Saturn's intake mechanism.
- * <p>Utilizes a single TalonFX motor to drive the intake rollers. This class
- * uses velocity-based control to maintain consistent intake/outtake speeds
- * and includes a voltage ramp to reduce mechanical stress during sudden
- * direction changes.</p>
- *
- * @author Henry M. - 6078 (Maintainer)
- * @author Riley A. - 6078 (Documentation)
- */
 public class Intake extends SubsystemBase {
   private final VelocityVoltage IntakeVV = new VelocityVoltage(0);
 
@@ -79,10 +69,6 @@ public class Intake extends SubsystemBase {
     statorCurrentPub.set(intakeStatorAmps);
   }
 
-  /**
-   * Runs the intake rollers forward at a target velocity to acquire fuel.
-   * <p>Target velocity is set to 48 rotations per second (RPS).</p>
-   */
   public void intakeFore () {
     //double mVol = intake.getMotorVoltage().getValueAsDouble();
     //double mVel = intake.getVelocity().getValueAsDouble();
@@ -91,17 +77,10 @@ public class Intake extends SubsystemBase {
     //System.out.println(mVol + "-Vol");
   }
 
-  /**
-   * Runs the intake rollers in reverse at a target velocity to expel fuel
-   * <p>Target velocity is set to -48 rotations per second (RPS).</p>
-   */
   public void intakeBack () {
     intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeBackwards));
   }
 
-  /**
-   * Immediately stops the intake rollers by applying zero voltage.
-   */
   public void intakeStop () {
     intake.setControl(IntakeVV.withVelocity(IntakeConstants.kIntakeStop));
   }

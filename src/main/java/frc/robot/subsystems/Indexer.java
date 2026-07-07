@@ -21,13 +21,6 @@ import frc.robot.Utils.NTDouble;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.IndexerConstants;
 
-/**
- * Subsystem for controlling the robot's internal fuel transport.
- * <p>The Indexer uses 2 motors to move fuel into or out of the robot.
- * It handles the synchronization between the upper and lower roller.
- * <p>This class is maintained by Henry M. of 6078
- * @author 6078 - Riley A.
- */
 public class Indexer extends SubsystemBase {
   private final TalonFX spindexer = new TalonFX(IndexerConstants.kSpindexerID);
   private final TalonFX feeder = new TalonFX(IndexerConstants.kFeederID);

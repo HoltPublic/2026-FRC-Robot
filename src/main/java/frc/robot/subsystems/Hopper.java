@@ -20,13 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
- *  The Hopper Subsystem manages the storage and transport of fuel to the turret
- *  <p>It utilizes a lead-follower motor configuration (HopperLeft as lead) &
- *  supports both Velocity control for continuous movement and Position control
- *  for precise extension
- *  <p>Visual Reference: <img src="../doc-files/Hopper.png"><br>
- *  <p>Note: Code is currently maintained by Henry M. of 6078
- * @author 6078 - Riley A.
+ *  The Hopper Subsystem, which looks something along the lines of this based on the CAD Model: <br>
+ *  <img src="../doc-files/Hopper.png">
  */
 public class Hopper extends SubsystemBase {
 
@@ -135,8 +130,8 @@ public class Hopper extends SubsystemBase {
   }
 
     /**
-     * Sets the Hopper to a specific extension point.
-     * @param position The target location in rotations. Positive values generally indicate extension outward
+     * Brings the hopper to an assumed position
+     * @param position A double representing the location of how far the hopper is extended out
      */
   public void setHopperPosition (double position) {
     targetPositionPub.set(position);

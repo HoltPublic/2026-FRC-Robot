@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,16 +13,9 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  /**
-   * Constants related to Operator Input (Controllers)
-   */
   public static class OIConstants {
     public static final int kDriverControllerPort = 0;
   }
-
-  /**
-   * NetworkTable names for various Limelight camera units on Saturn.
-   */
   public static class LimelightConstants {
   public static String LimelightBackLeft = "limelight-bleft";
   public static String LimelightBackRight = "limelight-bright";
@@ -159,7 +150,6 @@ public final class Constants {
 
   /**
    * Constants related to the REV Blinkin
-   * @author Riley A. - 6078 (Both Maintainer and Documentation)
    */
   public static class BlinkinConstants {
 
